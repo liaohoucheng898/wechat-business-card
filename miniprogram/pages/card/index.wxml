@@ -1,0 +1,146 @@
+<view class="page-container card-page">
+  <view wx:if="{{loading}}" class="loading-wrap">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view wx:elif="{{notFound}}" class="not-found-wrap">
+    <view class="not-found-card">
+      <view class="not-found-code">404</view>
+      <view class="not-found-title">{{notFoundText || '名片不存在'}}</view>
+      <view class="not-found-desc">可能是链接无效，或该员工没有开通当前公司名片。</view>
+    </view>
+  </view>
+
+  <block wx:elif="{{staff && company}}">
+    <view class="hero">
+      <view class="hero-orb hero-orb-a"></view>
+      <view class="hero-orb hero-orb-b"></view>
+
+      <view class="hero-save-contact" style="{{saveContactWrapStyle}}">
+        <view class="save-contact-btn" style="{{saveContactButtonStyle}}" bindtap="onSaveContact">存入通讯录</view>
+      </view>
+
+      <view class="profile-card">
+        <view class="profile-top">
+          <view class="avatar-wrap" bindtap="onLongPressAvatar">
+            <image
+              class="avatar-img"
+              src="{{staff.avatar || defaultAvatar}}"
+              mode="aspectFill"
+            />
+          </view>
+
+          <view class="profile-info">
+            <view class="profile-name">{{staff.name}}</view>
+            <view class="profile-title">{{staff.title || '暂未填写职位'}}</view>
+            <view class="profile-company">{{company.name}}</view>
+          </view>
+        </view>
+
+        <view class="profile-divider"></view>
+
+        <view class="contact-list">
+          <view class="contact-item" bindtap="onCallStaff">
+            <image class="contact-icon" src="/images/card/contact-phone.svg" mode="aspectFit" />
+            <text class="contact-text">{{staff.phoneDisplay || staff.phoneFull || staff.phone || '暂未填写电话'}}</text>
+          </view>
+
+          <view class="contact-item" bindtap="onCopyEmail">
+            <image class="contact-icon" src="/images/card/contact-email.svg" mode="aspectFit" />
+            <text class="contact-text">{{staff.email || '暂未填写邮箱'}}</text>
+          </view>
+
+          <view class="contact-item" bindtap="onOpenMap">
+            <image class="contact-icon" src="/images/card/contact-address.svg" mode="aspectFit" />
+            <text class="contact-text">{{company.displayAddress || company.address || company.locationName || '暂未填写地址'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view
+        wx:if="{{staff.phoneDisplay || staff.phoneFull || staff.phone}}"
+        class="call-phone-bar"
+        bindtap="onCallStaff"
+      >
+        <text class="call-phone-bar-text">电话联系</text>
+      </view>
+    </view>
+
+    <view class="content-block">
+      <view class="block-header">
+        <image class="block-header-icon" src="/images/card/section-company.svg" mode="aspectFit" />
+        <text class="block-title">公司介绍</text>
+      </view>
+
+      <view wx:if="{{company.intro}}" class="block-body rich-wrapper">
+        <rich-text nodes="{{company.intro}}" />
+      </view>
+      <view wx:else class="block-empty">暂未填写公司介绍</view>
+    </view>
+
+    <view class="content-block">
+      <view class="block-header">
+        <image class="block-header-icon" src="/images/card/section-business.svg" mode="aspectFit" />
+        <text class="block-title">业务介绍</text>
+      </view>
+
+      <view wx:if="{{company.businessIntro}}" class="block-body rich-wrapper">
+        <rich-text nodes="{{company.businessIntro}}" />
+      </view>
+      <view wx:else class="block-empty">暂未填写业务介绍</view>
+    </view>
+
+    <view class="content-block">
+      <view class="block-header case-header">
+        <image class="block-header-icon" src="/images/card/section-case.svg" mode="aspectFit" />
+        <text class="block-title">客户案例</text>
+      </view>
+
+      <scroll-view
+        wx:if="{{caseCategories.length > 0}}"
+        class="category-scroll"
+        scroll-x
+        enhanced
+        show-scrollbar="{{false}}"
+      >
+        <view class="case-tabs">
+          <view class="tab-btn {{activeCategoryId === '' ? 'active' : ''}}" bindtap="onCategoryTap" data-id="">全部</view>
+          <view
+            wx:for="{{caseCategories}}"
+            wx:key="_id"
+            class="tab-btn {{activeCategoryId === item._id ? 'active' : ''}}"
+            bindtap="onCategoryTap"
+            data-id="{{item._id}}"
+          >{{item.name}}</view>
+        </view>
+      </scroll-view>
+
+      <block wx:if="{{filteredCases.length > 0}}">
+        <view class="case-list">
+          <view
+            wx:for="{{filteredCases}}"
+            wx:key="caseId"
+            class="case-card"
+            bindtap="onCaseTap"
+            data-case-id="{{item.caseId}}"
+          >
+            <image wx:if="{{item.cover}}" class="case-cover" src="{{item.cover}}" mode="aspectFill" />
+            <view wx:else class="case-logo">{{item.badgeText}}</view>
+
+            <view class="case-info">
+              <view class="case-name">{{item.title}}</view>
+              <view class="case-tag">{{item.description || '点击查看案例详情'}}</view>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{casesLoadingMore}}" class="case-load-status">加载中...</view>
+        <view wx:elif="{{!hasMoreCases}}" class="case-load-status">已加载全部</view>
+      </block>
+
+      <view wx:elif="{{casesLoadingMore}}" class="case-load-status">加载中...</view>
+      <empty-state wx:else text="暂无客户案例" />
+    </view>
+  </block>
+</view>

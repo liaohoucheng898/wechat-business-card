@@ -1,0 +1,22 @@
+{
+  "pages": [
+    "pages/my-card/index",
+    "pages/card/index",
+    "pages/case-detail/index",
+    "pages/card-disabled/index",
+    "pages/bind-phone/index",
+    "pages/change-password/index",
+    "pages/edit-card/index",
+    "pages/my-stats/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#3764F7",
+    "navigationBarTitleText": "电子名片",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F6FA",
+    "backgroundTextStyle": "dark"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

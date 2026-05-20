@@ -1,0 +1,29 @@
+<!-- M2 名片已注销页 -->
+<view class="page-container disabled-page">
+  <view class="disabled-hero">
+    <view class="hero-orb hero-orb-a"></view>
+    <view class="hero-orb hero-orb-b"></view>
+
+    <view class="disabled-card">
+      <view class="disabled-icon-shell">
+        <view class="disabled-icon">✉️</view>
+      </view>
+
+      <view class="disabled-title">该名片已注销</view>
+      <view class="disabled-desc">抱歉，您访问的名片目前已停用</view>
+
+      <view wx:if="{{companyName || companyPhone}}" class="contact-card">
+        <view class="contact-hint">如需联系，请直接找公司：</view>
+        <view wx:if="{{companyName}}" class="contact-row">
+          <text class="contact-label">公司</text>
+          <text class="contact-value">{{companyName}}</text>
+        </view>
+        <view wx:if="{{companyPhone}}" class="contact-row" bindtap="onCallCompany">
+          <text class="contact-label">电话</text>
+          <text class="contact-value text-primary">{{companyPhone}}</text>
+          <text class="call-icon">📞</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

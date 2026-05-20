@@ -1,0 +1,11 @@
+{
+  "name": "adminGetCase",
+  "version": "1.0.0",
+  "description": "鑾峰彇鍗曚釜妗堜緥璇︽儏",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "3.18.1"
+  }
+}
+

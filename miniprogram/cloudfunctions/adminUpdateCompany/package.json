@@ -1,0 +1,11 @@
+{
+  "name": "adminUpdateCompany",
+  "version": "1.0.0",
+  "description": "鏇存柊鍏徃淇℃伅",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "3.18.1"
+  }
+}
+

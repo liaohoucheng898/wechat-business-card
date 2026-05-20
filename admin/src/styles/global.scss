@@ -1,0 +1,136 @@
+@use 'sass:color';
+@use './variables' as *;
+
+// ============================================================
+// 全局样式 + Element Plus 覆盖
+// ============================================================
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: $font-family-base;
+  font-size: 15px;
+  color: $text-primary;
+  background-color: $page-bg;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: $font-family-base;
+}
+
+a {
+  color: $color-primary;
+  text-decoration: none;
+}
+
+// --- Element Plus 覆盖 ---
+
+// 按钮圆角
+.el-button {
+  border-radius: $radius-button;
+  font-weight: 500;
+}
+
+.el-button--primary {
+  --el-button-bg-color: #{$color-primary};
+  --el-button-border-color: #{$color-primary};
+  --el-button-hover-bg-color: #{color.adjust($color-primary, $lightness: 8%)};
+  --el-button-hover-border-color: #{color.adjust($color-primary, $lightness: 8%)};
+  --el-button-active-bg-color: #{color.adjust($color-primary, $lightness: -5%)};
+  --el-button-active-border-color: #{color.adjust($color-primary, $lightness: -5%)};
+}
+
+// 输入框
+.el-input__wrapper {
+  border-radius: $radius-input;
+}
+
+// 卡片
+.el-card {
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  border: none;
+}
+
+// 标签
+.el-tag {
+  border-radius: $radius-tag;
+}
+
+// 表格
+.el-table {
+  --el-table-header-bg-color: #{$page-bg};
+  --el-table-border-color: #{$border-color};
+
+  th.el-table__cell {
+    color: $text-secondary;
+    font-weight: 500;
+    font-size: 13px;
+  }
+}
+
+// 分页
+.el-pagination {
+  --el-pagination-button-bg-color: #{$card-bg};
+  margin-top: $spacing-md;
+  justify-content: flex-end;
+}
+
+// 抽屉
+.el-drawer__header {
+  margin-bottom: 0;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid $border-color;
+  color: $text-primary;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.el-drawer__body {
+  padding: $spacing-lg;
+}
+
+// 菜单
+.el-menu {
+  border-right: none;
+}
+
+// 消息弹窗
+.el-message-box {
+  border-radius: $radius-card;
+}
+
+// --- 工具类 ---
+.page-container {
+  padding: $spacing-lg;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+
+  .page-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: $text-primary;
+  }
+}
+
+.card-wrapper {
+  background: $card-bg;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  padding: $spacing-lg;
+}

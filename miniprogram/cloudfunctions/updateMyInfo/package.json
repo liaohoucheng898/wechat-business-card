@@ -1,0 +1,9 @@
+{
+  "name": "updateMyInfo",
+  "version": "1.0.0",
+  "description": "员工更新个人信息",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "adminGetStats",
+  "version": "1.0.0",
+  "description": "浼佷笟鏁版嵁缁熻",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "3.18.1"
+  }
+}
+

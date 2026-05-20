@@ -1,0 +1,11 @@
+{
+  "name": "adminToggleCaseVisible",
+  "version": "1.0.0",
+  "description": "Admin toggle case visible",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "3.18.1"
+  }
+}
+

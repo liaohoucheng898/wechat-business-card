@@ -1,0 +1,17 @@
+{
+  "name": "digital-card-deploy-tools",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "cb:login": ".\\scripts\\invoke-tcb.cmd login",
+    "cb:env:list": ".\\scripts\\invoke-tcb.cmd env list",
+    "cb:deploy:functions": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-cloudfunctions.ps1",
+    "cb:deploy:http-routes": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-http-routes.ps1",
+    "cb:build:admin": "npm --prefix ./admin run build",
+    "cb:deploy:admin": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-admin-hosting.ps1",
+    "cb:deploy": "npm run cb:deploy:functions && npm run cb:deploy:http-routes && npm run cb:build:admin && npm run cb:deploy:admin"
+  },
+  "devDependencies": {
+    "@cloudbase/cli": "3.2.2"
+  }
+}

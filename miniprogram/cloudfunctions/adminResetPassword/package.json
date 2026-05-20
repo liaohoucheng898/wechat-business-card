@@ -1,0 +1,10 @@
+{
+  "name": "adminResetPassword",
+  "version": "1.0.0",
+  "description": "Admin reset password",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "3.18.1"
+  }
+}

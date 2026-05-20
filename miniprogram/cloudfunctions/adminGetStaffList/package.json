@@ -1,0 +1,11 @@
+{
+  "name": "adminGetStaffList",
+  "version": "1.0.0",
+  "description": "鑾峰彇鍛樺伐鍒楄〃",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "3.18.1"
+  }
+}
+

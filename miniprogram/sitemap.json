@@ -1,0 +1,9 @@
+{
+  "desc": "disable all pages from being indexed",
+  "rules": [
+    {
+      "action": "disallow",
+      "page": "*"
+    }
+  ]
+}

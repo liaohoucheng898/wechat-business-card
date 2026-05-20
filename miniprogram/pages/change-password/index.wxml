@@ -1,0 +1,61 @@
+<view class="page-container change-password-page">
+  <view class="change-password-hero">
+    <view class="change-password-card">
+      <view class="card-title">修改密码</view>
+      <view class="card-desc">
+        {{forceMode ? '当前正在使用临时密码，请先设置一个新密码。' : '请修改为你自己的常用密码。'}}
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">旧密码</text>
+        <view class="form-input-wrap">
+          <input
+            class="form-input"
+            password
+            maxlength="20"
+            placeholder="请输入旧密码或临时密码"
+            value="{{oldPassword}}"
+            data-field="oldPassword"
+            bindinput="onInput"
+          />
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">新密码</text>
+        <view class="form-input-wrap">
+          <input
+            class="form-input"
+            password
+            maxlength="20"
+            placeholder="8-20位，且必须同时包含字母和数字"
+            value="{{newPassword}}"
+            data-field="newPassword"
+            bindinput="onInput"
+          />
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">确认新密码</text>
+        <view class="form-input-wrap">
+          <input
+            class="form-input"
+            password
+            maxlength="20"
+            placeholder="请再次输入新密码"
+            value="{{confirmPassword}}"
+            data-field="confirmPassword"
+            bindinput="onInput"
+          />
+        </view>
+      </view>
+
+      <view class="password-tip">密码需为8-20位，且必须同时包含字母和数字</view>
+
+      <button class="btn-primary" loading="{{submitting}}" bindtap="onSubmit">
+        {{submitting ? '保存中...' : '保存新密码'}}
+      </button>
+    </view>
+  </view>
+</view>

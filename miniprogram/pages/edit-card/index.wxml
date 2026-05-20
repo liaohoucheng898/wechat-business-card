@@ -1,0 +1,190 @@
+<!-- M5 编辑名片页 -->
+<view class="page-container edit-page">
+  <view class="edit-hero">
+    <view class="hero-orb hero-orb-a"></view>
+    <view class="hero-orb hero-orb-b"></view>
+    <view class="hero-orb hero-orb-c"></view>
+
+    <view class="profile-card">
+      <view class="section-header profile-section-header">
+        <text class="section-title">基础资料</text>
+      </view>
+
+      <view class="profile-avatar-panel" bindtap="onChooseAvatar">
+        <view class="edit-avatar-wrap">
+          <image
+            class="edit-avatar"
+            src="{{avatar || defaultAvatar}}"
+            mode="aspectFill"
+          />
+          <view class="avatar-camera">
+            <image class="camera-icon" src="/images/edit-card/avatar-edit.svg" mode="aspectFit" />
+          </view>
+        </view>
+      </view>
+
+      <view class="profile-list">
+        <view class="profile-row">
+          <text class="form-label">姓名</text>
+          <view class="form-value readonly">
+            <text class="profile-text profile-text-strong">{{name}}</text>
+          </view>
+        </view>
+
+        <view class="profile-row">
+          <text class="form-label">手机</text>
+          <view class="form-value">
+            <text class="profile-text">{{phone}}</text>
+          </view>
+        </view>
+
+        <view class="profile-row">
+          <text class="form-label">第二手机</text>
+          <view class="form-value form-value-inline">
+            <input
+              class="form-input second-phone-input"
+              type="number"
+              maxlength="11"
+              placeholder=""
+              placeholder-style="color: #BBBFC4;"
+              value="{{secondPhone}}"
+              bindinput="onSecondPhoneInput"
+            />
+            <view class="second-phone-switch">
+              <text class="switch-label">是否显示</text>
+              <switch
+                checked="{{showSecondPhone}}"
+                color="#1677ff"
+                bindchange="onShowSecondPhoneChange"
+              />
+            </view>
+          </view>
+        </view>
+
+        <view class="profile-row">
+          <text class="form-label">邮箱</text>
+          <view class="form-value">
+            <input
+              class="form-input"
+              type="text"
+              maxlength="50"
+              placeholder="请输入邮箱"
+              placeholder-style="color: #BBBFC4;"
+              value="{{email}}"
+              bindinput="onEmailInput"
+            />
+          </view>
+        </view>
+
+        <view class="profile-row profile-row-last">
+          <text class="form-label">微信号</text>
+          <view class="form-value">
+            <input
+              class="form-input"
+              type="text"
+              maxlength="20"
+              placeholder="请输入微信号"
+              placeholder-style="color: #BBBFC4;"
+              value="{{wechat}}"
+              bindinput="onWechatInput"
+            />
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{companyTitles.length > 0}}" class="form-section section-card company-section-card">
+    <view class="section-header">
+      <text class="section-title">公司职位</text>
+    </view>
+
+    <view class="company-inline-list">
+      <view
+        wx:for="{{companyTitles}}"
+        wx:key="companyId"
+        class="company-inline-row {{index === companyTitles.length - 1 ? 'company-inline-row-last' : ''}}"
+      >
+        <text class="company-inline-label">{{item.companyName}}：</text>
+        <input
+          class="company-inline-input"
+          type="text"
+          maxlength="20"
+          placeholder="请输入职位"
+          placeholder-style="color: #BBBFC4;"
+          value="{{item.title}}"
+          bindinput="onCompanyTitleInput"
+          data-company-id="{{item.companyId}}"
+        />
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section section-card bio-section-card">
+    <view class="section-header">
+      <text class="section-title">个人简介</text>
+    </view>
+
+    <view class="bio-panel">
+      <textarea
+        class="bio-textarea"
+        maxlength="200"
+        placeholder="请输入你的专业介绍、擅长方向、服务内容或从业经验"
+        placeholder-style="color: #BBBFC4;"
+        value="{{bio}}"
+        bindinput="onBioInput"
+        auto-height
+      />
+      <view class="bio-footer">
+        <text class="bio-count {{bioLength > 200 ? 'over' : ''}}">{{bioLength}}/200</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="save-section">
+    <button
+      class="btn-primary edit-save-btn {{saving ? 'disabled' : ''}}"
+      disabled="{{saving}}"
+      bindtap="onSave"
+    >
+      {{saving ? '保存中...' : '保存'}}
+    </button>
+  </view>
+
+  <view wx:if="{{showAvatarCropper}}" class="avatar-crop-modal" catchtouchmove="noop">
+    <view class="avatar-crop-card">
+      <view class="avatar-crop-header">
+        <text class="avatar-crop-title">裁剪头像</text>
+        <text class="avatar-crop-subtitle">拖动图片调整位置，双指缩放大小</text>
+      </view>
+
+      <view
+        class="avatar-crop-stage"
+        style="width: {{cropBoxSize}}px; height: {{cropBoxSize}}px;"
+        catchtouchstart="onAvatarCropTouchStart"
+        catchtouchmove="onAvatarCropTouchMove"
+        catchtouchend="onAvatarCropTouchEnd"
+        catchtouchcancel="onAvatarCropTouchEnd"
+      >
+        <image
+          class="avatar-crop-image"
+          src="{{cropImagePath}}"
+          mode="scaleToFill"
+          style="width: {{cropImageDisplayWidth}}px; height: {{cropImageDisplayHeight}}px; transform: translate({{cropImageX}}px, {{cropImageY}}px);"
+        />
+        <view class="avatar-crop-circle"></view>
+      </view>
+
+      <view class="avatar-crop-actions">
+        <button class="avatar-crop-btn avatar-crop-btn-ghost" disabled="{{cropUploading}}" bindtap="onAvatarCropCancel">
+          取消
+        </button>
+        <button class="avatar-crop-btn avatar-crop-btn-primary" loading="{{cropUploading}}" disabled="{{cropUploading}}" bindtap="onAvatarCropConfirm">
+          确认裁剪
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <canvas type="2d" id="avatarCropCanvas" class="avatar-crop-canvas"></canvas>
+</view>

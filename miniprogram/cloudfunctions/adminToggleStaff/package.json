@@ -1,0 +1,11 @@
+{
+  "name": "adminToggleStaff",
+  "version": "1.0.0",
+  "description": "鍋滅敤/鍚敤鍛樺伐",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "3.18.1"
+  }
+}
+

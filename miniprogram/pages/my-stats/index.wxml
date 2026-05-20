@@ -1,0 +1,66 @@
+<!-- M7 个人数据统计页 -->
+<view class="page-container stats-page">
+  <view class="stats-hero">
+    <view class="hero-orb hero-orb-a"></view>
+    <view class="hero-orb hero-orb-b"></view>
+    <view class="hero-orb hero-orb-c"></view>
+
+    <view class="hero-shell">
+      <view class="hero-shell-glow"></view>
+      <view class="hero-card">
+        <view class="stats-summary">
+          <view class="stats-summary-item">
+            <text class="stats-summary-value">{{periodTotal}}</text>
+            <text class="stats-summary-label">{{activeTimeLabel}}浏览</text>
+          </view>
+          <view class="stats-summary-divider"></view>
+          <view class="stats-summary-item">
+            <text class="stats-summary-value stats-summary-value-dark">{{allTimeTotal}}</text>
+            <text class="stats-summary-label">累计总浏览</text>
+          </view>
+        </view>
+        <view class="stats-update-row">
+          <view class="stats-update-dot"></view>
+          <view class="stats-update-time">数据更新时间：{{updateTimeText}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="time-tabs section-card">
+    <view
+      wx:for="{{timeOptions}}"
+      wx:key="value"
+      class="time-tab {{activeTime === item.value ? 'active' : ''}}"
+      bindtap="onTimeTab"
+      data-value="{{item.value}}"
+    >{{item.label}}</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-wrap">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <block wx:else>
+    <view class="chart-card section-card">
+      <view class="section-header">
+        <view class="chart-title-wrap">
+          <text class="section-title chart-title-text">浏览趋势</text>
+          <text class="chart-subtitle">{{activeTimeLabel}}名片浏览变化</text>
+        </view>
+      </view>
+      <view wx:if="{{trend.length > 0}}" class="chart-wrap">
+        <canvas
+          type="2d"
+          id="trendChart"
+          class="trend-canvas"
+        />
+      </view>
+      <view wx:else class="chart-empty">
+        <text class="text-assist">暂无数据</text>
+      </view>
+    </view>
+    <view class="stats-encouragement">你的努力，客户正在看见</view>
+  </block>
+</view>

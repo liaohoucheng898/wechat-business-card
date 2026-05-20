@@ -1,0 +1,109 @@
+/* M2 名片已注销页 */
+.disabled-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #edf4ff 0%, #f5f6fa 360rpx, #f5f6fa 100%);
+}
+
+.disabled-hero {
+  position: relative;
+  padding: 120rpx 24rpx 0;
+  overflow: hidden;
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(22, 119, 255, 0.08);
+}
+
+.hero-orb-a {
+  width: 240rpx;
+  height: 240rpx;
+  top: 30rpx;
+  right: -70rpx;
+}
+
+.hero-orb-b {
+  width: 170rpx;
+  height: 170rpx;
+  left: -42rpx;
+  top: 280rpx;
+}
+
+.disabled-card {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 36rpx;
+  box-shadow: var(--shadow-float);
+  padding: 48rpx 32rpx 34rpx;
+  text-align: center;
+}
+
+.disabled-icon-shell {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  margin: 0 auto 32rpx;
+  background: linear-gradient(180deg, #F4F8FF 0%, #EAF2FF 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.disabled-icon {
+  font-size: 64rpx;
+}
+
+.disabled-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 16rpx;
+}
+
+.disabled-desc {
+  font-size: 26rpx;
+  color: var(--color-text-assist);
+  line-height: 1.7;
+  margin-bottom: 34rpx;
+}
+
+.contact-card {
+  background: #F8FAFF;
+  border-radius: 28rpx;
+  padding: 32rpx;
+  text-align: left;
+  border: 1rpx solid #E4EAFF;
+}
+
+.contact-hint {
+  font-size: 26rpx;
+  color: var(--color-text-assist);
+  margin-bottom: 24rpx;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-top: 1rpx solid var(--color-divider);
+}
+
+.contact-label {
+  font-size: 26rpx;
+  color: var(--color-text-assist);
+  width: 80rpx;
+  flex-shrink: 0;
+}
+
+.contact-value {
+  flex: 1;
+  font-size: 30rpx;
+  color: var(--color-text-main);
+}
+
+.call-icon {
+  font-size: 36rpx;
+  margin-left: 16rpx;
+}

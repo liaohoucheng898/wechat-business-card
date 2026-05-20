@@ -1,0 +1,258 @@
+{
+  "envId": "cloud1-d1gvh2zc3c5919349",
+  "functionRoot": "miniprogram/cloudfunctions",
+  "functions": [
+    {
+      "name": "adminCreateCase",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "adminCreateStaff",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "adminDeleteCase",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "adminDeleteStaff",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "adminGetCase",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "adminGetCaseList",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "adminGetCompany",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "adminGetCompanyList",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "adminGetStaffList",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "adminGetStats",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "adminImportStaff",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "adminListCategories",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "adminLogin",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "adminManageCategory",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "adminPasswordLogin",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "adminResetPassword",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "adminToggleCaseVisible",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "adminToggleStaff",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "adminUnbindWechat",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "adminUpdateCase",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "adminUpdateCompany",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "adminUpdateStaff",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "archiveViewLogs",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "bindPhone",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "changePassword",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "getCardInfo",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "getCardCases",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "getCaseDetail",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "getMyStats",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "imageCompress",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "login",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "passwordLogin",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "sendSmsCode",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 15,
+      "memorySize": 256
+    },
+    {
+      "name": "transferAdmin",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "updateMyInfo",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    },
+    {
+      "name": "writeViewLog",
+      "handler": "index.main",
+      "runtime": "Nodejs16.13",
+      "timeout": 3,
+      "memorySize": 256
+    }
+  ]
+}

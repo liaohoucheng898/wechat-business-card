@@ -1,0 +1,336 @@
+/* M4 我的名片页 */
+.my-card-page {
+  background: linear-gradient(180deg, #f7f9fd 0%, #f5f6fa 100%);
+}
+
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.loading-spinner {
+  width: 64rpx;
+  height: 64rpx;
+  border: 4rpx solid #DBDEE3;
+  border-top-color: #1677ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  color: #4A5568;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(155deg, #1e80ff 0%, #0f52cc 100%);
+  padding: 24rpx 16rpx 32rpx;
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-orb-a {
+  top: -80rpx;
+  right: -80rpx;
+  width: 400rpx;
+  height: 400rpx;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.hero-orb-b {
+  left: -60rpx;
+  bottom: 60rpx;
+  width: 260rpx;
+  height: 260rpx;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.profile-card {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 36rpx;
+  padding: 40rpx 56rpx 36rpx;
+  box-shadow: 0 4rpx 0 rgba(255, 255, 255, 0.6), 0 24rpx 64rpx rgba(10, 40, 120, 0.22);
+}
+
+.profile-top {
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+.avatar-wrap {
+  width: 144rpx;
+  height: 144rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #EEF4FF;
+  box-shadow: 0 0 0 6rpx #E0ECFF;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+}
+
+.profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name {
+  margin-bottom: 8rpx;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #1677ff;
+}
+
+.profile-title,
+.profile-company {
+  font-size: 26rpx;
+  color: #1677ff;
+  line-height: 1.5;
+}
+
+.profile-title {
+  margin-bottom: 4rpx;
+}
+
+.profile-divider {
+  height: 1rpx;
+  background: #EBEDF2;
+  margin-bottom: 28rpx;
+}
+
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18rpx;
+}
+
+.contact-icon {
+  width: 34rpx;
+  height: 34rpx;
+  flex-shrink: 0;
+  margin-top: 4rpx;
+}
+
+.contact-text {
+  flex: 1;
+  font-size: 27rpx;
+  line-height: 1.6;
+  color: #1677ff;
+  word-break: break-all;
+}
+
+.call-phone-bar {
+  position: relative;
+  z-index: 1;
+  margin: calc(20rpx + 6px) 0 0;
+  height: calc(84rpx - 8px);
+  line-height: calc(84rpx - 8px);
+  border-radius: 36rpx;
+  border: none;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F7FAFF 100%);
+  color: #1677FF;
+  font-size: 28rpx;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 4rpx 0 rgba(255, 255, 255, 0.6), 0 24rpx 64rpx rgba(10, 40, 120, 0.18);
+}
+
+.call-phone-bar-text {
+  display: inline-block;
+  font-size: 26rpx;
+  letter-spacing: 4rpx;
+  font-weight: 400;
+}
+
+.call-phone-bar:active {
+  transform: scale(0.985);
+  background: linear-gradient(180deg, #F7FAFF 0%, #EEF5FF 100%);
+}
+
+.company-switch-panel {
+  margin: 24rpx 16rpx 0;
+}
+
+.company-switch-list {
+  display: flex;
+  gap: 16rpx;
+}
+
+.company-switch-btn {
+  flex: 1;
+  min-width: 0;
+  height: 84rpx;
+  line-height: 84rpx;
+  text-align: center;
+  border-radius: 22rpx;
+  border: 1rpx solid #D9E6FF;
+  background: #F8FBFF;
+  color: #3D4A5C;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.company-switch-btn.active {
+  border-color: #1677ff;
+  background: linear-gradient(135deg, #1677ff 0%, #0f52cc 100%);
+  color: #fff;
+  box-shadow: 0 14rpx 28rpx rgba(22, 119, 255, 0.18);
+}
+
+.company-switch-btn.disabled {
+  background: #F3F5F9;
+  border-color: #E5E9F0;
+  color: #BABFCB;
+}
+
+.quick-entry {
+  margin: 24rpx 16rpx 0;
+  padding-top: 26rpx;
+  padding-bottom: 26rpx;
+}
+
+.entry-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.entry-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  min-width: 0;
+}
+
+.entry-icon-badge {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 22rpx;
+  background: linear-gradient(180deg, #F3F8FF 0%, #EAF2FF 100%);
+  border: 1rpx solid #DCE8FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.entry-icon-image {
+  width: 72rpx;
+  height: 72rpx;
+}
+
+.entry-text-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.entry-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1F2329;
+}
+
+.entry-subtext {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: #4A5568;
+}
+
+.entry-arrow {
+  font-size: 36rpx;
+  color: #A2ABB9;
+  margin-left: 16rpx;
+}
+
+.bottom-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 24rpx;
+  padding: 20rpx 16rpx;
+  background: transparent;
+  box-shadow: none;
+  z-index: 100;
+}
+
+.action-edit {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  border-radius: var(--radius-btn);
+  border: 2rpx solid var(--color-primary);
+  color: var(--color-primary);
+  font-size: 30rpx;
+  font-weight: 600;
+  background: #fff;
+}
+
+.action-share {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  border-radius: var(--radius-btn);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-deep) 100%);
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  border: none;
+  padding: 0;
+  box-shadow: 0 12rpx 28rpx rgba(22, 119, 255, 0.18);
+}
+
+.action-share::after {
+  border: none;
+}
+
+.empty-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.empty-text {
+  font-size: 30rpx;
+  color: var(--color-text-secondary);
+  margin-bottom: 32rpx;
+}
+
+.empty-btn {
+  width: 320rpx;
+}

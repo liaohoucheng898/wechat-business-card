@@ -1,0 +1,10 @@
+{
+  "name": "adminUnbindWechat",
+  "version": "1.0.0",
+  "description": "管理员解绑员工单个微信号",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "3.18.1"
+  }
+}

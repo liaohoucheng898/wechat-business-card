@@ -1,0 +1,11 @@
+{
+  "name": "adminLogin",
+  "version": "1.0.0",
+  "description": "PC绔鐞嗗憳鐧诲綍",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "3.18.1"
+  }
+}
+

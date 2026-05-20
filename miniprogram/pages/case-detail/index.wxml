@@ -1,0 +1,44 @@
+<view class="page-container case-detail-page">
+  <view wx:if="{{loading}}" class="loading-wrap">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view wx:elif="{{caseDetail}}" class="detail-shell">
+    <view class="detail-card">
+      <view class="detail-cover-frame">
+        <image
+          wx:if="{{caseDetail.cover}}"
+          class="detail-cover"
+          src="{{caseDetail.cover}}"
+          mode="aspectFit"
+        />
+        <view wx:else class="detail-cover-empty">暂无封面图</view>
+      </view>
+
+      <view class="detail-header">
+        <view class="detail-title-group">
+          <text class="detail-title">{{caseDetail.title || '未填写案例标题'}}</text>
+          <text class="detail-desc">{{caseDetail.description}}</text>
+        </view>
+
+        <view wx:if="{{caseDetail.categoryNames && caseDetail.categoryNames.length}}" class="detail-section detail-category-section">
+          <view class="detail-tags">
+            <text
+              wx:for="{{caseDetail.categoryNames}}"
+              wx:key="*this"
+              class="detail-tag"
+            >{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="detail-body">
+        <view wx:if="{{caseDetail.content}}" class="detail-content rich-wrapper">
+          <rich-text nodes="{{caseDetail.content}}" />
+        </view>
+        <view wx:else class="detail-empty">暂未填写案例详情</view>
+      </view>
+    </view>
+  </view>
+</view>

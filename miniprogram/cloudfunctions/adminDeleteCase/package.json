@@ -1,0 +1,11 @@
+{
+  "name": "adminDeleteCase",
+  "version": "1.0.0",
+  "description": "Admin delete case",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "3.18.1"
+  }
+}
+

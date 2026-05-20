@@ -1,0 +1,10 @@
+{
+  "name": "adminDeleteStaff",
+  "version": "1.0.0",
+  "description": "删除员工",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "3.18.1"
+  }
+}
