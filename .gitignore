@@ -24,6 +24,7 @@ pnpm-debug.log*
 # Archive artifacts
 *.zip
 *.rar
+.tmp-*.json
 
 # Environment files
 .env.local
@@ -39,6 +40,8 @@ miniprogram/cloudfunctions/**/tcb_custom_login.local.json
 # Local release artifacts
 release_backups/
 web-cloudbase-project/
+项目文档/客户案例/
+项目文档/华悦客户案例0428.zip
 
 # Historical repair packages
 微信名片_修复包_*/
