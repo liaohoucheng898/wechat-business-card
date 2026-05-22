@@ -10,8 +10,8 @@
       <span>共 {{ companyList.length }} 家公司</span>
     </div>
 
-    <div class="card-wrapper">
-      <el-table :data="companyList" v-loading="loading" stripe>
+    <div class="card-wrapper" v-loading="loading">
+      <el-table :data="companyList" stripe>
         <el-table-column label="公司" min-width="220">
           <template #default="{ row }">
             <div class="company-cell">

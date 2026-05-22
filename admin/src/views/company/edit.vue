@@ -36,13 +36,13 @@
               v-model="form.logo"
               ratio="1:1"
               :width="100"
-              placeholder="上传Logo"
+              placeholder="上传图片"
             />
           </el-form-item>
 
           <div class="base-grid-row">
             <el-form-item label="公司名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入公司名称" maxlength="30" show-word-limit />
+              <el-input v-model="form.name" placeholder="30字以内" maxlength="30" show-word-limit />
             </el-form-item>
 
             <el-form-item label="公司官网">
@@ -52,14 +52,14 @@
 
           <div class="base-grid-row">
             <el-form-item label="公司地址">
-              <el-input v-model="form.address" placeholder="请输入公司地址" maxlength="100" />
+              <el-input v-model="form.address" placeholder="详细地址" maxlength="100" />
             </el-form-item>
 
             <el-form-item label="公司定位" class="location-form-item">
               <div class="location-field">
                 <el-input
                   :model-value="locationText"
-                  placeholder="点击选择定位"
+                  placeholder="选择地图定位"
                   readonly
                   @click="mapPickerVisible = true"
                 >
@@ -81,7 +81,7 @@
           </div>
 
           <el-form-item label="公司电话" class="phone-form-item">
-            <el-input v-model="form.phone" placeholder="请输入公司电话" maxlength="20" />
+            <el-input v-model="form.phone" placeholder="0898-68548301" maxlength="20" />
           </el-form-item>
         </div>
       </section>

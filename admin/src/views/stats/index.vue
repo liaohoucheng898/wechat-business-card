@@ -27,83 +27,85 @@
       </template>
     </el-alert>
 
-    <!-- 总览卡片 -->
-    <div class="overview-cards">
-      <div class="stat-card">
-        <div class="stat-label">期间浏览量</div>
-        <div class="stat-value">{{ formatNumber(overview.periodViews) }}</div>
-        <div v-if="overview.changePercent !== null" class="stat-change">
-          较上一周期
-          <span :class="overview.changePercent >= 0 ? 'up' : 'down'">
-            {{ overview.changePercent >= 0 ? '↑' : '↓' }}{{ Math.abs(overview.changePercent) }}%
-          </span>
+    <div class="stats-content" v-loading="loading">
+      <!-- 总览卡片 -->
+      <div class="overview-cards">
+        <div class="stat-card">
+          <div class="stat-label">期间浏览量</div>
+          <div class="stat-value">{{ formatNumber(overview.periodViews) }}</div>
+          <div v-if="overview.changePercent !== null" class="stat-change">
+            较上一周期
+            <span :class="overview.changePercent >= 0 ? 'up' : 'down'">
+              {{ overview.changePercent >= 0 ? '↑' : '↓' }}{{ Math.abs(overview.changePercent) }}%
+            </span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">累计浏览量</div>
+          <div class="stat-value">{{ formatNumber(overview.totalViews) }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">高活跃员工</div>
+          <div class="stat-value">{{ formatNumber(activeRankCount) }}</div>
+          <div class="stat-desc">近30天浏览量 ≥ 500 的启用员工</div>
         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">累计浏览量</div>
-        <div class="stat-value">{{ formatNumber(overview.totalViews) }}</div>
+
+      <!-- ECharts 折线图 -->
+      <div class="card-wrapper chart-section">
+        <div class="section-header">
+          <span class="section-title">趋势图</span>
+        </div>
+        <div ref="chartRef" class="chart-container" />
       </div>
-      <div class="stat-card">
-        <div class="stat-label">高活跃员工</div>
-        <div class="stat-value">{{ formatNumber(activeRankCount) }}</div>
-        <div class="stat-desc">近30天浏览量 ≥ 500 的启用员工</div>
+
+      <!-- 员工排行榜 -->
+      <div class="card-wrapper rank-section">
+        <div class="section-header">
+          <span class="section-title">员工排行榜</span>
+          <span class="section-tip">仅展示启用状态员工</span>
+        </div>
+        <el-table :data="rankList" stripe>
+          <el-table-column label="排名" width="70" align="center">
+            <template #default="{ $index }">
+              <span class="rank-num">{{ $index + 1 }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="员工" min-width="160">
+            <template #default="{ row }">
+              <div class="staff-cell">
+                <el-avatar :size="32" :src="row.avatar" />
+                <span class="staff-name">{{ row.name }}</span>
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="近7天" prop="weekViews" width="100" align="right">
+            <template #default="{ row }">
+              <span class="num-cell">{{ formatNumber(row.weekViews) }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="近15天" prop="halfMonthViews" width="100" align="right">
+            <template #default="{ row }">
+              <span class="num-cell">{{ formatNumber(row.halfMonthViews) }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="近30天" prop="monthViews" width="100" align="right" sortable>
+            <template #default="{ row }">
+              <span class="num-cell">{{ formatNumber(row.monthViews) }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="累计浏览量" prop="totalViews" width="120" align="right">
+            <template #default="{ row }">
+              <span class="num-cell">{{ formatNumber(row.totalViews) }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
-    </div>
-
-    <!-- ECharts 折线图 -->
-    <div class="card-wrapper chart-section">
-      <div class="section-header">
-        <span class="section-title">趋势图</span>
-      </div>
-      <div ref="chartRef" class="chart-container" />
-    </div>
-
-    <!-- 员工排行榜 -->
-    <div class="card-wrapper rank-section">
-      <div class="section-header">
-        <span class="section-title">员工排行榜</span>
-        <span class="section-tip">仅展示启用状态员工</span>
-      </div>
-      <el-table :data="rankList" v-loading="loading" stripe>
-        <el-table-column label="排名" width="70" align="center">
-          <template #default="{ $index }">
-            <span class="rank-num">{{ $index + 1 }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="员工" min-width="160">
-          <template #default="{ row }">
-            <div class="staff-cell">
-              <el-avatar :size="32" :src="row.avatar" />
-              <span class="staff-name">{{ row.name }}</span>
-            </div>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="近7天" prop="weekViews" width="100" align="right">
-          <template #default="{ row }">
-            <span class="num-cell">{{ formatNumber(row.weekViews) }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="近15天" prop="halfMonthViews" width="100" align="right">
-          <template #default="{ row }">
-            <span class="num-cell">{{ formatNumber(row.halfMonthViews) }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="近30天" prop="monthViews" width="100" align="right" sortable>
-          <template #default="{ row }">
-            <span class="num-cell">{{ formatNumber(row.monthViews) }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="累计浏览量" prop="totalViews" width="120" align="right">
-          <template #default="{ row }">
-            <span class="num-cell">{{ formatNumber(row.totalViews) }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
     </div>
   </div>
 </template>
@@ -291,6 +293,12 @@ onBeforeUnmount(() => {
 @use '@/styles/variables' as *;
 
 .stats-page {
+  .stats-content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-base;
+  }
+
   .filter-bar {
     display: flex;
     align-items: flex-start;
@@ -324,7 +332,6 @@ onBeforeUnmount(() => {
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
-    margin-bottom: 20px;
   }
 
   .stat-card {
@@ -375,7 +382,7 @@ onBeforeUnmount(() => {
 
   // ---- 折线图 ----
   .chart-section {
-    margin-bottom: 20px;
+    margin-bottom: 0;
   }
 
   .chart-container {
@@ -412,7 +419,7 @@ onBeforeUnmount(() => {
     .staff-cell {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: $spacing-sm;
 
       .staff-name {
         font-size: 15px;

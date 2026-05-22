@@ -31,9 +31,26 @@
             <el-form-item label="企业全称" prop="title">
               <el-input
                 v-model="form.title"
-                placeholder="请输入企业全称"
+                placeholder="50字以内"
                 maxlength="50"
                 show-word-limit
+              />
+            </el-form-item>
+
+            <el-form-item label="案例封面" class="form-row-full cover-form-item">
+              <ImageUpload
+                v-model="form.cover"
+                ratio="16:9"
+                :width="240"
+                :max-size="3"
+                fit-crop-box-to-image
+                :crop-output-width="608"
+                :crop-output-height="342"
+                :thumb-width="160"
+                :thumb-height="160"
+                :thumb-quality="0.75"
+                @uploaded="handleCoverUploaded"
+                placeholder="608*342以上，16:9"
               />
             </el-form-item>
 
@@ -81,7 +98,7 @@
 
             <div class="case-inline-row">
               <el-form-item label="是否可见">
-                <el-switch v-model="form.visible" />
+                <el-checkbox v-model="form.visible">小程序展示</el-checkbox>
               </el-form-item>
 
               <el-form-item label="排序值">
@@ -108,7 +125,7 @@
               v-model="form.description"
               type="textarea"
               :rows="3"
-              placeholder="选填，简要描述案例内容"
+              placeholder="200字以内，用于小程序列表展示"
               maxlength="200"
               show-word-limit
             />
@@ -138,28 +155,6 @@
             </el-tag>
             <span v-if="!previewCategoryNames.length" class="preview-meta-empty">暂无栏目</span>
           </div>
-        </section>
-
-        <section class="admin-panel asset-panel">
-          <div class="panel-header">
-            <div>
-              <h2>案例封面</h2>
-            </div>
-          </div>
-          <ImageUpload
-            v-model="form.cover"
-            ratio="16:9"
-            :width="240"
-            :max-size="3"
-            fit-crop-box-to-image
-            :crop-output-width="608"
-            :crop-output-height="342"
-            :thumb-width="160"
-            :thumb-height="160"
-            :thumb-quality="0.75"
-            @uploaded="handleCoverUploaded"
-            placeholder="建议上传分辨率608*342以上的16:9图片"
-          />
         </section>
       </aside>
     </div>
@@ -599,7 +594,7 @@ onMounted(() => {
   .case-form-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 6px;
+    gap: $spacing-sm;
   }
 
   .form-row-full {
@@ -680,7 +675,7 @@ onMounted(() => {
   }
 
   .category-company-block {
-    padding: 12px 14px;
+    padding: $spacing-md;
     border: 1px solid $border-color;
     border-radius: $radius-card;
     background: #fafbfc;
@@ -803,7 +798,7 @@ onMounted(() => {
       max-width: 100%;
       height: auto;
       margin: 16px auto;
-      border-radius: 12px;
+      border-radius: $radius-card;
     }
 
     :deep(p) {

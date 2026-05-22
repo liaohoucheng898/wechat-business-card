@@ -33,8 +33,8 @@
       <span>共 {{ filteredCaseList.length }} 条案例</span>
     </div>
 
-    <div class="card-wrapper">
-      <el-table :data="filteredCaseList" v-loading="loading" stripe>
+    <div class="card-wrapper" v-loading="loading">
+      <el-table :data="filteredCaseList" stripe>
         <el-table-column label="案例" min-width="260">
           <template #default="{ row }">
             <div class="object-cell">
@@ -800,7 +800,7 @@ onMounted(() => {
       max-width: 100%;
       height: auto;
       margin: 16px auto;
-      border-radius: 12px;
+      border-radius: $radius-card;
     }
 
     :deep(p) {

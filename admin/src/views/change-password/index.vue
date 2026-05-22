@@ -160,7 +160,7 @@ async function handleLogout() {
   max-width: 100%;
   background: $card-bg;
   border: 1px solid $border-color;
-  border-radius: 12px;
+  border-radius: $radius-card;
   box-shadow: none;
   padding: 28px;
   box-sizing: border-box;

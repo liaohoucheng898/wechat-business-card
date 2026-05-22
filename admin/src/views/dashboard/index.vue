@@ -45,169 +45,168 @@
       :closable="false"
     />
 
-    <section class="metric-grid" v-loading="loading">
-      <article
-        v-for="item in metricCards"
-        :key="item.key"
-        class="metric-card"
-        :class="`metric-card--${item.tone}`"
-      >
-        <div class="metric-card__header">
-          <span class="metric-card__label">{{ item.label }}</span>
-          <el-tag size="small" effect="plain" :type="item.tagType">{{ item.tag }}</el-tag>
-        </div>
-        <div class="metric-card__value num-cell">{{ item.value }}</div>
-        <p class="metric-card__desc">{{ item.desc }}</p>
-      </article>
-    </section>
-
-    <div class="dashboard-main-grid">
-      <section class="admin-panel trend-panel">
-        <div class="panel-header">
-          <div>
-            <h2 class="panel-title">浏览趋势</h2>
-          </div>
-          <el-tag effect="plain">{{ currentCompanyName }}</el-tag>
-        </div>
-
-        <div v-if="hasTrendData" class="trend-chart" role="img" aria-label="浏览趋势柱状图">
-          <div class="trend-chart__plot">
-            <div
-              v-for="item in chartBars"
-              :key="item.date"
-              class="trend-chart__bar-item"
-            >
-              <span class="trend-chart__value num-cell">{{ formatNumber(item.value) }}</span>
-              <span class="trend-chart__bar" :style="{ height: item.height }" />
-              <span class="trend-chart__date">{{ item.shortDate }}</span>
-            </div>
-          </div>
-        </div>
-
-        <el-empty
-          v-else
-          description="暂无趋势数据，可切换公司或时间范围后重试。"
-        />
-      </section>
-
-      <section class="admin-panel risk-panel">
-        <div class="panel-header">
-          <div>
-            <h2 class="panel-title">风险与待处理</h2>
-          </div>
-          <el-button link type="primary" @click="goTo('/cases')">查看全部</el-button>
-        </div>
-
-        <div class="risk-list">
-          <article
-            v-for="item in riskItems"
-            :key="item.title"
-            class="risk-item"
-            :class="`risk-item--${item.type}`"
-          >
-            <div class="risk-item__content">
-              <strong>{{ item.title }}</strong>
-              <span>{{ item.desc }}</span>
-            </div>
-            <el-button type="primary" link @click="goTo(item.route)">
-              {{ item.action }}
-            </el-button>
-          </article>
-        </div>
-      </section>
-    </div>
-
-    <div class="dashboard-main-grid dashboard-main-grid--bottom">
-      <section class="admin-panel rank-panel">
-        <div class="panel-header">
-          <div>
-            <h2 class="panel-title">员工表现排行</h2>
-          </div>
-          <el-button type="primary" link @click="goTo('/stats')">查看统计</el-button>
-        </div>
-
-        <el-table
-          :data="staffRank"
-          v-loading="loading"
-          stripe
-          empty-text="暂无员工排行数据"
+    <div class="dashboard-content" v-loading="loading">
+      <section class="metric-grid">
+        <article
+          v-for="item in metricCards"
+          :key="item.key"
+          class="metric-card"
+          :class="`metric-card--${item.tone}`"
         >
-          <el-table-column label="排名" width="72" align="center">
-            <template #default="{ $index }">
-              <span class="rank-index">{{ $index + 1 }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="员工" min-width="140">
-            <template #default="{ row }">
-              <div class="staff-cell">
-                <strong>{{ row.name || row.staffName || '-' }}</strong>
-                <span>{{ row.title || row.position || '暂无职位' }}</span>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="公司" min-width="110">
-            <template #default="{ row }">
-              {{ row.companyName || getCompanyName(row.companyId) }}
-            </template>
-          </el-table-column>
-          <el-table-column label="近 7 天" prop="weekViews" width="100" align="right">
-            <template #default="{ row }">
-              <span class="num-cell">{{ formatNumber(row.weekViews) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="近 30 天" prop="monthViews" width="110" align="right">
-            <template #default="{ row }">
-              <span class="num-cell">{{ formatNumber(row.monthViews) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="累计浏览" prop="totalViews" width="110" align="right">
-            <template #default="{ row }">
-              <span class="num-cell">{{ formatNumber(row.totalViews) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="状态" width="90" align="center">
-            <template #default="{ row }">
-              <el-tag :type="row.status === 'disabled' ? 'warning' : 'success'" effect="plain" size="small">
-                {{ row.status === 'disabled' ? '待跟进' : '正常' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-        </el-table>
-      </section>
-
-      <section class="admin-panel operation-panel">
-        <div class="panel-header">
-          <div>
-            <h2 class="panel-title">数据状态</h2>
+          <div class="metric-card__header">
+            <span class="metric-card__label">{{ item.label }}</span>
+            <el-tag size="small" effect="plain" :type="item.tagType">{{ item.tag }}</el-tag>
           </div>
-        </div>
-
-        <div class="operation-list">
-          <article class="operation-item">
-            <span class="operation-item__label">数据刷新</span>
-            <strong>{{ lastUpdatedAt || '-' }}</strong>
-          </article>
-          <article class="operation-item">
-            <span class="operation-item__label">当前筛选</span>
-            <strong>{{ currentCompanyName }} · {{ currentTimeRangeLabel }}</strong>
-          </article>
-          <article class="operation-item">
-            <span class="operation-item__label">统计范围</span>
-            <strong>外部访客访问</strong>
-            <p>已排除内部员工访问。</p>
-          </article>
-          <article class="operation-item">
-            <span class="operation-item__label">内容状态</span>
-            <strong>{{ formatNumber(visibleCaseCount) }} 个可见案例</strong>
-            <p>其中 {{ formatNumber(missingCategoryCount) }} 个案例缺少归属栏目。</p>
-          </article>
-        </div>
-
-        <el-empty
-          v-if="!loading && !caseList.length"
-          description="暂无案例数据，可先进入内容中心新建案例。"
-        />
+          <div class="metric-card__value num-cell">{{ item.value }}</div>
+          <p class="metric-card__desc">{{ item.desc }}</p>
+        </article>
       </section>
+
+      <div class="dashboard-body-grid">
+        <section class="admin-panel trend-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">浏览趋势</h2>
+            </div>
+            <el-tag effect="plain">{{ currentCompanyName }}</el-tag>
+          </div>
+
+          <div v-if="hasTrendData" class="trend-chart" role="img" aria-label="浏览趋势柱状图">
+            <div class="trend-chart__plot">
+              <div
+                v-for="item in chartBars"
+                :key="item.date"
+                class="trend-chart__bar-item"
+              >
+                <span class="trend-chart__value num-cell">{{ formatNumber(item.value) }}</span>
+                <span class="trend-chart__bar" :style="{ height: item.height }" />
+                <span class="trend-chart__date">{{ item.shortDate }}</span>
+              </div>
+            </div>
+          </div>
+
+          <el-empty
+            v-else
+            description="暂无趋势数据，可切换公司或时间范围后重试。"
+          />
+        </section>
+
+        <section class="admin-panel risk-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">风险与待处理</h2>
+            </div>
+            <el-button link type="primary" @click="goTo('/cases')">查看全部</el-button>
+          </div>
+
+          <div class="risk-list">
+            <article
+              v-for="item in riskItems"
+              :key="item.title"
+              class="risk-item"
+              :class="`risk-item--${item.type}`"
+            >
+              <div class="risk-item__content">
+                <strong>{{ item.title }}</strong>
+                <span>{{ item.desc }}</span>
+              </div>
+              <el-button type="primary" link @click="goTo(item.route)">
+                {{ item.action }}
+              </el-button>
+            </article>
+          </div>
+        </section>
+
+        <section class="admin-panel rank-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">员工表现排行</h2>
+            </div>
+            <el-button type="primary" link @click="goTo('/stats')">查看统计</el-button>
+          </div>
+
+          <el-table
+            :data="staffRank"
+            stripe
+            empty-text="暂无员工排行数据"
+          >
+            <el-table-column label="排名" width="72" align="center">
+              <template #default="{ $index }">
+                <span class="rank-index">{{ $index + 1 }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="员工" min-width="140">
+              <template #default="{ row }">
+                <div class="staff-cell">
+                  <strong>{{ row.name || row.staffName || '-' }}</strong>
+                  <span>{{ row.title || row.position || '暂无职位' }}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="公司" min-width="110">
+              <template #default="{ row }">
+                {{ row.companyName || getCompanyName(row.companyId) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="近 7 天" prop="weekViews" width="100" align="right">
+              <template #default="{ row }">
+                <span class="num-cell">{{ formatNumber(row.weekViews) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="近 30 天" prop="monthViews" width="110" align="right">
+              <template #default="{ row }">
+                <span class="num-cell">{{ formatNumber(row.monthViews) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="累计浏览" prop="totalViews" width="110" align="right">
+              <template #default="{ row }">
+                <span class="num-cell">{{ formatNumber(row.totalViews) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态" width="90" align="center">
+              <template #default="{ row }">
+                <el-tag :type="row.status === 'disabled' ? 'warning' : 'success'" effect="plain" size="small">
+                  {{ row.status === 'disabled' ? '待跟进' : '正常' }}
+                </el-tag>
+              </template>
+            </el-table-column>
+          </el-table>
+        </section>
+
+        <section class="admin-panel operation-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">数据状态</h2>
+            </div>
+          </div>
+
+          <div class="operation-list">
+            <article class="operation-item">
+              <span class="operation-item__label">数据刷新</span>
+              <strong>{{ lastUpdatedAt || '-' }}</strong>
+            </article>
+            <article class="operation-item">
+              <span class="operation-item__label">当前筛选</span>
+              <strong>{{ currentCompanyName }} · {{ currentTimeRangeLabel }}</strong>
+            </article>
+            <article class="operation-item">
+              <span class="operation-item__label">统计范围</span>
+              <strong>外部访客访问</strong>
+              <p>已排除内部员工访问。</p>
+            </article>
+            <article class="operation-item">
+              <span class="operation-item__label">内容状态</span>
+              <strong>{{ formatNumber(visibleCaseCount) }} 个可见案例</strong>
+              <p>其中 {{ formatNumber(missingCategoryCount) }} 个案例缺少归属栏目。</p>
+            </article>
+          </div>
+
+          <el-empty
+            v-if="!loading && !caseList.length"
+            description="暂无案例数据，可先进入内容中心新建案例。"
+          />
+        </section>
+      </div>
     </div>
   </div>
 </template>
@@ -480,6 +479,12 @@ onMounted(() => {
   border-radius: $radius-card;
 }
 
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-base;
+}
+
 .metric-grid {
   display: grid;
   align-items: stretch;
@@ -541,16 +546,12 @@ onMounted(() => {
   line-height: 20px;
 }
 
-.dashboard-main-grid {
+.dashboard-body-grid {
   display: grid;
   align-items: stretch;
   grid-template-columns: minmax(0, 2fr) minmax(360px, 1fr);
-  grid-auto-rows: minmax(0, auto);
+  grid-template-rows: minmax(356px, auto) minmax(360px, auto);
   gap: $spacing-base;
-
-  &--bottom {
-    grid-template-columns: minmax(0, 2fr) minmax(360px, 1fr);
-  }
 
   > .admin-panel {
     min-width: 0;
@@ -756,9 +757,9 @@ onMounted(() => {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .dashboard-main-grid,
-  .dashboard-main-grid--bottom {
+  .dashboard-body-grid {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
   }
 }
 

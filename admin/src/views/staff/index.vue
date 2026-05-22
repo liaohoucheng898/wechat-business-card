@@ -41,8 +41,8 @@
       <span>共 {{ filteredStaffList.length }} 名员工</span>
     </div>
 
-    <div class="card-wrapper">
-      <el-table :data="filteredStaffList" v-loading="loading" stripe>
+    <div class="card-wrapper" v-loading="loading">
+      <el-table :data="filteredStaffList" stripe>
         <el-table-column label="员工" min-width="240">
           <template #default="{ row }">
             <div class="object-cell">
@@ -801,7 +801,7 @@ onMounted(() => {
   .header-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: $spacing-sm;
   }
 
   .header-action-btn {
@@ -810,14 +810,14 @@ onMounted(() => {
   }
 
   .company-tag {
-    margin-right: 6px;
+    margin-right: $spacing-xs;
     margin-bottom: 4px;
   }
 
   .position-stack {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: $spacing-xs;
     color: $text-secondary;
     font-size: 13px;
     line-height: 18px;
@@ -831,7 +831,7 @@ onMounted(() => {
   .pagination-wrapper {
     display: flex;
     justify-content: flex-end;
-    padding-top: 20px;
+    padding-top: $spacing-base;
   }
 
   .hidden-file-input {
@@ -841,32 +841,32 @@ onMounted(() => {
   .import-dialog {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: $spacing-base;
   }
 
   .import-dialog__section {
-    padding: 18px 20px;
+    padding: $spacing-base;
     border: 1px solid $border-color;
-    border-radius: 16px;
+    border-radius: $radius-card;
     background: #fff;
   }
 
   .import-dialog__label {
-    margin: 0 0 10px;
+    margin: 0 0 $spacing-sm;
     font-size: 15px;
     font-weight: 600;
     color: $text-primary;
   }
 
   .import-dialog__text {
-    margin: 0 0 8px;
+    margin: 0 0 $spacing-sm;
     font-size: 14px;
     line-height: 1.7;
     color: $text-secondary;
   }
 
   .import-dialog__hint {
-    margin: 10px 0 0;
+    margin: $spacing-sm 0 0;
     font-size: 13px;
     line-height: 1.6;
     color: $text-auxiliary;
@@ -875,7 +875,7 @@ onMounted(() => {
   .import-upload {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: $spacing-sm;
   }
 
   .import-upload__name {
@@ -888,17 +888,17 @@ onMounted(() => {
   .import-result {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: $spacing-base;
   }
 
   .import-result__summary {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    gap: $spacing-sm;
   }
 
   .summary-card {
-    padding: 18px 16px;
+    padding: $spacing-base;
     border: 1px solid $border-color;
     border-radius: $radius-card;
     background: $card-bg;
@@ -938,7 +938,7 @@ onMounted(() => {
 
   .credential-dialog {
     .credential-tip {
-      margin: 0 0 18px;
+      margin: 0 0 $spacing-base;
       font-size: 14px;
       line-height: 1.7;
       color: $text-secondary;
@@ -956,7 +956,7 @@ onMounted(() => {
     }
 
     .credential-note {
-      margin: 6px 0 0;
+      margin: $spacing-xs 0 0;
       font-size: 13px;
       line-height: 1.7;
       color: $text-auxiliary;
