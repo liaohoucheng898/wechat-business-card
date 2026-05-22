@@ -301,7 +301,7 @@ onBeforeUnmount(() => {
       z-index: 10;
 
       .suggestion-item {
-        padding: 10px 14px;
+        padding: $spacing-sm $spacing-md;
         cursor: pointer;
         border-bottom: 1px solid #DBDEE3;
 

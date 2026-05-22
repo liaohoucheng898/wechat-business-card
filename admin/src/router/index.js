@@ -18,13 +18,19 @@ const routes = [
   {
     path: '/',
     component: () => import('@/layouts/AdminLayout.vue'),
-    redirect: '/cases',
+    redirect: '/dashboard',
     children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index.vue'),
+        meta: { title: '运营驾驶舱' }
+      },
       {
         path: 'staff',
         name: 'Staff',
         component: () => import('@/views/staff/index.vue'),
-        meta: { title: '员工管理' }
+        meta: { title: '人员管理' }
       },
       {
         path: 'company',
@@ -42,7 +48,7 @@ const routes = [
         path: 'cases',
         name: 'CaseList',
         component: () => import('@/views/cases/list.vue'),
-        meta: { title: '案例管理' }
+        meta: { title: '内容中心' }
       },
       {
         path: 'cases/edit/:caseId?',
@@ -54,7 +60,7 @@ const routes = [
         path: 'stats',
         name: 'Stats',
         component: () => import('@/views/stats/index.vue'),
-        meta: { title: '数据统计' }
+        meta: { title: '数据分析' }
       }
     ]
   }

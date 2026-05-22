@@ -3,45 +3,64 @@
 // ============================================================
 
 // --- 品牌色 ---
-$color-primary: #1677ff;
-$color-success: #0EC972;
-$color-warning: #FD8C43;
-$color-error: #F65146;
-$color-purple: #988BFF;
+$color-primary: #2563EB;
+$color-primary-hover: #1D4ED8;
+$color-primary-pressed: #1E40AF;
+$color-primary-soft: #EFF6FF;
+$color-primary-border: #BFDBFE;
+$color-success: #16A34A;
+$color-warning: #D97706;
+$color-error: #DC2626;
+$color-purple: #7C3AED;
 
 // --- 文字色 ---
-$text-primary: #1F2329;
-$text-secondary: #646A73;
-$text-auxiliary: #8F959E;
-$text-disabled: #BBBFC4;
+$text-primary: #111827;
+$text-secondary: #374151;
+$text-regular: #374151;
+$text-auxiliary: #6B7280;
+$text-placeholder: #9CA3AF;
+$text-disabled: #D1D5DB;
 
 // --- 边框 / 背景 ---
-$border-color: #DBDEE3;
-$page-bg: #F5F6FA;
+$border-color: #E5E7EB;
+$border-color-strong: #D1D5DB;
+$page-bg: #F5F7FA;
 $card-bg: #FFFFFF;
+$table-header-bg: #F9FAFB;
+$surface-inset: #F3F4F6;
+
+// --- 侧边栏 ---
+$sidebar-bg: #0F172A;
+$sidebar-active-bg: #1E293B;
+$sidebar-hover-bg: #1F2A3D;
+$sidebar-text: #D1D5DB;
+$sidebar-text-active: #FFFFFF;
+$sidebar-border: rgba(255, 255, 255, 0.08);
 
 // --- 圆角 ---
-$radius-card: 12px;
-$radius-button: 8px;
-$radius-input: 8px;
-$radius-tag: 4px;
+$radius-card: 8px;
+$radius-button: 6px;
+$radius-input: 6px;
+$radius-tag: 999px;
 
 // --- 间距 ---
 $spacing-xs: 4px;
 $spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 32px;
+$spacing-md: 12px;
+$spacing-base: 16px;
+$spacing-lg: 20px;
+$spacing-xl: 24px;
+$spacing-xxl: 32px;
 
 // --- 字体 ---
-$font-family-base: 'Inter', '思源黑体', 'Source Han Sans SC', 'Source Han Sans CN', 'Source Han Sans', sans-serif;
-$font-family-number: 'Inter', '思源黑体', 'Source Han Sans SC', 'Source Han Sans CN', 'Source Han Sans', sans-serif;
+$font-family-base: 'Inter', '思源黑体', 'Source Han Sans SC', 'Source Han Sans CN', 'Source Han Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+$font-family-number: 'DIN Alternate', 'Roboto Mono', 'SFMono-Regular', Consolas, monospace;
 
 // --- 阴影 ---
-$shadow-card: 0 2px 12px rgba(5, 24, 71, 0.06);
-$shadow-dropdown: 0 4px 16px rgba(5, 24, 71, 0.1);
+$shadow-card: none;
+$shadow-dropdown: 0 12px 32px rgba(15, 23, 42, 0.14);
 
 // --- 布局尺寸 ---
 $header-height: 56px;
-$sidebar-width: 200px;
+$sidebar-width: 232px;
 $sidebar-collapsed-width: 64px;

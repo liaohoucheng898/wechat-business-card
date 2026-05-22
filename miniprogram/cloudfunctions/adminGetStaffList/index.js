@@ -33,6 +33,11 @@ function toPositiveInteger(value, fallback) {
   return parsed
 }
 
+function normalizeEnumFilter(value, allowedValues = []) {
+  const normalized = String(value || '').trim()
+  return allowedValues.includes(normalized) ? normalized : ''
+}
+
 async function fetchStaffByStatus(db, status) {
   const batchSize = 100
   let skip = 0
@@ -97,6 +102,21 @@ function sortStaffWithinStatus(list = []) {
   })
 }
 
+function isKeywordMatched(staff, keyword) {
+  if (!keyword) return true
+  return [staff.name, staff.phone, staff.secondPhone].some((value) => String(value || '').includes(keyword))
+}
+
+function isBindingMatched(staff, bindingFilter) {
+  if (!bindingFilter) return true
+  const isBound = normalizeStaffOpenids(staff).length > 0
+  return bindingFilter === 'bound' ? isBound : !isBound
+}
+
+function filterStaffRows(rows = [], { keyword, bindingFilter }) {
+  return rows.filter((staff) => isKeywordMatched(staff, keyword) && isBindingMatched(staff, bindingFilter))
+}
+
 function getCompanyTitle(enabledCompanies = [], companyId) {
   const target = (enabledCompanies || []).find((item) => item.companyId === companyId)
   return target?.title || ''
@@ -126,9 +146,12 @@ const STAFF_LIST_COMPANY_IDS = {
   zhuochen: 'company_003',
 }
 
-exports.main = async (event) => {
+exports.main = async (event = {}) => {
   const requestedPage = toPositiveInteger(event.page, 1)
   const requestedPageSize = Math.min(toPositiveInteger(event.pageSize, 20), 100)
+  const keyword = String(event.keyword || '').trim()
+  const statusFilter = normalizeEnumFilter(event.statusFilter, ['active', 'disabled'])
+  const bindingFilter = normalizeEnumFilter(event.bindingFilter, ['bound', 'unbound'])
 
   try {
     const { customUserId: staffId } = tcbAuth.getUserInfo()
@@ -138,16 +161,21 @@ exports.main = async (event) => {
     }
 
     const db = getDb()
-    const { total: activeTotal } = await db.collection(COL.STAFF).where({ status: 'active' }).count()
-    const { total: disabledTotal } = await db.collection(COL.STAFF).where({ status: 'disabled' }).count()
-    const total = activeTotal + disabledTotal
+    let candidateRows
+    if (statusFilter) {
+      candidateRows = sortStaffWithinStatus(await fetchStaffByStatus(db, statusFilter))
+    } else {
+      const activeRows = sortStaffWithinStatus(await fetchStaffByStatus(db, 'active'))
+      const disabledRows = sortStaffWithinStatus(await fetchStaffByStatus(db, 'disabled'))
+      candidateRows = activeRows.concat(disabledRows)
+    }
+
+    const filteredRows = filterStaffRows(candidateRows, { keyword, bindingFilter })
+    const total = filteredRows.length
     const maxPage = total > 0 ? Math.ceil(total / requestedPageSize) : 1
     const page = Math.min(requestedPage, maxPage)
     const offset = (page - 1) * requestedPageSize
-
-    const activeRows = sortStaffWithinStatus(await fetchStaffByStatus(db, 'active'))
-    const disabledRows = sortStaffWithinStatus(await fetchStaffByStatus(db, 'disabled'))
-    const rows = activeRows.concat(disabledRows).slice(offset, offset + requestedPageSize)
+    const rows = filteredRows.slice(offset, offset + requestedPageSize)
 
     const avatarIds = rows.map((staff) => staff.avatar || staff.avatarOriginal || '').filter(Boolean)
     const avatarUrlMap = await buildTempUrlMap(avatarIds)

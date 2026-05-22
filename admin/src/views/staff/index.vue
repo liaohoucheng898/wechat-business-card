@@ -1,7 +1,9 @@
 <template>
   <div class="staff-page">
     <div class="page-header">
-      <span class="page-title">员工管理</span>
+      <div class="title-block">
+        <h1 class="page-title">人员管理</h1>
+      </div>
       <div class="header-actions">
         <el-button class="header-action-btn" type="primary" plain @click="openImportDialog">
           导入员工
@@ -13,17 +15,51 @@
       </div>
     </div>
 
-    <div class="card-wrapper">
-      <el-table :data="staffList" v-loading="loading" stripe>
-        <el-table-column type="index" label="序号" width="60" align="center" />
+    <div class="admin-filter-panel">
+      <el-select v-model="companyFilter" clearable placeholder="全部公司" style="width: 140px">
+        <el-option
+          v-for="(name, id) in companyMap"
+          :key="id"
+          :label="name"
+          :value="id"
+        />
+      </el-select>
+      <el-input v-model="keyword" clearable placeholder="搜索姓名或手机号" style="width: 220px" />
+      <el-select v-model="statusFilter" clearable placeholder="账号状态" style="width: 140px">
+        <el-option label="正常" value="active" />
+        <el-option label="已停用" value="disabled" />
+      </el-select>
+      <el-select v-model="bindingFilter" clearable placeholder="绑定状态" style="width: 140px">
+        <el-option label="已绑定" value="bound" />
+        <el-option label="未绑定" value="unbound" />
+      </el-select>
+      <el-button type="primary" plain @click="fetchList">查询</el-button>
+      <el-button @click="keyword = ''; companyFilter = ''; statusFilter = ''; bindingFilter = ''">重置</el-button>
+    </div>
 
-        <el-table-column label="头像" width="70" align="center">
+    <div class="admin-toolbar">
+      <span>共 {{ filteredStaffList.length }} 名员工</span>
+    </div>
+
+    <div class="card-wrapper" v-loading="loading">
+      <el-table :data="filteredStaffList" stripe>
+        <el-table-column label="员工" min-width="240">
           <template #default="{ row }">
-            <el-avatar :size="36" :src="row.avatar" />
+            <div class="object-cell">
+              <span class="object-avatar">
+                <img v-if="row.avatar" :src="row.avatar" alt="员工头像">
+                <span v-else>{{ row.name?.charAt(0) || '-' }}</span>
+              </span>
+              <div class="object-main">
+                <div class="object-title">{{ row.name || '-' }}</div>
+                <div class="object-sub">
+                  {{ (row.enabledCompanies || []).map((item) => getCompanyName(item.companyId)).join(' / ') || '暂无开通公司' }}
+                  <span v-if="row.isAdmin"> · 管理员</span>
+                </div>
+              </div>
+            </div>
           </template>
         </el-table-column>
-
-        <el-table-column prop="name" label="姓名" width="100" />
 
         <el-table-column label="手机号" width="220">
           <template #default="{ row }">
@@ -31,59 +67,20 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="已绑微信数" width="100" align="center">
+        <el-table-column label="职位" min-width="210">
           <template #default="{ row }">
-            {{ row.boundWechatCount || 0 }}
+            <div class="position-stack">
+              <span v-if="row.huayueTitle">华悦：{{ row.huayueTitle }}</span>
+              <span v-if="row.huabaoTitle">华宝：{{ row.huabaoTitle }}</span>
+              <span v-if="row.zhuochenTitle">卓辰：{{ row.zhuochenTitle }}</span>
+              <span v-if="!row.huayueTitle && !row.huabaoTitle && !row.zhuochenTitle" class="text-muted">-</span>
+            </div>
           </template>
         </el-table-column>
 
-        <el-table-column label="是否管理员" width="100" align="center">
+        <el-table-column label="绑定微信数" width="110" align="center">
           <template #default="{ row }">
-            {{ row.isAdmin ? '是' : '否' }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="华悦职位" min-width="120">
-          <template #default="{ row }">
-            {{ row.huayueTitle || '-' }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="华宝职位" min-width="120">
-          <template #default="{ row }">
-            {{ row.huabaoTitle || '-' }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="卓辰职位" min-width="120">
-          <template #default="{ row }">
-            {{ row.zhuochenTitle || '-' }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="已开通公司" min-width="200">
-          <template #default="{ row }">
-            <el-tag
-              v-for="item in row.enabledCompanies"
-              :key="item.companyId"
-              size="small"
-              class="company-tag"
-            >
-              {{ getCompanyName(item.companyId) }}
-            </el-tag>
-            <span v-if="!row.enabledCompanies?.length" class="text-muted">暂无</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="绑定状态" width="100" align="center">
-          <template #default="{ row }">
-            <el-tag
-              :type="row.isBound ? 'success' : 'info'"
-              size="small"
-              effect="plain"
-            >
-              {{ row.isBound ? '已绑定' : '未绑定' }}
-            </el-tag>
+            <span class="num-cell">{{ row.boundWechatCount || 0 }}</span>
           </template>
         </el-table-column>
 
@@ -107,6 +104,18 @@
               effect="plain"
             >
               {{ row.status === 'active' ? '正常' : '已停用' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="绑定状态" width="100" align="center">
+          <template #default="{ row }">
+            <el-tag
+              :type="row.isBound ? 'success' : 'info'"
+              size="small"
+              effect="plain"
+            >
+              {{ row.isBound ? '已绑定' : '未绑定' }}
             </el-tag>
           </template>
         </el-table-column>
@@ -215,11 +224,11 @@
             <span class="summary-card__label">总记录数</span>
             <strong class="summary-card__value">{{ importResult.total }}</strong>
           </div>
-          <div class="summary-card">
+          <div class="summary-card summary-card--success">
             <span class="summary-card__label">成功导入</span>
             <strong class="summary-card__value success">{{ importResult.successCount }}</strong>
           </div>
-          <div class="summary-card">
+          <div class="summary-card summary-card--danger">
             <span class="summary-card__label">失败条数</span>
             <strong class="summary-card__value danger">{{ importResult.failCount }}</strong>
           </div>
@@ -272,7 +281,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import * as XLSX from '@e965/xlsx'
@@ -300,6 +309,11 @@ const editingStaff = ref(null)
 const page = ref(1)
 const pageSize = ref(20)
 const total = ref(0)
+const companyMap = COMPANY_MAP
+const companyFilter = ref('')
+const keyword = ref('')
+const statusFilter = ref('')
+const bindingFilter = ref('')
 const credentialDialogVisible = ref(false)
 const credentialDialog = ref({
   phone: '',
@@ -319,6 +333,36 @@ const importResult = ref({
   failures: []
 })
 const userStore = useUserStore()
+
+const filteredStaffList = computed(() => {
+  const text = keyword.value.trim()
+  return staffList.value.filter((item) => {
+    const keywordMatched = !text || [item.name, item.phone, item.secondPhone].some((value) => String(value || '').includes(text))
+    const companyMatched =
+      !companyFilter.value ||
+      (item.enabledCompanies || []).some((company) => company.companyId === companyFilter.value)
+    const statusMatched = !statusFilter.value || item.status === statusFilter.value
+    const bindingMatched =
+      !bindingFilter.value ||
+      (bindingFilter.value === 'bound' && item.isBound) ||
+      (bindingFilter.value === 'unbound' && !item.isBound)
+    return keywordMatched && companyMatched && statusMatched && bindingMatched
+  })
+})
+
+let filterFetchTimer = null
+let staffListRequestSeq = 0
+watch([keyword, companyFilter, statusFilter, bindingFilter], () => {
+  page.value = 1
+  staffListRequestSeq += 1
+  if (filterFetchTimer) {
+    clearTimeout(filterFetchTimer)
+  }
+  filterFetchTimer = setTimeout(() => {
+    fetchList()
+    filterFetchTimer = null
+  }, 250)
+})
 
 function getCompanyName(companyId) {
   return COMPANY_MAP[companyId] || companyId
@@ -510,7 +554,7 @@ async function importStaffInBatches(rows = []) {
   }
 
   for (let index = 0; index < batches.length; index += 1) {
-    const result = await adminImportStaff(batches[index])
+    const result = await adminImportStaff(batches[index], { loading: false })
     const failures = Array.isArray(result.failures) ? result.failures : []
     summary.successCount += Number(result.successCount || 0)
     summary.failCount += Number(result.failCount || failures.length || 0)
@@ -604,19 +648,26 @@ async function submitImport() {
 }
 
 async function fetchList() {
+  const requestSeq = ++staffListRequestSeq
   loading.value = true
   try {
     const data = await adminGetStaffList({
       page: page.value,
-      pageSize: pageSize.value
-    })
+      pageSize: pageSize.value,
+      keyword: keyword.value.trim(),
+      statusFilter: statusFilter.value,
+      bindingFilter: bindingFilter.value
+    }, { loading: false })
+    if (requestSeq !== staffListRequestSeq) return
     staffList.value = data.list || []
     total.value = data.total || 0
     page.value = data.page || page.value
   } catch {
     // api.js 已统一处理错误
   } finally {
-    loading.value = false
+    if (requestSeq === staffListRequestSeq) {
+      loading.value = false
+    }
   }
 }
 
@@ -659,7 +710,7 @@ function openCredentialDialog(data, tip) {
 async function handleResetPassword(row) {
   try {
     await ElMessageBox.confirm(
-      `确认重置员工“${row.name}”的登录密码？重置后旧密码会立即失效。`,
+      `确认重置员工“${row.name}”的登录密码？重置后旧密码会立即失效，需要把新临时密码发给本人。`,
       '重置密码',
       {
         confirmButtonText: '确认',
@@ -688,7 +739,7 @@ async function handleResetPassword(row) {
 async function handleDelete(row) {
   try {
     await ElMessageBox.confirm(
-      `确认彻底删除员工“${row.name}”吗？删除后该员工将无法登录，且员工数据会从后台员工表中移除。`,
+      `确认彻底删除员工“${row.name}”吗？删除后该员工将无法登录，员工资料会从后台员工表移除。本操作不可直接恢复。`,
       '删除员工',
       {
         confirmButtonText: '确认删除',
@@ -750,7 +801,7 @@ onMounted(() => {
   .header-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: $spacing-sm;
   }
 
   .header-action-btn {
@@ -759,8 +810,17 @@ onMounted(() => {
   }
 
   .company-tag {
-    margin-right: 6px;
+    margin-right: $spacing-xs;
     margin-bottom: 4px;
+  }
+
+  .position-stack {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    color: $text-secondary;
+    font-size: 13px;
+    line-height: 18px;
   }
 
   .text-muted {
@@ -771,7 +831,7 @@ onMounted(() => {
   .pagination-wrapper {
     display: flex;
     justify-content: flex-end;
-    padding-top: 20px;
+    padding-top: $spacing-base;
   }
 
   .hidden-file-input {
@@ -781,32 +841,32 @@ onMounted(() => {
   .import-dialog {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: $spacing-base;
   }
 
   .import-dialog__section {
-    padding: 18px 20px;
+    padding: $spacing-base;
     border: 1px solid $border-color;
-    border-radius: 16px;
+    border-radius: $radius-card;
     background: #fff;
   }
 
   .import-dialog__label {
-    margin: 0 0 10px;
+    margin: 0 0 $spacing-sm;
     font-size: 15px;
     font-weight: 600;
     color: $text-primary;
   }
 
   .import-dialog__text {
-    margin: 0 0 8px;
+    margin: 0 0 $spacing-sm;
     font-size: 14px;
     line-height: 1.7;
     color: $text-secondary;
   }
 
   .import-dialog__hint {
-    margin: 10px 0 0;
+    margin: $spacing-sm 0 0;
     font-size: 13px;
     line-height: 1.6;
     color: $text-auxiliary;
@@ -815,7 +875,7 @@ onMounted(() => {
   .import-upload {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: $spacing-sm;
   }
 
   .import-upload__name {
@@ -828,20 +888,31 @@ onMounted(() => {
   .import-result {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: $spacing-base;
   }
 
   .import-result__summary {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    gap: $spacing-sm;
   }
 
   .summary-card {
-    padding: 18px 16px;
+    padding: $spacing-base;
     border: 1px solid $border-color;
-    border-radius: 16px;
-    background: $page-bg;
+    border-radius: $radius-card;
+    background: $card-bg;
+    box-shadow: none;
+  }
+
+  .summary-card--success {
+    border-color: rgba($color-success, 0.3);
+    background: rgba($color-success, 0.06);
+  }
+
+  .summary-card--danger {
+    border-color: rgba($color-error, 0.3);
+    background: rgba($color-error, 0.06);
   }
 
   .summary-card__label {
@@ -867,7 +938,7 @@ onMounted(() => {
 
   .credential-dialog {
     .credential-tip {
-      margin: 0 0 18px;
+      margin: 0 0 $spacing-base;
       font-size: 14px;
       line-height: 1.7;
       color: $text-secondary;
@@ -885,7 +956,7 @@ onMounted(() => {
     }
 
     .credential-note {
-      margin: 6px 0 0;
+      margin: $spacing-xs 0 0;
       font-size: 13px;
       line-height: 1.7;
       color: $text-auxiliary;

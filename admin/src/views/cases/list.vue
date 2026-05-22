@@ -1,11 +1,11 @@
 <template>
   <div class="cases-list-page">
     <div class="page-header">
-      <span class="page-title">案例管理</span>
+      <div class="title-block">
+        <h1 class="page-title">内容中心</h1>
+      </div>
       <div class="page-actions">
-        <el-button @click="categoryDialogVisible = true">
-          栏目管理
-        </el-button>
+        <el-button plain @click="categoryDialogVisible = true">栏目管理</el-button>
         <el-button type="primary" @click="goEdit()">
           <el-icon><Plus /></el-icon>
           新增案例
@@ -15,25 +15,40 @@
 
     <CompanyTabs v-model="filterCompanyId" @change="fetchCases" />
 
-    <div class="card-wrapper">
-      <el-table :data="caseList" v-loading="loading" stripe>
-        <el-table-column type="index" label="序号" width="60" align="center" />
+    <div class="admin-filter-panel">
+      <el-input v-model="keyword" clearable placeholder="搜索企业全称" style="width: 220px" />
+      <el-select v-model="visibleStatus" clearable placeholder="可见状态" style="width: 140px">
+        <el-option label="可见" value="visible" />
+        <el-option label="隐藏" value="hidden" />
+      </el-select>
+      <el-select v-model="categoryStatus" clearable placeholder="栏目状态" style="width: 140px">
+        <el-option label="已有栏目" value="hasCategory" />
+        <el-option label="缺少栏目" value="missing" />
+      </el-select>
+      <el-button type="primary" plain @click="fetchCases">查询</el-button>
+      <el-button @click="handleResetFilters">重置</el-button>
+    </div>
 
-        <el-table-column label="封面" width="100" align="center">
+    <div class="admin-toolbar">
+      <span>共 {{ filteredCaseList.length }} 条案例</span>
+    </div>
+
+    <div class="card-wrapper" v-loading="loading">
+      <el-table :data="filteredCaseList" stripe>
+        <el-table-column label="案例" min-width="260">
           <template #default="{ row }">
-            <el-image
-              :src="row.cover"
-              :preview-src-list="row.cover ? [row.cover] : []"
-              fit="cover"
-              class="cover-img"
-              preview-teleported
-            />
+            <div class="object-cell">
+              <span class="object-thumb">
+                <img v-if="row.cover" :src="row.cover" alt="案例封面">
+                <span v-else>案</span>
+              </span>
+              <div class="object-main">
+                <div class="object-title">{{ row.title || '未填写企业全称' }}</div>
+                <div class="object-sub">{{ row.description || '暂无简要描述' }}</div>
+              </div>
+            </div>
           </template>
         </el-table-column>
-
-        <el-table-column prop="title" label="企业全称" min-width="180" show-overflow-tooltip />
-
-        <el-table-column prop="sort" label="排序" width="70" align="center" />
 
         <el-table-column label="所属公司" min-width="160">
           <template #default="{ row }">
@@ -64,13 +79,26 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="可见" width="80" align="center">
+        <el-table-column prop="sort" label="排序" width="80" align="center" />
+
+        <el-table-column label="状态" width="120" align="center">
           <template #default="{ row }">
-            <el-switch
-              :model-value="row.visible"
-              size="small"
-              @change="(val) => handleToggleVisible(row, val)"
-            />
+            <span class="status-inline">
+              <el-tag :type="row.visible !== false ? 'success' : 'info'" size="small" effect="plain">
+                {{ row.visible !== false ? '可见' : '隐藏' }}
+              </el-tag>
+              <el-switch
+                :model-value="row.visible !== false"
+                size="small"
+                @change="(val) => handleToggleVisible(row, val)"
+              />
+            </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="更新时间" width="170">
+          <template #default="{ row }">
+            <span class="num-cell">{{ formatCaseUpdatedAt(row) }}</span>
           </template>
         </el-table-column>
 
@@ -225,7 +253,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
@@ -248,6 +276,9 @@ const companyMap = COMPANY_MAP
 const loading = ref(false)
 const caseList = ref([])
 const filterCompanyId = ref('')
+const keyword = ref('')
+const visibleStatus = ref('')
+const categoryStatus = ref('')
 const previewVisible = ref(false)
 const previewLoading = ref(false)
 const previewData = ref({
@@ -269,8 +300,38 @@ const editingCategoryId = ref('')
 const editingCategoryName = ref('')
 const editingCategorySort = ref(0)
 
+const filteredCaseList = computed(() => {
+  return caseList.value.filter((item) => {
+    const keywordMatched = !keyword.value || String(item.title || '').includes(keyword.value.trim())
+    const visibleMatched =
+      !visibleStatus.value ||
+      (visibleStatus.value === 'visible' && item.visible !== false) ||
+      (visibleStatus.value === 'hidden' && item.visible === false)
+    const categoryMatched =
+      !categoryStatus.value ||
+      (categoryStatus.value === 'missing' && !item.categories?.length) ||
+      (categoryStatus.value === 'hasCategory' && !!item.categories?.length)
+    return keywordMatched && visibleMatched && categoryMatched
+  })
+})
+
 function getCompanyName(id) {
   return COMPANY_MAP[id] || id
+}
+
+function formatCaseUpdatedAt(row = {}) {
+  const value = row.updatedAt || row.updateTime || row.createdAt || ''
+  if (!value) return '-'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return String(value)
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
+function handleResetFilters() {
+  keyword.value = ''
+  visibleStatus.value = ''
+  categoryStatus.value = ''
 }
 
 function decodeHtmlAttr(value = '') {
@@ -427,7 +488,7 @@ async function fetchCases() {
     if (filterCompanyId.value) {
       params.companyId = filterCompanyId.value
     }
-    const data = await adminGetCaseList(params)
+    const data = await adminGetCaseList(params, { loading: false })
     caseList.value = await mapTempFileURLs(data.list || [], 'cover')
   } catch {
     // api.js 已统一处理错误
@@ -459,7 +520,7 @@ async function handlePreview(row) {
   }
 
   try {
-    const data = await adminGetCase(row.caseId)
+    const data = await adminGetCase(row.caseId, { loading: false })
     previewData.value = {
       title: data.title || row.title || '',
       description: data.description || row.description || '',
@@ -487,9 +548,9 @@ async function handleToggleVisible(row, val) {
 async function handleDelete(row) {
   try {
     await ElMessageBox.confirm(
-      `确认删除案例「${row.title}」？删除后不可恢复。`,
-      '删除确认',
-      { confirmButtonText: '删除', cancelButtonText: '取消', type: 'warning' }
+      `确认删除案例「${row.title}」吗？删除后该案例不会在小程序展示，后台不可直接恢复。`,
+      '删除案例确认',
+      { confirmButtonText: '确认删除案例', cancelButtonText: '取消', type: 'warning' }
     )
     await adminDeleteCase(row.caseId)
     ElMessage.success('已删除')
@@ -502,7 +563,7 @@ async function handleDelete(row) {
 async function fetchCategories() {
   catLoading.value = true
   try {
-    const data = await adminGetCategoryList(catActiveTab.value)
+    const data = await adminGetCategoryList(catActiveTab.value, { loading: false })
     categoryList.value = data.list || []
   } catch {
     categoryList.value = []
@@ -535,7 +596,7 @@ async function handleAddCategory() {
       companyId: catActiveTab.value,
       name: newCategoryName.value.trim(),
       sort: newCategorySort.value
-    })
+    }, { loading: false })
     ElMessage.success('添加成功')
     newCategoryName.value = ''
     newCategorySort.value = 0
@@ -560,7 +621,7 @@ async function handleUpdateCategory(row) {
       categoryId: row.categoryId,
       name: editingCategoryName.value.trim(),
       sort: editingCategorySort.value
-    })
+    }, { loading: false })
     ElMessage.success('保存成功')
     handleCancelEditCategory()
     fetchCategories()
@@ -739,7 +800,7 @@ onMounted(() => {
       max-width: 100%;
       height: auto;
       margin: 16px auto;
-      border-radius: 12px;
+      border-radius: $radius-card;
     }
 
     :deep(p) {

@@ -38,22 +38,21 @@
           <el-input
             v-model="form.secondPhone"
             class="second-phone-input"
-            placeholder=""
+            placeholder="11位手机号"
             maxlength="11"
           />
           <div class="second-phone-toggle">
-            <span class="second-phone-toggle__label">是否显示</span>
-            <el-switch v-model="form.showSecondPhone" />
+            <el-checkbox v-model="form.showSecondPhone">展示</el-checkbox>
           </div>
         </div>
       </el-form-item>
 
       <el-form-item label="微信号">
-        <el-input v-model="form.wechat" placeholder="请输入微信号" maxlength="30" />
+        <el-input v-model="form.wechat" placeholder="选填" maxlength="30" />
       </el-form-item>
 
       <el-form-item label="邮箱" prop="email">
-        <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
+        <el-input v-model="form.email" placeholder="name@example.com" maxlength="50" />
       </el-form-item>
 
       <el-form-item label="个人简介">
@@ -62,7 +61,7 @@
             v-model="form.bio"
             type="textarea"
             :rows="3"
-            placeholder="请输入个人简介"
+            placeholder="200字以内"
             maxlength="200"
           />
           <span class="char-count">{{ form.bio?.length || 0 }}/200</span>
@@ -88,7 +87,7 @@
             v-model="companyFields[id].title"
             class="company-inline-input"
             :disabled="!enabledCompanyIds.includes(id)"
-            placeholder="请输入职位名称"
+            placeholder="职位名称"
             maxlength="20"
           />
         </div>
@@ -110,7 +109,7 @@
               <el-input
                 v-model="binding.remark"
                 class="wechat-binding-item__remark"
-                placeholder="请输入备注"
+                placeholder="备注内容"
                 maxlength="30"
                 clearable
               />
@@ -368,9 +367,9 @@ async function handleSave() {
   try {
     let result
     if (isEdit.value) {
-      result = await adminUpdateStaff(props.staffData.staffId, payload, props.staffData.pageLoadedAt)
+      result = await adminUpdateStaff(props.staffData.staffId, payload, props.staffData.pageLoadedAt, { loading: false })
     } else {
-      result = await adminCreateStaff(payload)
+      result = await adminCreateStaff(payload, { loading: false })
     }
 
     ElMessage.success(isEdit.value ? '保存成功' : '创建成功')
@@ -408,9 +407,10 @@ async function handleSave() {
   .company-title-panel {
     margin-top: 4px;
     padding: 8px 16px;
-    background: $page-bg;
-    border: 1px solid rgba(219, 222, 227, 0.9);
+    background: $surface-inset;
+    border: 1px solid $border-color;
     border-radius: $radius-card;
+    box-shadow: none;
   }
 
   .second-phone-row {
@@ -428,7 +428,7 @@ async function handleSave() {
   .second-phone-toggle {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: $spacing-sm;
     flex-shrink: 0;
   }
 
@@ -441,8 +441,8 @@ async function handleSave() {
     display: flex;
     align-items: center;
     min-height: 56px;
-    gap: 14px;
-    border-bottom: 1px solid rgba(219, 222, 227, 0.9);
+    gap: $spacing-base;
+    border-bottom: 1px solid $border-color;
 
     &:last-child {
       border-bottom: none;
@@ -469,24 +469,26 @@ async function handleSave() {
 
   .checkbox-panel {
     width: 100%;
-    padding: 14px 16px;
-    background: $page-bg;
-    border: 1px solid rgba(219, 222, 227, 0.9);
+    padding: $spacing-md $spacing-base;
+    background: $surface-inset;
+    border: 1px solid $border-color;
     border-radius: $radius-card;
+    box-shadow: none;
   }
 
   .form-tip {
-    margin-top: 10px;
+    margin-top: $spacing-sm;
     font-size: 13px;
     line-height: 1.6;
     color: $text-secondary;
   }
 
   .wechat-binding-panel {
-    padding: 14px 16px;
-    background: $page-bg;
-    border: 1px solid rgba(219, 222, 227, 0.9);
+    padding: $spacing-md $spacing-base;
+    background: $surface-inset;
+    border: 1px solid $border-color;
     border-radius: $radius-card;
+    box-shadow: none;
   }
 
   .wechat-binding-count {
@@ -497,7 +499,7 @@ async function handleSave() {
   }
 
   .wechat-binding-list {
-    margin-top: 10px;
+    margin-top: $spacing-sm;
   }
 
   .wechat-binding-item {
@@ -505,7 +507,7 @@ async function handleSave() {
     align-items: center;
     gap: 12px;
     min-height: 52px;
-    border-bottom: 1px solid rgba(219, 222, 227, 0.9);
+    border-bottom: 1px solid $border-color;
 
     &:last-child {
       border-bottom: none;

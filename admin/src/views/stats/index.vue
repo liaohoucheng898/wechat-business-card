@@ -2,7 +2,9 @@
   <div class="stats-page">
     <!-- 顶部筛选 -->
     <div class="page-header">
-      <span class="page-title">企业数据统计</span>
+      <div class="title-block">
+        <h1 class="page-title">数据分析</h1>
+      </div>
     </div>
 
     <div class="filter-bar">
@@ -16,92 +18,109 @@
       </div>
     </div>
 
-    <!-- 总览卡片 -->
-    <div class="overview-cards">
-      <div class="stat-card">
-        <div class="stat-label">期间浏览量</div>
-        <div class="stat-value">{{ formatNumber(overview.periodViews) }}</div>
-        <div v-if="overview.changePercent !== null" class="stat-change">
-          较上一周期
-          <span :class="overview.changePercent >= 0 ? 'up' : 'down'">
-            {{ overview.changePercent >= 0 ? '↑' : '↓' }}{{ Math.abs(overview.changePercent) }}%
-          </span>
+    <el-alert class="trust-alert" type="info" :closable="false" show-icon>
+      <template #title>
+        <div class="trust-alert-content">
+          <span>统计口径：只统计外部访客打开名片产生的访问记录；已登录员工访问不计入。数据更新时间以当前页面刷新完成时间为准。</span>
+          <span v-if="lastUpdatedAt" class="last-updated">更新时间：{{ lastUpdatedAt }}</span>
+        </div>
+      </template>
+    </el-alert>
+
+    <div class="stats-content" v-loading="loading">
+      <!-- 总览卡片 -->
+      <div class="overview-cards">
+        <div class="stat-card">
+          <div class="stat-label">期间浏览量</div>
+          <div class="stat-value">{{ formatNumber(overview.periodViews) }}</div>
+          <div v-if="overview.changePercent !== null" class="stat-change">
+            较上一周期
+            <span :class="overview.changePercent >= 0 ? 'up' : 'down'">
+              {{ overview.changePercent >= 0 ? '↑' : '↓' }}{{ Math.abs(overview.changePercent) }}%
+            </span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">累计浏览量</div>
+          <div class="stat-value">{{ formatNumber(overview.totalViews) }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">高活跃员工</div>
+          <div class="stat-value">{{ formatNumber(activeRankCount) }}</div>
+          <div class="stat-desc">近30天浏览量 ≥ 500 的启用员工</div>
         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">累计浏览量</div>
-        <div class="stat-value">{{ formatNumber(overview.totalViews) }}</div>
+
+      <!-- ECharts 折线图 -->
+      <div class="card-wrapper chart-section">
+        <div class="section-header">
+          <span class="section-title">趋势图</span>
+        </div>
+        <div ref="chartRef" class="chart-container" />
       </div>
-    </div>
 
-    <!-- ECharts 折线图 -->
-    <div class="card-wrapper chart-section">
-      <div ref="chartRef" class="chart-container" />
-    </div>
+      <!-- 员工排行榜 -->
+      <div class="card-wrapper rank-section">
+        <div class="section-header">
+          <span class="section-title">员工排行榜</span>
+          <span class="section-tip">仅展示启用状态员工</span>
+        </div>
+        <el-table :data="rankList" stripe>
+          <el-table-column label="排名" width="70" align="center">
+            <template #default="{ $index }">
+              <span class="rank-num">{{ $index + 1 }}</span>
+            </template>
+          </el-table-column>
 
-    <!-- 员工排行榜 -->
-    <div class="card-wrapper rank-section">
-      <div class="section-header">
-        <span class="section-title">员工排行榜</span>
-        <span class="section-tip">仅展示启用状态员工</span>
+          <el-table-column label="员工" min-width="160">
+            <template #default="{ row }">
+              <div class="staff-cell">
+                <el-avatar :size="32" :src="row.avatar" />
+                <span class="staff-name">{{ row.name }}</span>
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="近7天" prop="weekViews" width="100" align="right">
+            <template #default="{ row }">
+              <span class="num-cell">{{ formatNumber(row.weekViews) }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="近15天" prop="halfMonthViews" width="100" align="right">
+            <template #default="{ row }">
+              <span class="num-cell">{{ formatNumber(row.halfMonthViews) }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="近30天" prop="monthViews" width="100" align="right" sortable>
+            <template #default="{ row }">
+              <span class="num-cell">{{ formatNumber(row.monthViews) }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="累计浏览量" prop="totalViews" width="120" align="right">
+            <template #default="{ row }">
+              <span class="num-cell">{{ formatNumber(row.totalViews) }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
-      <el-table :data="rankList" v-loading="loading" stripe>
-        <el-table-column label="排名" width="70" align="center">
-          <template #default="{ $index }">
-            <span v-if="$index === 0" class="rank-medal">🥇</span>
-            <span v-else-if="$index === 1" class="rank-medal">🥈</span>
-            <span v-else-if="$index === 2" class="rank-medal">🥉</span>
-            <span v-else class="rank-num">{{ $index + 1 }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="员工" min-width="160">
-          <template #default="{ row }">
-            <div class="staff-cell">
-              <el-avatar :size="32" :src="row.avatar" />
-              <span class="staff-name">{{ row.name }}</span>
-            </div>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="近7天" prop="weekViews" width="100" align="right">
-          <template #default="{ row }">
-            <span class="num-cell">{{ formatNumber(row.weekViews) }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="近15天" prop="halfMonthViews" width="100" align="right">
-          <template #default="{ row }">
-            <span class="num-cell">{{ formatNumber(row.halfMonthViews) }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="近30天" prop="monthViews" width="100" align="right" sortable>
-          <template #default="{ row }">
-            <span class="num-cell">{{ formatNumber(row.monthViews) }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="累计浏览量" prop="totalViews" width="120" align="right">
-          <template #default="{ row }">
-            <span class="num-cell">{{ formatNumber(row.totalViews) }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import * as echarts from 'echarts'
 import { callFunction } from '@/cloud/api'
 import { mapTempFileURLs } from '@/cloud/file'
 import CompanyTabs from '@/components/CompanyTabs.vue'
 
 const companyId = ref('')
-const timeRange = ref('week')
+const timeRange = ref('month')
 const loading = ref(false)
+const lastUpdatedAt = ref('')
 
 const overview = ref({
   periodViews: 0,
@@ -111,6 +130,7 @@ const overview = ref({
 
 const chartData = ref({ dates: [], values: [] })
 const rankList = ref([])
+const activeRankCount = computed(() => rankList.value.filter((item) => Number(item.monthViews || 0) >= 500).length)
 
 const chartRef = ref(null)
 let chartInstance = null
@@ -120,6 +140,44 @@ function formatNumber(n) {
   return Number(n).toLocaleString()
 }
 
+function formatDateTime(date) {
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+}
+
+function normalizeRankList(data = {}) {
+  const source = Array.isArray(data.staffRank) && data.staffRank.length
+    ? data.staffRank
+    : Array.isArray(data.ranking)
+      ? data.ranking
+      : []
+
+  return source.map((item) => ({
+    ...item,
+    weekViews: item.weekViews ?? item.views7d ?? 0,
+    halfMonthViews: item.halfMonthViews ?? item.views15d ?? 0,
+    monthViews: item.monthViews ?? item.views30d ?? 0,
+    totalViews: item.totalViews ?? item.viewsTotal ?? 0
+  }))
+}
+
+function normalizeOverview(data = {}) {
+  return {
+    periodViews: data.overview?.periodViews ?? data.periodTotal ?? 0,
+    totalViews: data.overview?.totalViews ?? data.allTimeTotal ?? 0,
+    changePercent: data.overview?.changePercent ?? null
+  }
+}
+
+function normalizeChartData(data = {}) {
+  const trend = Array.isArray(data.trend) ? data.trend : []
+
+  return {
+    dates: data.chart?.dates ?? trend.map((item) => item.date),
+    values: data.chart?.values ?? trend.map((item) => item.count ?? 0)
+  }
+}
+
 async function fetchStats() {
   loading.value = true
   try {
@@ -127,25 +185,19 @@ async function fetchStats() {
     if (companyId.value) {
       params.companyId = companyId.value
     }
-    const data = await callFunction('adminGetStats', params)
+    const data = await callFunction('adminGetStats', params, { loading: false })
 
     // 总览
-    overview.value = {
-      periodViews: data.overview?.periodViews ?? 0,
-      totalViews: data.overview?.totalViews ?? 0,
-      changePercent: data.overview?.changePercent ?? null
-    }
+    overview.value = normalizeOverview(data)
 
     // 折线图
-    chartData.value = {
-      dates: data.chart?.dates || [],
-      values: data.chart?.values || []
-    }
+    chartData.value = normalizeChartData(data)
 
     // 员工排行（按近30天降序）
-    const list = [...(data.staffRank || [])]
+    const list = normalizeRankList(data)
     list.sort((a, b) => (b.monthViews || 0) - (a.monthViews || 0))
     rankList.value = await mapTempFileURLs(list, 'avatar')
+    lastUpdatedAt.value = formatDateTime(new Date())
 
     await nextTick()
     renderChart()
@@ -241,26 +293,54 @@ onBeforeUnmount(() => {
 @use '@/styles/variables' as *;
 
 .stats-page {
+  .stats-content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-base;
+  }
+
   .filter-bar {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .trust-alert {
+    margin-bottom: 16px;
+  }
+
+  .trust-alert-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    line-height: 20px;
+  }
+
+  .last-updated {
+    color: $text-auxiliary;
+    font-weight: 400;
+    white-space: nowrap;
   }
 
   // ---- 总览卡片 ----
   .overview-cards {
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
-    margin-bottom: 20px;
   }
 
   .stat-card {
     flex: 1;
+    min-width: 220px;
     background: $card-bg;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid $border-color;
+    border-radius: $radius-card;
+    box-shadow: $shadow-card;
     padding: 20px 24px;
 
     .stat-label {
@@ -292,11 +372,17 @@ onBeforeUnmount(() => {
         font-weight: 600;
       }
     }
+
+    .stat-desc {
+      margin-top: 6px;
+      font-size: 12px;
+      color: $text-auxiliary;
+    }
   }
 
   // ---- 折线图 ----
   .chart-section {
-    margin-bottom: 20px;
+    margin-bottom: 0;
   }
 
   .chart-container {
@@ -324,12 +410,8 @@ onBeforeUnmount(() => {
       color: $text-auxiliary;
     }
 
-    .rank-medal {
-      font-size: 18px;
-    }
-
     .rank-num {
-      font-family: 'Inter', '思源黑体', 'Source Han Sans SC', 'Source Han Sans CN', 'Source Han Sans', sans-serif;
+      font-family: $font-family-number;
       font-weight: 600;
       color: $text-secondary;
     }
@@ -337,7 +419,7 @@ onBeforeUnmount(() => {
     .staff-cell {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: $spacing-sm;
 
       .staff-name {
         font-size: 15px;

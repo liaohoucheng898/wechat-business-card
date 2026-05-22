@@ -1,94 +1,64 @@
 <template>
   <div class="login-page">
     <div class="login-card">
-      <div class="login-intro">
-        <div class="intro-content">
-          <h1 class="intro-title">电子名片</h1>
-          <h2 class="intro-subtitle">管理后台</h2>
-          <p class="intro-desc">
-            统一管理员工名片、公司信息和案例展示，<br />
-            帮助团队高效开展业务。
-          </p>
-          <div class="intro-features">
-            <div class="feature-item">
-              <el-icon :size="18"><User /></el-icon>
-              <span>员工管理</span>
-            </div>
-            <div class="feature-item">
-              <el-icon :size="18"><OfficeBuilding /></el-icon>
-              <span>公司管理</span>
-            </div>
-            <div class="feature-item">
-              <el-icon :size="18"><Suitcase /></el-icon>
-              <span>案例管理</span>
-            </div>
-            <div class="feature-item">
-              <el-icon :size="18"><DataAnalysis /></el-icon>
-              <span>数据统计</span>
-            </div>
-          </div>
-        </div>
+      <div class="form-header">
+        <h1 class="form-title">电子名片管理后台</h1>
+        <p class="form-desc">请使用管理员手机号和密码登录</p>
       </div>
 
-      <div class="login-form-area">
-        <div class="form-header">
-          <h3 class="form-title">管理员登录</h3>
-          <p class="form-desc">PC 后台仅支持管理员使用账号密码登录。</p>
-        </div>
+      <p class="login-note">
+        连续输错 5 次后将临时锁定 15 分钟。如忘记密码，请联系主管理员重置。
+      </p>
 
-        <el-form
-          ref="passwordFormRef"
-          :model="passwordForm"
-          :rules="passwordRules"
-          label-position="top"
-        >
-          <el-form-item label="账号" prop="phone">
-            <el-input
-              v-model="passwordForm.phone"
-              placeholder="请输入手机号"
-              maxlength="11"
-              clearable
-              size="large"
-              @keyup.enter="handlePasswordLogin"
-            >
-              <template #prefix>
-                <el-icon><Iphone /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
+      <el-form
+        ref="passwordFormRef"
+        :model="passwordForm"
+        :rules="passwordRules"
+        label-position="top"
+        class="login-form"
+      >
+        <el-form-item label="手机号" prop="phone">
+          <el-input
+            v-model="passwordForm.phone"
+            placeholder="请输入手机号"
+            maxlength="11"
+            clearable
+            size="large"
+            @keyup.enter="handlePasswordLogin"
+          >
+            <template #prefix>
+              <el-icon><Iphone /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
 
-          <el-form-item label="密码" prop="password">
-            <el-input
-              v-model="passwordForm.password"
-              type="password"
-              show-password
-              placeholder="请输入密码"
-              size="large"
-              @keyup.enter="handlePasswordLogin"
-            >
-              <template #prefix>
-                <el-icon><Lock /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input
+            v-model="passwordForm.password"
+            type="password"
+            show-password
+            placeholder="请输入密码"
+            size="large"
+            @keyup.enter="handlePasswordLogin"
+          >
+            <template #prefix>
+              <el-icon><Lock /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
 
-          <el-form-item>
-            <el-button
-              type="primary"
-              size="large"
-              :loading="loginLoading"
-              class="submit-btn"
-              @click="handlePasswordLogin"
-            >
-              登录
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </div>
-
-    <div class="login-footer">
-      © {{ new Date().getFullYear() }} 海南华悦科技有限公司
+        <el-form-item>
+          <el-button
+            type="primary"
+            size="large"
+            :loading="loginLoading"
+            class="submit-btn"
+            @click="handlePasswordLogin"
+          >
+            登录后台
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
@@ -97,7 +67,7 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { User, OfficeBuilding, Suitcase, DataAnalysis, Iphone, Lock } from '@element-plus/icons-vue'
+import { Iphone, Lock } from '@element-plus/icons-vue'
 import { adminPasswordLogin } from '@/cloud/api'
 import { useUserStore } from '@/stores/user'
 
@@ -149,7 +119,7 @@ async function handlePasswordLogin() {
 
   loginLoading.value = true
   try {
-    const data = await adminPasswordLogin(passwordForm.phone, passwordForm.password)
+    const data = await adminPasswordLogin(passwordForm.phone, passwordForm.password, { loading: false })
     await finishLogin(data)
   } catch {
     // api.js 已统一处理错误
@@ -165,94 +135,59 @@ async function handlePasswordLogin() {
 .login-page {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, $color-primary 0%, #6B8CFF 50%, $color-purple 100%);
-  padding: $spacing-lg;
+  background: $page-bg;
+  padding: 24px;
 }
 
 .login-card {
-  display: flex;
-  width: 860px;
-  min-height: 520px;
+  width: 440px;
+  max-width: 100%;
   background: $card-bg;
+  border: 1px solid $border-color;
   border-radius: $radius-card;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-}
-
-.login-intro {
-  flex: 1;
-  background: linear-gradient(160deg, rgba($color-primary, 0.08) 0%, rgba($color-purple, 0.05) 100%);
-  padding: 40px 36px;
-  display: flex;
-  align-items: flex-start;
-
-  .intro-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: $color-primary;
-    margin: 0 0 4px;
-  }
-
-  .intro-subtitle {
-    font-size: 20px;
-    font-weight: 500;
-    color: $text-primary;
-    margin: 0 0 16px;
-  }
-
-  .intro-desc {
-    font-size: 15px;
-    color: $text-secondary;
-    line-height: 1.8;
-    margin: 0 0 32px;
-  }
-
-  .intro-features {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .feature-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 15px;
-    color: $text-secondary;
-
-    .el-icon {
-      color: $color-primary;
-    }
-  }
-}
-
-.login-form-area {
-  flex: 1;
-  padding: 40px 36px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  box-shadow: none;
+  padding: 28px;
+  box-sizing: border-box;
 }
 
 .form-header {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .form-title {
-  font-size: 22px;
-  font-weight: 600;
-  color: $text-primary;
   margin: 0 0 8px;
+  color: $text-primary;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
 }
 
 .form-desc {
-  font-size: 15px;
-  color: $text-secondary;
   margin: 0;
-  line-height: 1.8;
+  color: $text-secondary;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.login-note {
+  margin: 0 0 24px;
+  padding: 12px;
+  border: 1px solid $color-primary-border;
+  border-radius: $radius-button;
+  background: $color-primary-soft;
+  color: $text-secondary;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.login-form {
+  :deep(.el-form-item__label) {
+    color: $text-secondary;
+    font-weight: 500;
+  }
 }
 
 .submit-btn {
@@ -260,9 +195,17 @@ async function handlePasswordLogin() {
   margin-top: 8px;
 }
 
-.login-footer {
-  margin-top: 32px;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
+@media (max-width: 480px) {
+  .login-page {
+    padding: 16px;
+  }
+
+  .login-card {
+    padding: 24px 20px;
+  }
+
+  .form-title {
+    font-size: 22px;
+  }
 }
 </style>

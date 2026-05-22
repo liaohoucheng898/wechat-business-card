@@ -349,7 +349,7 @@ watch(
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: $spacing-sm;
   border: 1px dashed $border-color;
   border-radius: $radius-button;
   cursor: pointer;

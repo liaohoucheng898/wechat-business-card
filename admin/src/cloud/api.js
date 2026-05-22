@@ -133,8 +133,8 @@ export async function callFunction(name, data = {}, options = {}) {
 /**
  * 发送短信验证码（公开接口，需要匿名登录态）
  */
-export async function sendSmsCode(phone, scene = 'login') {
-  return postPublicHttp('/auth/admin/send-sms', { phone, scene })
+export async function sendSmsCode(phone, scene = 'login', options = {}) {
+  return postPublicHttp('/auth/admin/send-sms', { phone, scene }, options)
 }
 
 /**
@@ -143,8 +143,8 @@ export async function sendSmsCode(phone, scene = 'login') {
  * 2. 调用 adminLogin 云函数校验身份，拿到 ticket
  * 3. 用 ticket 完成 CloudBase Custom Login，建立正式 SDK 登录态
  */
-export async function adminLogin(phone, smsCode) {
-  const data = await postPublicHttp('/auth/admin/login', { phone, smsCode })
+export async function adminLogin(phone, smsCode, options = {}) {
+  const data = await postPublicHttp('/auth/admin/login', { phone, smsCode }, options)
   // data 包含 { staffInfo, ticket }
   await signInWithTicket(data.ticket)
   return data
@@ -153,8 +153,8 @@ export async function adminLogin(phone, smsCode) {
 /**
  * 管理员账号密码登录
  */
-export async function adminPasswordLogin(phone, password) {
-  const data = await postPublicHttp('/auth/admin/login', { phone, password, loginMode: 'password' })
+export async function adminPasswordLogin(phone, password, options = {}) {
+  const data = await postPublicHttp('/auth/admin/login', { phone, password, loginMode: 'password' }, options)
   await signInWithTicket(data.ticket)
   return data
 }
@@ -162,29 +162,29 @@ export async function adminPasswordLogin(phone, password) {
 /**
  * 获取员工列表
  */
-export function adminGetStaffList(params = {}) {
-  return callFunction('adminGetStaffList', params)
+export function adminGetStaffList(params = {}, options = {}) {
+  return callFunction('adminGetStaffList', params, options)
 }
 
 /**
  * 新增员工
  */
-export function adminCreateStaff(data) {
-  return callFunction('adminCreateStaff', data)
+export function adminCreateStaff(data, options = {}) {
+  return callFunction('adminCreateStaff', data, options)
 }
 
 /**
  * 批量导入员工
  */
-export function adminImportStaff(rows = []) {
-  return callFunction('adminImportStaff', { rows })
+export function adminImportStaff(rows = [], options = {}) {
+  return callFunction('adminImportStaff', { rows }, options)
 }
 
 /**
  * 编辑员工
  */
-export function adminUpdateStaff(staffId, fields, pageLoadedAt) {
-  return callFunction('adminUpdateStaff', { staffId, fields, pageLoadedAt })
+export function adminUpdateStaff(staffId, fields, pageLoadedAt, options = {}) {
+  return callFunction('adminUpdateStaff', { staffId, fields, pageLoadedAt }, options)
 }
 
 /**
@@ -218,36 +218,36 @@ export function adminResetPassword(staffId) {
 /**
  * 获取公司列表
  */
-export function adminGetCompanyList() {
-  return callFunction('adminGetCompanyList')
+export function adminGetCompanyList(options = {}) {
+  return callFunction('adminGetCompanyList', {}, options)
 }
 
 /**
  * 获取单个公司详情
  */
-export function adminGetCompany(companyId) {
-  return callFunction('adminGetCompany', { companyId })
+export function adminGetCompany(companyId, options = {}) {
+  return callFunction('adminGetCompany', { companyId }, options)
 }
 
 /**
  * 更新公司信息
  */
-export function adminUpdateCompany(companyId, fields, pageLoadedAt) {
-  return callFunction('adminUpdateCompany', { companyId, fields, pageLoadedAt })
+export function adminUpdateCompany(companyId, fields, pageLoadedAt, options = {}) {
+  return callFunction('adminUpdateCompany', { companyId, fields, pageLoadedAt }, options)
 }
 
 /**
  * 获取案例列表
  */
-export function adminGetCaseList(params = {}) {
-  return callFunction('adminGetCaseList', params)
+export function adminGetCaseList(params = {}, options = {}) {
+  return callFunction('adminGetCaseList', params, options)
 }
 
 /**
  * 获取单个案例详情
  */
-export function adminGetCase(caseId) {
-  return callFunction('adminGetCase', { caseId })
+export function adminGetCase(caseId, options = {}) {
+  return callFunction('adminGetCase', { caseId }, options)
 }
 
 /**
@@ -281,18 +281,18 @@ export function adminToggleCaseVisible(caseId, visible) {
 /**
  * 栏目管理（新增/编辑/删除/列表）
  */
-export function adminManageCategory(action, data = {}) {
-  return callFunction('adminManageCategory', { action, ...data })
+export function adminManageCategory(action, data = {}, options = {}) {
+  return callFunction('adminManageCategory', { action, ...data }, options)
 }
 
 /**
  * 获取栏目列表
  */
-export function adminGetCategoryList(companyId) {
+export function adminGetCategoryList(companyId, options = {}) {
   return callFunction('adminManageCategory', {
     action: 'list',
     companyId
-  }).then((data) => {
+  }, options).then((data) => {
     const categories = data.categories || data.list || []
     return {
       ...data,
@@ -309,13 +309,13 @@ export function adminGetCategoryList(companyId) {
 /**
  * 获取统计数据
  */
-export function adminGetStats(params = {}) {
-  return callFunction('adminGetStats', params)
+export function adminGetStats(params = {}, options = {}) {
+  return callFunction('adminGetStats', params, options)
 }
 
 /**
  * 修改当前登录账号密码
  */
-export function changePassword(oldPassword, newPassword) {
-  return callFunction('changePassword', { oldPassword, newPassword })
+export function changePassword(oldPassword, newPassword, options = {}) {
+  return callFunction('changePassword', { oldPassword, newPassword }, options)
 }

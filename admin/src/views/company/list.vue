@@ -1,39 +1,88 @@
 <template>
   <div class="company-list-page">
     <div class="page-header">
-      <span class="page-title">公司管理</span>
+      <div class="title-block">
+        <h1 class="page-title">公司管理</h1>
+      </div>
     </div>
 
-    <div class="card-grid">
-      <el-card
-        v-for="company in companyList"
-        :key="company.companyId"
-        shadow="hover"
-        class="company-card"
-      >
-        <div class="card-body">
-          <el-avatar
-            :size="80"
-            shape="square"
-            :src="company.logo"
-            class="company-logo"
-          >
-            <span class="logo-placeholder">{{ company.name?.charAt(0) }}</span>
-          </el-avatar>
-          <div class="company-info">
-            <h3 class="company-name">{{ company.name }}</h3>
-            <p class="company-desc">{{ company.intro || '暂无简介' }}</p>
-          </div>
-          <el-button
-            type="primary"
-            plain
-            size="small"
-            @click="goEdit(company.companyId)"
-          >
-            编辑
-          </el-button>
-        </div>
-      </el-card>
+    <div class="admin-toolbar">
+      <span>共 {{ companyList.length }} 家公司</span>
+    </div>
+
+    <div class="card-wrapper" v-loading="loading">
+      <el-table :data="companyList" stripe>
+        <el-table-column label="公司" min-width="220">
+          <template #default="{ row }">
+            <div class="company-cell">
+              <el-avatar
+                :size="40"
+                shape="square"
+                :src="row.logo"
+                class="company-logo"
+              >
+                <span class="logo-placeholder">{{ row.name?.charAt(0) || '-' }}</span>
+              </el-avatar>
+              <div class="company-meta">
+                <span class="company-name">{{ row.name || '-' }}</span>
+                <span class="company-sub">{{ row.address || '暂无地址' }}</span>
+              </div>
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="定位" min-width="180">
+          <template #default="{ row }">
+            <div class="location-cell">
+              <el-tag
+                :type="hasCompanyLocation(row) ? 'success' : 'info'"
+                size="small"
+                effect="plain"
+              >
+                {{ hasCompanyLocation(row) ? '已设置' : '未设置' }}
+              </el-tag>
+              <span v-if="hasCompanyLocation(row)" class="location-text">
+                {{ getLocationText(row) }}
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="官网" min-width="220">
+          <template #default="{ row }">
+            <a
+              v-if="hasTextValue(row.website)"
+              :href="getWebsiteHref(row.website)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="website-link"
+            >
+              {{ row.website }}
+            </a>
+            <span v-else class="text-muted">-</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="联系电话" min-width="150">
+          <template #default="{ row }">
+            <span>{{ row.phone || '-' }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="更新时间" min-width="170">
+          <template #default="{ row }">
+            <span class="num-cell">{{ formatDateTime(row.updatedAt) }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="操作" width="120" align="center" fixed="right">
+          <template #default="{ row }">
+            <el-button type="primary" link size="small" @click="goEdit(row.companyId)">
+              编辑
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -41,7 +90,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { COMPANY_IDS, COMPANY_MAP } from '@/config/env'
+import { COMPANY_MAP } from '@/config/env'
 import { adminGetCompanyList } from '@/cloud/api'
 import { mapTempFileURLs } from '@/cloud/file'
 
@@ -53,13 +102,16 @@ const companyList = ref(
     companyId: id,
     name,
     logo: '',
-    intro: ''
+    address: '',
+    website: ''
   }))
 )
+const loading = ref(false)
 
 async function fetchCompanies() {
+  loading.value = true
   try {
-    const data = await adminGetCompanyList()
+    const data = await adminGetCompanyList({ loading: false })
     const list = await mapTempFileURLs(data.list || data || [], 'logo')
     // 用接口返回覆盖
     companyList.value = companyList.value.map(c => {
@@ -68,7 +120,66 @@ async function fetchCompanies() {
     })
   } catch {
     // 接口失败时使用本地默认数据
+  } finally {
+    loading.value = false
   }
+}
+
+function hasTextValue(value) {
+  return Boolean(String(value || '').trim())
+}
+
+function getFiniteNumber(value) {
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  if (typeof value === 'string' && value.trim()) {
+    const parsed = Number(value.trim())
+    return Number.isFinite(parsed) ? parsed : null
+  }
+  return null
+}
+
+function getLocationParts(company) {
+  const lat =
+    getFiniteNumber(company.latitude) ??
+    getFiniteNumber(company.location?.lat) ??
+    getFiniteNumber(company.location?.latitude)
+  const lng =
+    getFiniteNumber(company.longitude) ??
+    getFiniteNumber(company.location?.lng) ??
+    getFiniteNumber(company.location?.longitude)
+  return { lat, lng }
+}
+
+function hasCompanyLocation(company) {
+  const { lat, lng } = getLocationParts(company)
+  return (
+    hasTextValue(company.locationName || company.location?.name) ||
+    (typeof lat === 'number' && typeof lng === 'number')
+  )
+}
+
+function getLocationText(company) {
+  if (hasTextValue(company.locationName)) return company.locationName.trim()
+  if (hasTextValue(company.location?.name)) return company.location.name.trim()
+  const { lat, lng } = getLocationParts(company)
+  if (typeof lat === 'number' && typeof lng === 'number') {
+    return `${lat.toFixed(6)}, ${lng.toFixed(6)}`
+  }
+  return '-'
+}
+
+function getWebsiteHref(value) {
+  const website = String(value || '').trim()
+  if (/^https?:\/\//i.test(website)) return website
+  return `https://${website}`
+}
+
+function formatDateTime(value) {
+  if (!value) return '-'
+  const date = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(date.getTime())) return '-'
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
 }
 
 function goEdit(companyId) {
@@ -87,53 +198,77 @@ onMounted(() => {
 @use '@/styles/variables' as *;
 
 .company-list-page {
-  .card-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: $spacing-lg;
+  .title-block {
+    min-width: 0;
   }
 
-  .company-card {
-    border-radius: $radius-card;
+  .company-cell {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    min-width: 0;
+  }
 
-    .card-body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: $spacing-md;
-      padding: $spacing-md 0;
+  .company-logo {
+    flex: 0 0 auto;
+    border: 1px solid $border-color;
+    border-radius: $radius-button;
+    background: $surface-inset;
+  }
 
-      .company-logo {
-        border-radius: $radius-button;
-        background: $page-bg;
+  .logo-placeholder {
+    font-size: 16px;
+    font-weight: 600;
+    color: $text-auxiliary;
+  }
 
-        .logo-placeholder {
-          font-size: 28px;
-          font-weight: 600;
-          color: $text-auxiliary;
-        }
-      }
+  .company-meta,
+  .location-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
 
-      .company-info {
-        text-align: center;
+  .company-name {
+    color: $text-primary;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+  }
 
-        .company-name {
-          font-size: 16px;
-          font-weight: 600;
-          color: $text-primary;
-          margin: 0 0 6px;
-        }
+  .company-sub,
+  .location-text {
+    color: $text-auxiliary;
+    font-size: 12px;
+    line-height: 18px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-        .company-desc {
-          font-size: 13px;
-          color: $text-auxiliary;
-          margin: 0;
-          max-width: 200px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-      }
+  .location-text {
+    max-width: 180px;
+  }
+
+  .company-sub {
+    max-width: 220px;
+  }
+
+  .website-link {
+    display: inline-block;
+    max-width: 220px;
+    color: $color-primary;
+    font-size: 13px;
+    line-height: 20px;
+    overflow: hidden;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 }

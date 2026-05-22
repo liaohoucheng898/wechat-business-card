@@ -1,9 +1,22 @@
 <template>
   <el-container class="admin-layout">
     <!-- 侧边栏 -->
-    <el-aside :width="sidebarCollapsed ? '64px' : '200px'" class="admin-sidebar">
-      <div class="sidebar-logo" @click="router.push('/')">
-        <img src="https://static-s3.skyworkcdn.com/fe/skywork-site-assets/images/skybot/avatar1-new.png" alt="Logo" class="logo-img" />
+    <el-aside :width="sidebarCollapsed ? '64px' : '232px'" class="admin-sidebar">
+      <div class="sidebar-logo" @click="router.push('/dashboard')">
+        <span class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" focusable="false">
+            <defs>
+              <linearGradient id="logoGradient" x1="6" y1="4" x2="26" y2="28" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#4C9AFF" />
+                <stop offset="1" stop-color="#1677FF" />
+              </linearGradient>
+            </defs>
+            <rect x="2.5" y="3.5" width="27" height="25" rx="7" fill="url(#logoGradient)" />
+            <rect x="7" y="9" width="18" height="14" rx="3" fill="#FFFFFF" opacity="0.96" />
+            <circle cx="12" cy="16" r="3" fill="#1677FF" opacity="0.9" />
+            <path d="M17 13.5H23M17 17H23M10 21C10.8 19.8 13.2 19.8 14 21" stroke="#1677FF" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+        </span>
         <span v-show="!sidebarCollapsed" class="logo-text">电子名片</span>
       </div>
       <el-menu
@@ -11,25 +24,13 @@
         :collapse="sidebarCollapsed"
         router
         class="sidebar-menu"
-        background-color="#fff"
-        text-color="#646A73"
-        active-text-color="#1677ff"
+        background-color="#0F172A"
+        text-color="#D1D5DB"
+        active-text-color="#FFFFFF"
       >
-        <el-menu-item index="/staff">
-          <el-icon><User /></el-icon>
-          <template #title>员工管理</template>
-        </el-menu-item>
-        <el-menu-item index="/company">
-          <el-icon><OfficeBuilding /></el-icon>
-          <template #title>公司管理</template>
-        </el-menu-item>
-        <el-menu-item index="/cases">
-          <el-icon><Suitcase /></el-icon>
-          <template #title>案例管理</template>
-        </el-menu-item>
-        <el-menu-item index="/stats">
-          <el-icon><DataAnalysis /></el-icon>
-          <template #title>数据统计</template>
+        <el-menu-item v-for="item in menuItems" :key="item.index" :index="item.index">
+          <el-icon><component :is="item.icon" /></el-icon>
+          <template #title>{{ item.label }}</template>
         </el-menu-item>
       </el-menu>
     </el-aside>
@@ -43,7 +44,7 @@
             <Fold v-if="!sidebarCollapsed" />
             <Expand v-else />
           </el-icon>
-          <span class="header-title">电子名片管理后台</span>
+          <span class="header-title">{{ route.meta.title || '运营驾驶舱' }}</span>
         </div>
         <div class="header-right">
           <span class="admin-name">{{ userStore.adminName }}</span>
@@ -68,7 +69,7 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import {
-  User, OfficeBuilding, Suitcase, DataAnalysis,
+  DataLine, User, OfficeBuilding, Suitcase, DataAnalysis,
   Fold, Expand, SwitchButton
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
@@ -79,6 +80,14 @@ const router = useRouter()
 const userStore = useUserStore()
 const appStore = useAppStore()
 
+const menuItems = [
+  { index: '/dashboard', label: '运营驾驶舱', icon: DataLine },
+  { index: '/cases', label: '内容中心', icon: Suitcase },
+  { index: '/staff', label: '人员管理', icon: User },
+  { index: '/company', label: '公司管理', icon: OfficeBuilding },
+  { index: '/stats', label: '数据分析', icon: DataAnalysis }
+]
+
 const sidebarCollapsed = computed(() => appStore.sidebarCollapsed)
 
 // 当前激活菜单：取路由的第一层路径
@@ -86,12 +95,12 @@ const activeMenu = computed(() => {
   const path = route.path
   // 匹配 /company/edit/xxx → /company
   const match = path.match(/^\/[^/]+/)
-  return match ? match[0] : '/staff'
+  return match ? match[0] : '/dashboard'
 })
 
 async function handleLogout() {
   try {
-    await ElMessageBox.confirm('确认退出登录？', '提示', {
+    await ElMessageBox.confirm('退出后需要重新输入管理员账号和密码。未保存的编辑内容不会自动提交。', '确认退出登录', {
       confirmButtonText: '确认',
       cancelButtonText: '取消',
       type: 'warning'
@@ -114,8 +123,8 @@ async function handleLogout() {
 }
 
 .admin-sidebar {
-  background: $card-bg;
-  border-right: 1px solid $border-color;
+  background: $sidebar-bg;
+  border-right: 1px solid $sidebar-border;
   transition: width 0.3s ease;
   overflow: hidden;
 
@@ -125,20 +134,30 @@ async function handleLogout() {
     align-items: center;
     padding: 0 16px;
     cursor: pointer;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $sidebar-border;
 
-    .logo-img {
+    .logo-mark {
       width: 32px;
       height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 8px;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
       flex-shrink: 0;
+
+      svg {
+        width: 32px;
+        height: 32px;
+        display: block;
+      }
     }
 
     .logo-text {
       margin-left: 10px;
       font-size: 16px;
       font-weight: 600;
-      color: $text-primary;
+      color: $sidebar-text-active;
       white-space: nowrap;
     }
   }
@@ -146,14 +165,21 @@ async function handleLogout() {
   .sidebar-menu {
     height: calc(100vh - #{$header-height});
     overflow-y: auto;
+    border-right: 0;
+    background: $sidebar-bg;
 
     .el-menu-item {
       height: 48px;
       line-height: 48px;
       font-size: 15px;
+      color: $sidebar-text;
+
+      &:hover {
+        background-color: $sidebar-hover-bg;
+      }
 
       &.is-active {
-        background-color: rgba($color-primary, 0.06);
+        background-color: $sidebar-active-bg;
         font-weight: 500;
       }
     }
@@ -212,4 +238,5 @@ async function handleLogout() {
   overflow-y: auto;
   padding: $spacing-lg;
 }
+
 </style>

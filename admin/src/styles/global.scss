@@ -13,7 +13,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: $font-family-base;
-  font-size: 15px;
+  font-size: 14px;
   color: $text-primary;
   background-color: $page-bg;
   -webkit-font-smoothing: antialiased;
@@ -44,22 +44,27 @@ a {
 .el-button--primary {
   --el-button-bg-color: #{$color-primary};
   --el-button-border-color: #{$color-primary};
-  --el-button-hover-bg-color: #{color.adjust($color-primary, $lightness: 8%)};
-  --el-button-hover-border-color: #{color.adjust($color-primary, $lightness: 8%)};
-  --el-button-active-bg-color: #{color.adjust($color-primary, $lightness: -5%)};
-  --el-button-active-border-color: #{color.adjust($color-primary, $lightness: -5%)};
+  --el-button-hover-bg-color: #{$color-primary-hover};
+  --el-button-hover-border-color: #{$color-primary-hover};
+  --el-button-active-bg-color: #{$color-primary-pressed};
+  --el-button-active-border-color: #{$color-primary-pressed};
 }
 
 // 输入框
 .el-input__wrapper {
   border-radius: $radius-input;
+  box-shadow: 0 0 0 1px $border-color inset;
 }
 
 // 卡片
 .el-card {
   border-radius: $radius-card;
-  box-shadow: $shadow-card;
-  border: none;
+  border: 1px solid $border-color;
+  box-shadow: none;
+
+  .el-card__body {
+    padding: $spacing-base;
+  }
 }
 
 // 标签
@@ -69,13 +74,20 @@ a {
 
 // 表格
 .el-table {
-  --el-table-header-bg-color: #{$page-bg};
+  --el-table-header-bg-color: #{$table-header-bg};
+  --el-table-row-hover-bg-color: #{$table-header-bg};
   --el-table-border-color: #{$border-color};
+  color: $text-regular;
 
   th.el-table__cell {
     color: $text-secondary;
-    font-weight: 500;
+    background-color: $table-header-bg;
+    font-weight: 600;
     font-size: 13px;
+  }
+
+  .el-table__cell {
+    border-bottom-color: $border-color;
   }
 }
 
@@ -119,18 +131,162 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: $spacing-lg;
+  gap: $spacing-base;
+  margin-bottom: $spacing-base;
 
   .page-title {
-    font-size: 18px;
+    margin: 0;
+    font-size: 20px;
+    line-height: 28px;
     font-weight: 600;
     color: $text-primary;
   }
+
 }
 
+.title-block {
+  min-width: 0;
+}
+
+.page-actions,
+.actions,
+.toolbar-actions,
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.admin-panel,
 .card-wrapper {
   background: $card-bg;
+  border: 1px solid $border-color;
   border-radius: $radius-card;
-  box-shadow: $shadow-card;
-  padding: $spacing-lg;
+  box-shadow: none;
+  padding: $spacing-base;
+}
+
+.panel-header,
+.panel-head,
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-base;
+  margin-bottom: $spacing-base;
+
+  h2,
+  .panel-title {
+    margin: 0;
+    color: $text-primary;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
+  }
+
+}
+
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-base;
+  margin-bottom: $spacing-base;
+}
+
+.admin-filter-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: $spacing-md $spacing-base;
+  margin-bottom: $spacing-base;
+  padding: $spacing-base;
+  background: $card-bg;
+  border: 1px solid $border-color;
+  border-radius: $radius-card;
+  box-shadow: none;
+}
+
+.object-cell {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  min-width: 0;
+}
+
+.object-thumb,
+.object-avatar {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  color: $color-primary;
+  background: $color-primary-soft;
+  border: 1px solid $color-primary-border;
+  border-radius: $radius-button;
+  font-weight: 600;
+}
+
+.object-thumb img,
+.object-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.object-main {
+  min-width: 0;
+}
+
+.object-title {
+  overflow: hidden;
+  color: $text-primary;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.object-sub {
+  margin-top: 2px;
+  overflow: hidden;
+  color: $text-auxiliary;
+  font-size: 12px;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.admin-note {
+  color: $text-auxiliary;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.text-muted {
+  color: $text-auxiliary;
+}
+
+.num-cell {
+  font-family: $font-family-number;
+  font-variant-numeric: tabular-nums;
 }
