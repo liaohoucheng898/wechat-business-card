@@ -1,11 +1,11 @@
 <template>
   <div class="cases-list-page">
     <div class="page-header">
-      <span class="page-title">案例管理</span>
+      <div class="title-block">
+        <h1 class="page-title">内容中心</h1>
+        <p class="page-desc">管理客户案例、栏目、可见状态和小程序端展示内容。</p>
+      </div>
       <div class="page-actions">
-        <el-button @click="categoryDialogVisible = true">
-          栏目管理
-        </el-button>
         <el-button type="primary" @click="goEdit()">
           <el-icon><Plus /></el-icon>
           新增案例
@@ -15,8 +15,28 @@
 
     <CompanyTabs v-model="filterCompanyId" @change="fetchCases" />
 
+    <div class="admin-filter-panel">
+      <el-input v-model="keyword" clearable placeholder="搜索企业全称" style="width: 220px" />
+      <el-select v-model="visibleStatus" clearable placeholder="可见状态" style="width: 140px">
+        <el-option label="可见" value="visible" />
+        <el-option label="隐藏" value="hidden" />
+      </el-select>
+      <el-select v-model="categoryStatus" clearable placeholder="栏目状态" style="width: 140px">
+        <el-option label="已有栏目" value="hasCategory" />
+        <el-option label="缺少栏目" value="missing" />
+      </el-select>
+      <el-button @click="handleResetFilters">重置</el-button>
+    </div>
+
+    <div class="admin-toolbar">
+      <span>共 {{ filteredCaseList.length }} 条 · 返回本页保留当前筛选条件</span>
+      <div class="toolbar-actions">
+        <el-button plain size="small" @click="categoryDialogVisible = true">栏目管理</el-button>
+      </div>
+    </div>
+
     <div class="card-wrapper">
-      <el-table :data="caseList" v-loading="loading" stripe>
+      <el-table :data="filteredCaseList" v-loading="loading" stripe>
         <el-table-column type="index" label="序号" width="60" align="center" />
 
         <el-table-column label="封面" width="100" align="center">
@@ -225,7 +245,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
@@ -248,6 +268,9 @@ const companyMap = COMPANY_MAP
 const loading = ref(false)
 const caseList = ref([])
 const filterCompanyId = ref('')
+const keyword = ref('')
+const visibleStatus = ref('')
+const categoryStatus = ref('')
 const previewVisible = ref(false)
 const previewLoading = ref(false)
 const previewData = ref({
@@ -269,8 +292,29 @@ const editingCategoryId = ref('')
 const editingCategoryName = ref('')
 const editingCategorySort = ref(0)
 
+const filteredCaseList = computed(() => {
+  return caseList.value.filter((item) => {
+    const keywordMatched = !keyword.value || String(item.title || '').includes(keyword.value.trim())
+    const visibleMatched =
+      !visibleStatus.value ||
+      (visibleStatus.value === 'visible' && item.visible !== false) ||
+      (visibleStatus.value === 'hidden' && item.visible === false)
+    const categoryMatched =
+      !categoryStatus.value ||
+      (categoryStatus.value === 'missing' && !item.categories?.length) ||
+      (categoryStatus.value === 'hasCategory' && !!item.categories?.length)
+    return keywordMatched && visibleMatched && categoryMatched
+  })
+})
+
 function getCompanyName(id) {
   return COMPANY_MAP[id] || id
+}
+
+function handleResetFilters() {
+  keyword.value = ''
+  visibleStatus.value = ''
+  categoryStatus.value = ''
 }
 
 function decodeHtmlAttr(value = '') {
@@ -487,9 +531,9 @@ async function handleToggleVisible(row, val) {
 async function handleDelete(row) {
   try {
     await ElMessageBox.confirm(
-      `确认删除案例「${row.title}」？删除后不可恢复。`,
-      '删除确认',
-      { confirmButtonText: '删除', cancelButtonText: '取消', type: 'warning' }
+      `确认删除案例「${row.title}」吗？删除后该案例不会在小程序展示，后台不可直接恢复。本操作会记录操作人和时间。`,
+      '删除案例确认',
+      { confirmButtonText: '确认删除案例', cancelButtonText: '取消', type: 'warning' }
     )
     await adminDeleteCase(row.caseId)
     ElMessage.success('已删除')
