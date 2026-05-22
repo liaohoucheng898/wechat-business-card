@@ -138,6 +138,22 @@ function formatDateTime(date) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
 }
 
+function normalizeRankList(data = {}) {
+  const source = Array.isArray(data.staffRank) && data.staffRank.length
+    ? data.staffRank
+    : Array.isArray(data.ranking)
+      ? data.ranking
+      : []
+
+  return source.map((item) => ({
+    ...item,
+    weekViews: item.weekViews ?? item.views7d ?? 0,
+    halfMonthViews: item.halfMonthViews ?? item.views15d ?? 0,
+    monthViews: item.monthViews ?? item.views30d ?? 0,
+    totalViews: item.totalViews ?? item.viewsTotal ?? 0
+  }))
+}
+
 async function fetchStats() {
   loading.value = true
   try {
@@ -161,7 +177,7 @@ async function fetchStats() {
     }
 
     // 员工排行（按近30天降序）
-    const list = [...(data.staffRank || [])]
+    const list = normalizeRankList(data)
     list.sort((a, b) => (b.monthViews || 0) - (a.monthViews || 0))
     rankList.value = await mapTempFileURLs(list, 'avatar')
     lastUpdatedAt.value = formatDateTime(new Date())
