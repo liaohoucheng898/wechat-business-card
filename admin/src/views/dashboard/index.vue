@@ -332,9 +332,9 @@ async function fetchDashboard() {
     if (companyId.value) statsParams.companyId = companyId.value
 
     const [stats, staff, cases] = await Promise.all([
-      adminGetStats(statsParams),
+      adminGetStats(statsParams, { loading: false }),
       fetchAllStaff(),
-      adminGetCaseList(companyId.value ? { companyId: companyId.value } : {})
+      adminGetCaseList(companyId.value ? { companyId: companyId.value } : {}, { loading: false })
     ])
 
     if (requestSeq !== dashboardRequestSeq) return
@@ -362,7 +362,7 @@ async function fetchDashboard() {
 }
 
 async function fetchAllStaff() {
-  const firstPage = await adminGetStaffList({ page: 1, pageSize: 200 })
+  const firstPage = await adminGetStaffList({ page: 1, pageSize: 200 }, { loading: false })
   const firstList = firstPage.list || []
   const parsedTotal = Number(firstPage.total ?? firstList.length)
   const total = Number.isFinite(parsedTotal) ? parsedTotal : firstList.length
@@ -376,7 +376,7 @@ async function fetchAllStaff() {
     Array.from({ length: pageCount - 1 }, (_, index) => adminGetStaffList({
       page: index + 2,
       pageSize: STAFF_PAGE_SIZE
-    }))
+    }, { loading: false }))
   )
 
   return [
@@ -544,12 +544,12 @@ onMounted(() => {
 .dashboard-main-grid {
   display: grid;
   align-items: stretch;
-  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.85fr);
+  grid-template-columns: minmax(0, 2fr) minmax(360px, 1fr);
   grid-auto-rows: minmax(0, auto);
   gap: $spacing-base;
 
   &--bottom {
-    grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.75fr);
+    grid-template-columns: minmax(0, 2fr) minmax(360px, 1fr);
   }
 
   > .admin-panel {

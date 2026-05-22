@@ -111,7 +111,7 @@ const loading = ref(false)
 async function fetchCompanies() {
   loading.value = true
   try {
-    const data = await adminGetCompanyList()
+    const data = await adminGetCompanyList({ loading: false })
     const list = await mapTempFileURLs(data.list || data || [], 'logo')
     // 用接口返回覆盖
     companyList.value = companyList.value.map(c => {

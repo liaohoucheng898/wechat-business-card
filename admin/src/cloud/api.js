@@ -162,8 +162,8 @@ export async function adminPasswordLogin(phone, password) {
 /**
  * 获取员工列表
  */
-export function adminGetStaffList(params = {}) {
-  return callFunction('adminGetStaffList', params)
+export function adminGetStaffList(params = {}, options = {}) {
+  return callFunction('adminGetStaffList', params, options)
 }
 
 /**
@@ -218,8 +218,8 @@ export function adminResetPassword(staffId) {
 /**
  * 获取公司列表
  */
-export function adminGetCompanyList() {
-  return callFunction('adminGetCompanyList')
+export function adminGetCompanyList(options = {}) {
+  return callFunction('adminGetCompanyList', {}, options)
 }
 
 /**
@@ -239,8 +239,8 @@ export function adminUpdateCompany(companyId, fields, pageLoadedAt) {
 /**
  * 获取案例列表
  */
-export function adminGetCaseList(params = {}) {
-  return callFunction('adminGetCaseList', params)
+export function adminGetCaseList(params = {}, options = {}) {
+  return callFunction('adminGetCaseList', params, options)
 }
 
 /**
@@ -309,8 +309,8 @@ export function adminGetCategoryList(companyId) {
 /**
  * 获取统计数据
  */
-export function adminGetStats(params = {}) {
-  return callFunction('adminGetStats', params)
+export function adminGetStats(params = {}, options = {}) {
+  return callFunction('adminGetStats', params, options)
 }
 
 /**
