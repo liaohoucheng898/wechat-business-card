@@ -6,6 +6,7 @@
         <p class="page-desc">管理客户案例、栏目、可见状态和小程序端展示内容。</p>
       </div>
       <div class="page-actions">
+        <el-button plain @click="categoryDialogVisible = true">栏目管理</el-button>
         <el-button type="primary" @click="goEdit()">
           <el-icon><Plus /></el-icon>
           新增案例
@@ -25,35 +26,34 @@
         <el-option label="已有栏目" value="hasCategory" />
         <el-option label="缺少栏目" value="missing" />
       </el-select>
+      <el-button type="primary" plain @click="fetchCases">查询</el-button>
       <el-button @click="handleResetFilters">重置</el-button>
     </div>
 
     <div class="admin-toolbar">
-      <span>共 {{ filteredCaseList.length }} 条 · 返回本页保留当前筛选条件</span>
+      <span>已选 0 项 · 共 {{ filteredCaseList.length }} 条 · 返回本页保留筛选和滚动位置</span>
       <div class="toolbar-actions">
-        <el-button plain size="small" @click="categoryDialogVisible = true">栏目管理</el-button>
+        <el-button plain size="small" disabled>列设置</el-button>
+        <el-button plain size="small" disabled>导出</el-button>
       </div>
     </div>
 
     <div class="card-wrapper">
       <el-table :data="filteredCaseList" v-loading="loading" stripe>
-        <el-table-column type="index" label="序号" width="60" align="center" />
-
-        <el-table-column label="封面" width="100" align="center">
+        <el-table-column label="案例" min-width="260">
           <template #default="{ row }">
-            <el-image
-              :src="row.cover"
-              :preview-src-list="row.cover ? [row.cover] : []"
-              fit="cover"
-              class="cover-img"
-              preview-teleported
-            />
+            <div class="object-cell">
+              <span class="object-thumb">
+                <img v-if="row.cover" :src="row.cover" alt="案例封面">
+                <span v-else>案</span>
+              </span>
+              <div class="object-main">
+                <div class="object-title">{{ row.title || '未填写企业全称' }}</div>
+                <div class="object-sub">{{ row.description || '封面 16:9，详情含富文本图片' }}</div>
+              </div>
+            </div>
           </template>
         </el-table-column>
-
-        <el-table-column prop="title" label="企业全称" min-width="180" show-overflow-tooltip />
-
-        <el-table-column prop="sort" label="排序" width="70" align="center" />
 
         <el-table-column label="所属公司" min-width="160">
           <template #default="{ row }">
@@ -84,13 +84,26 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="可见" width="80" align="center">
+        <el-table-column prop="sort" label="排序" width="80" align="center" />
+
+        <el-table-column label="状态" width="120" align="center">
           <template #default="{ row }">
-            <el-switch
-              :model-value="row.visible"
-              size="small"
-              @change="(val) => handleToggleVisible(row, val)"
-            />
+            <span class="status-inline">
+              <el-tag :type="row.visible !== false ? 'success' : 'info'" size="small" effect="plain">
+                {{ row.visible !== false ? '可见' : '隐藏' }}
+              </el-tag>
+              <el-switch
+                :model-value="row.visible !== false"
+                size="small"
+                @change="(val) => handleToggleVisible(row, val)"
+              />
+            </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="更新时间" width="170">
+          <template #default="{ row }">
+            <span class="num-cell">{{ formatCaseUpdatedAt(row) }}</span>
           </template>
         </el-table-column>
 
@@ -309,6 +322,15 @@ const filteredCaseList = computed(() => {
 
 function getCompanyName(id) {
   return COMPANY_MAP[id] || id
+}
+
+function formatCaseUpdatedAt(row = {}) {
+  const value = row.updatedAt || row.updateTime || row.createdAt || ''
+  if (!value) return '-'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return String(value)
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
 }
 
 function handleResetFilters() {

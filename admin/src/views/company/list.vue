@@ -3,13 +3,15 @@
     <div class="page-header">
       <div class="title-block">
         <h1 class="page-title">公司管理</h1>
-        <p class="page-desc">维护固定公司的基础资料、联系方式和小程序首页展示信息。</p>
+        <p class="page-desc">从卡片展示改为业务配置表，更适合维护公司资料、展示状态和更新时间。</p>
       </div>
     </div>
 
     <div class="admin-toolbar">
-      <span>固定 3 家公司 · 公司资料会影响小程序客户首页展示</span>
-      <span class="text-muted">编辑后请在小程序端人工核对展示效果</span>
+      <span>固定 3 家公司 · 公司资料会影响小程序展示页</span>
+      <div class="toolbar-actions">
+        <el-button plain size="small" disabled>查看展示口径</el-button>
+      </div>
     </div>
 
     <div class="card-wrapper">
@@ -27,7 +29,7 @@
               </el-avatar>
               <div class="company-meta">
                 <span class="company-name">{{ row.name || '-' }}</span>
-                <span class="company-id">{{ row.companyId }}</span>
+                <span class="company-id">{{ getCompanySummary(row) }}</span>
               </div>
             </div>
           </template>
@@ -170,6 +172,12 @@ function getCompanyCompleteness(company) {
     complete: missing.length === 0,
     missing
   }
+}
+
+function getCompanySummary(company) {
+  const missing = getCompanyCompleteness(company).missing
+  if (!missing.length) return '公司简介、业务介绍已维护'
+  return `缺少${missing[0]}`
 }
 
 function getFiniteNumber(value) {

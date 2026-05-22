@@ -32,7 +32,7 @@
           </el-radio-button>
         </el-radio-group>
 
-        <el-button :loading="loading" @click="fetchDashboard">刷新</el-button>
+        <el-button type="primary" :loading="loading" @click="fetchDashboard">刷新数据</el-button>
       </div>
     </div>
 
@@ -72,7 +72,7 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">浏览趋势</h2>
-            <p class="panel-desc">按{{ currentTimeRangeLabel }}展示浏览量变化，统计口径与企业数据统计页保持一致。</p>
+            <p class="panel-desc">按天统计，排除内部员工访问。</p>
           </div>
           <el-tag effect="plain">{{ currentCompanyName }}</el-tag>
         </div>
@@ -101,11 +101,9 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">风险与待处理</h2>
-            <p class="panel-desc">聚合影响客户体验和员工绑定状态的事项。</p>
+            <p class="panel-desc">页面内持续展示，不只依赖短暂提示。</p>
           </div>
-          <el-tag :type="riskCount ? 'warning' : 'success'" effect="plain">
-            {{ riskCount ? `${riskCount} 项待处理` : '暂无高优先级风险' }}
-          </el-tag>
+          <el-button link type="primary" @click="goTo('/cases')">查看全部</el-button>
         </div>
 
         <div class="risk-list">
@@ -131,10 +129,10 @@
       <section class="admin-panel rank-panel">
         <div class="panel-header">
           <div>
-            <h2 class="panel-title">员工浏览排行</h2>
-            <p class="panel-desc">展示近 30 天浏览量前 5 名员工，便于发现高关注名片。</p>
+            <h2 class="panel-title">员工表现排行</h2>
+            <p class="panel-desc">按近30天浏览量排序。</p>
           </div>
-          <el-button type="primary" link @click="goTo('/stats')">查看完整统计</el-button>
+          <el-button type="primary" link @click="goTo('/stats')">查看统计</el-button>
         </div>
 
         <el-table
@@ -156,9 +154,14 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="所属公司" min-width="110">
+          <el-table-column label="公司" min-width="110">
             <template #default="{ row }">
               {{ row.companyName || getCompanyName(row.companyId) }}
+            </template>
+          </el-table-column>
+          <el-table-column label="近 7 天" prop="weekViews" width="100" align="right">
+            <template #default="{ row }">
+              <span class="num-cell">{{ formatNumber(row.weekViews) }}</span>
             </template>
           </el-table-column>
           <el-table-column label="近 30 天" prop="monthViews" width="110" align="right">
@@ -171,6 +174,13 @@
               <span class="num-cell">{{ formatNumber(row.totalViews) }}</span>
             </template>
           </el-table-column>
+          <el-table-column label="状态" width="90" align="center">
+            <template #default="{ row }">
+              <el-tag :type="row.status === 'disabled' ? 'warning' : 'success'" effect="plain" size="small">
+                {{ row.status === 'disabled' ? '待跟进' : '正常' }}
+              </el-tag>
+            </template>
+          </el-table-column>
         </el-table>
       </section>
 
@@ -178,9 +188,9 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">最近操作</h2>
-            <p class="panel-desc">最近操作展示当前后台可追溯动作；第一版不新增操作日志接口</p>
+            <p class="panel-desc">用于追溯，不用于装饰。</p>
           </div>
-          <el-button type="primary" link @click="goTo('/cases')">进入内容中心</el-button>
+          <el-button type="primary" link disabled>操作日志</el-button>
         </div>
 
         <div class="operation-list">

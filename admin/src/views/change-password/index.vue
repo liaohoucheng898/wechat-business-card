@@ -2,12 +2,12 @@
   <div class="change-password-page">
     <div class="change-password-card">
       <div class="card-header">
-        <h2 class="card-title">修改密码</h2>
+        <h2 class="card-title">首次登录，请修改密码</h2>
         <p class="card-desc">
-          {{ userStore.mustChangePassword ? '当前账号正在使用临时密码，请先设置一个新密码。' : '请修改为你自己的常用密码。' }}
+          临时密码只用于首次进入后台
         </p>
         <p class="password-note">
-          修改成功后会进入运营驾驶舱。新密码需为 8-20 位，且必须同时包含字母和数字。
+          修改成功后会进入运营驾驶舱。新密码需至少 8 位，建议包含数字和字母。
         </p>
       </div>
 
@@ -18,7 +18,7 @@
         label-position="top"
         class="change-password-form"
       >
-        <el-form-item label="旧密码" prop="oldPassword">
+        <el-form-item label="当前临时密码" prop="oldPassword">
           <el-input
             v-model="form.oldPassword"
             type="password"
@@ -55,7 +55,7 @@
           <div class="action-row">
             <el-button size="large" @click="handleLogout">退出登录</el-button>
             <el-button type="primary" size="large" :loading="submitting" @click="handleSubmit">
-              保存新密码
+              保存并进入后台
             </el-button>
           </div>
         </el-form-item>

@@ -3,16 +3,16 @@
     <div class="page-header">
       <div class="title-block">
         <h1 class="page-title">编辑公司</h1>
-        <p class="page-desc">维护公司资料、展示内容、联系方式和地图定位。</p>
+        <p class="page-desc">公司简介、业务介绍、地址、电话和定位统一维护。</p>
       </div>
       <div class="page-actions">
         <el-button @click="goBack">
           <el-icon><ArrowLeft /></el-icon>
-          返回
+          取消
         </el-button>
         <el-button type="primary" :loading="saving" @click="handleSave">
           <el-icon><Check /></el-icon>
-          保存
+          保存公司资料
         </el-button>
       </div>
     </div>
@@ -27,55 +27,23 @@
     >
       <section class="admin-panel form-section">
         <div class="section-header">
-          <h2>基础资料</h2>
-          <span class="text-muted">公司名称和 Logo 会用于后台识别与小程序展示</span>
+          <div>
+            <h2>{{ form.name || '公司资料' }}</h2>
+            <p class="section-sub">保存前校验必填、并发版本和地图定位。</p>
+          </div>
+          <el-tag effect="plain" type="success">资料完整</el-tag>
         </div>
-        <div class="form-grid base-grid">
+        <div class="form-grid company-main-grid">
           <el-form-item label="公司名称" prop="name">
             <el-input v-model="form.name" placeholder="请输入公司名称" maxlength="30" show-word-limit />
-          </el-form-item>
-
-          <el-form-item label="公司Logo">
-            <ImageUpload
-              v-model="form.logo"
-              ratio="1:1"
-              :width="100"
-              placeholder="上传Logo"
-            />
-          </el-form-item>
-        </div>
-      </section>
-
-      <section class="admin-panel form-section">
-        <div class="section-header">
-          <h2>展示内容</h2>
-          <span class="text-muted">富文本内容保存后会影响小程序客户首页展示</span>
-        </div>
-        <el-form-item label="公司简介">
-          <TinyEditor v-model="form.intro" :height="300" />
-        </el-form-item>
-
-        <el-form-item label="业务介绍">
-          <TinyEditor v-model="form.businessIntro" :height="300" />
-        </el-form-item>
-      </section>
-
-      <section class="admin-panel form-section">
-        <div class="section-header">
-          <h2>联系方式与定位</h2>
-          <span class="text-muted">编辑后请在小程序端人工核对地图和电话展示</span>
-        </div>
-        <div class="form-grid contact-grid">
-          <el-form-item label="公司地址">
-            <el-input v-model="form.address" placeholder="请输入公司地址" maxlength="100" />
           </el-form-item>
 
           <el-form-item label="公司电话">
             <el-input v-model="form.phone" placeholder="请输入公司电话" maxlength="20" />
           </el-form-item>
 
-          <el-form-item label="公司官网">
-            <el-input v-model="form.website" placeholder="https://" maxlength="200" />
+          <el-form-item label="公司地址">
+            <el-input v-model="form.address" placeholder="请输入公司地址" maxlength="100" />
           </el-form-item>
 
           <el-form-item label="公司定位" class="location-form-item">
@@ -100,6 +68,37 @@
                 清除
               </el-button>
             </div>
+          </el-form-item>
+
+          <el-form-item label="公司简介" class="form-row-full">
+            <TinyEditor v-model="form.intro" :height="300" />
+          </el-form-item>
+
+          <el-form-item label="业务介绍" class="form-row-full">
+            <TinyEditor v-model="form.businessIntro" :height="300" />
+          </el-form-item>
+        </div>
+      </section>
+
+      <section class="admin-panel form-section">
+        <div class="section-header">
+          <div>
+            <h2>更多资料</h2>
+            <p class="section-sub">保留原有 Logo 和官网字段，不影响主编辑流程。</p>
+          </div>
+        </div>
+        <div class="form-grid support-grid">
+          <el-form-item label="公司Logo">
+            <ImageUpload
+              v-model="form.logo"
+              ratio="1:1"
+              :width="100"
+              placeholder="上传Logo"
+            />
+          </el-form-item>
+
+          <el-form-item label="公司官网">
+            <el-input v-model="form.website" placeholder="https://" maxlength="200" />
           </el-form-item>
         </div>
       </section>
@@ -288,15 +287,16 @@ onMounted(() => {
     gap: $spacing-base $spacing-xl;
   }
 
-  .base-grid {
-    grid-template-columns: minmax(0, 1fr) 180px;
-    align-items: start;
-  }
-
-  .contact-grid {
+  .company-main-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .support-grid {
+    grid-template-columns: 180px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .form-row-full,
   .location-form-item {
     grid-column: 1 / -1;
   }
@@ -333,8 +333,8 @@ onMounted(() => {
       justify-content: flex-end;
     }
 
-    .base-grid,
-    .contact-grid {
+    .company-main-grid,
+    .support-grid {
       grid-template-columns: 1fr;
     }
 

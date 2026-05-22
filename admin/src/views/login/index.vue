@@ -7,7 +7,7 @@
       </div>
 
       <p class="login-note">
-        PC 后台仅支持管理员进入。连续输错多次后可能临时锁定，请联系主管理员处理。
+        连续输错 5 次后将临时锁定 15 分钟。如忘记密码，请联系主管理员重置。
       </p>
 
       <el-form
@@ -17,7 +17,7 @@
         label-position="top"
         class="login-form"
       >
-        <el-form-item label="账号" prop="phone">
+        <el-form-item label="手机号" prop="phone">
           <el-input
             v-model="passwordForm.phone"
             placeholder="请输入手机号"
@@ -55,7 +55,7 @@
             class="submit-btn"
             @click="handlePasswordLogin"
           >
-            登录
+            登录后台
           </el-button>
         </el-form-item>
       </el-form>

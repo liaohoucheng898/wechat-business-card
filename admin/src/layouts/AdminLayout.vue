@@ -36,6 +36,10 @@
         <div class="header-right">
           <span class="admin-name">{{ userStore.adminName }}</span>
           <el-divider direction="vertical" />
+          <el-button text @click="helpVisible = true">
+            <el-icon><QuestionFilled /></el-icon>
+            帮助
+          </el-button>
           <el-button text type="primary" @click="handleLogout">
             <el-icon><SwitchButton /></el-icon>
             退出
@@ -48,16 +52,25 @@
         <router-view />
       </el-main>
     </el-container>
+
+    <el-dialog v-model="helpVisible" title="帮助与数据口径" width="520px">
+      <div class="help-dialog">
+        本后台以运营驾驶舱为首页，关键指标显示来源、口径、更新时间和权限范围。高风险操作会在确认前说明对象、范围、后果和是否可撤回。
+      </div>
+      <template #footer>
+        <el-button type="primary" @click="helpVisible = false">知道了</el-button>
+      </template>
+    </el-dialog>
   </el-container>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import {
   DataLine, User, OfficeBuilding, Suitcase, DataAnalysis,
-  Fold, Expand, SwitchButton
+  Fold, Expand, SwitchButton, QuestionFilled
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { useAppStore } from '@/stores/app'
@@ -66,6 +79,7 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const appStore = useAppStore()
+const helpVisible = ref(false)
 
 const menuItems = [
   { index: '/dashboard', label: '运营驾驶舱', icon: DataLine },
@@ -87,7 +101,7 @@ const activeMenu = computed(() => {
 
 async function handleLogout() {
   try {
-    await ElMessageBox.confirm('确认退出登录？', '提示', {
+    await ElMessageBox.confirm('退出后需要重新输入管理员账号和密码。未保存的编辑内容不会自动提交。', '确认退出登录', {
       confirmButtonText: '确认',
       cancelButtonText: '取消',
       type: 'warning'
@@ -214,5 +228,11 @@ async function handleLogout() {
   background: $page-bg;
   overflow-y: auto;
   padding: $spacing-lg;
+}
+
+.help-dialog {
+  color: $text-secondary;
+  font-size: 14px;
+  line-height: 24px;
 }
 </style>

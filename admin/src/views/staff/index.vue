@@ -1,7 +1,10 @@
 <template>
   <div class="staff-page">
     <div class="page-header">
-      <span class="page-title">员工管理</span>
+      <div class="title-block">
+        <h1 class="page-title">人员管理</h1>
+        <p class="page-desc">维护员工账号、公司开通关系、职位、绑定微信和密码状态。</p>
+      </div>
       <div class="header-actions">
         <el-button class="header-action-btn" type="primary" plain @click="openImportDialog">
           导入员工
@@ -14,6 +17,14 @@
     </div>
 
     <div class="admin-filter-panel">
+      <el-select v-model="companyFilter" clearable placeholder="全部公司" style="width: 140px">
+        <el-option
+          v-for="(name, id) in companyMap"
+          :key="id"
+          :label="name"
+          :value="id"
+        />
+      </el-select>
       <el-input v-model="keyword" clearable placeholder="搜索姓名或手机号" style="width: 220px" />
       <el-select v-model="statusFilter" clearable placeholder="账号状态" style="width: 140px">
         <el-option label="正常" value="active" />
@@ -23,25 +34,36 @@
         <el-option label="已绑定" value="bound" />
         <el-option label="未绑定" value="unbound" />
       </el-select>
-      <el-button @click="keyword = ''; statusFilter = ''; bindingFilter = ''">重置</el-button>
+      <el-button type="primary" plain @click="fetchList">查询</el-button>
+      <el-button @click="keyword = ''; companyFilter = ''; statusFilter = ''; bindingFilter = ''">重置</el-button>
     </div>
 
     <div class="admin-toolbar">
-      <span>共 {{ total }} 名员工 · 批量导入前请先下载模板</span>
-      <span class="text-muted">密码和绑定状态只用于后台管理</span>
+      <span>共 {{ filteredStaffList.length }} 名员工 · 批量操作需先明确选择范围</span>
+      <div class="toolbar-actions">
+        <el-button plain size="small" disabled>批量导出</el-button>
+      </div>
     </div>
 
     <div class="card-wrapper">
       <el-table :data="filteredStaffList" v-loading="loading" stripe>
-        <el-table-column type="index" label="序号" width="60" align="center" />
-
-        <el-table-column label="头像" width="70" align="center">
+        <el-table-column label="员工" min-width="240">
           <template #default="{ row }">
-            <el-avatar :size="36" :src="row.avatar" />
+            <div class="object-cell">
+              <span class="object-avatar">
+                <img v-if="row.avatar" :src="row.avatar" alt="员工头像">
+                <span v-else>{{ row.name?.charAt(0) || '-' }}</span>
+              </span>
+              <div class="object-main">
+                <div class="object-title">{{ row.name || '-' }}</div>
+                <div class="object-sub">
+                  {{ (row.enabledCompanies || []).map((item) => getCompanyName(item.companyId)).join(' / ') || '暂无开通公司' }}
+                  <span v-if="row.isAdmin"> · 管理员</span>
+                </div>
+              </div>
+            </div>
           </template>
         </el-table-column>
-
-        <el-table-column prop="name" label="姓名" width="100" />
 
         <el-table-column label="手机号" width="220">
           <template #default="{ row }">
@@ -49,59 +71,20 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="已绑微信数" width="100" align="center">
+        <el-table-column label="职位" min-width="210">
           <template #default="{ row }">
-            {{ row.boundWechatCount || 0 }}
+            <div class="position-stack">
+              <span v-if="row.huayueTitle">华悦：{{ row.huayueTitle }}</span>
+              <span v-if="row.huabaoTitle">华宝：{{ row.huabaoTitle }}</span>
+              <span v-if="row.zhuochenTitle">卓辰：{{ row.zhuochenTitle }}</span>
+              <span v-if="!row.huayueTitle && !row.huabaoTitle && !row.zhuochenTitle" class="text-muted">-</span>
+            </div>
           </template>
         </el-table-column>
 
-        <el-table-column label="是否管理员" width="100" align="center">
+        <el-table-column label="绑定微信数" width="110" align="center">
           <template #default="{ row }">
-            {{ row.isAdmin ? '是' : '否' }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="华悦职位" min-width="120">
-          <template #default="{ row }">
-            {{ row.huayueTitle || '-' }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="华宝职位" min-width="120">
-          <template #default="{ row }">
-            {{ row.huabaoTitle || '-' }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="卓辰职位" min-width="120">
-          <template #default="{ row }">
-            {{ row.zhuochenTitle || '-' }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="已开通公司" min-width="200">
-          <template #default="{ row }">
-            <el-tag
-              v-for="item in row.enabledCompanies"
-              :key="item.companyId"
-              size="small"
-              class="company-tag"
-            >
-              {{ getCompanyName(item.companyId) }}
-            </el-tag>
-            <span v-if="!row.enabledCompanies?.length" class="text-muted">暂无</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="绑定状态" width="100" align="center">
-          <template #default="{ row }">
-            <el-tag
-              :type="row.isBound ? 'success' : 'info'"
-              size="small"
-              effect="plain"
-            >
-              {{ row.isBound ? '已绑定' : '未绑定' }}
-            </el-tag>
+            <span class="num-cell">{{ row.boundWechatCount || 0 }}</span>
           </template>
         </el-table-column>
 
@@ -125,6 +108,18 @@
               effect="plain"
             >
               {{ row.status === 'active' ? '正常' : '已停用' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="绑定状态" width="100" align="center">
+          <template #default="{ row }">
+            <el-tag
+              :type="row.isBound ? 'success' : 'info'"
+              size="small"
+              effect="plain"
+            >
+              {{ row.isBound ? '已绑定' : '未绑定' }}
             </el-tag>
           </template>
         </el-table-column>
@@ -318,6 +313,8 @@ const editingStaff = ref(null)
 const page = ref(1)
 const pageSize = ref(20)
 const total = ref(0)
+const companyMap = COMPANY_MAP
+const companyFilter = ref('')
 const keyword = ref('')
 const statusFilter = ref('')
 const bindingFilter = ref('')
@@ -345,18 +342,21 @@ const filteredStaffList = computed(() => {
   const text = keyword.value.trim()
   return staffList.value.filter((item) => {
     const keywordMatched = !text || [item.name, item.phone, item.secondPhone].some((value) => String(value || '').includes(text))
+    const companyMatched =
+      !companyFilter.value ||
+      (item.enabledCompanies || []).some((company) => company.companyId === companyFilter.value)
     const statusMatched = !statusFilter.value || item.status === statusFilter.value
     const bindingMatched =
       !bindingFilter.value ||
       (bindingFilter.value === 'bound' && item.isBound) ||
       (bindingFilter.value === 'unbound' && !item.isBound)
-    return keywordMatched && statusMatched && bindingMatched
+    return keywordMatched && companyMatched && statusMatched && bindingMatched
   })
 })
 
 let filterFetchTimer = null
 let staffListRequestSeq = 0
-watch([keyword, statusFilter, bindingFilter], () => {
+watch([keyword, companyFilter, statusFilter, bindingFilter], () => {
   page.value = 1
   staffListRequestSeq += 1
   if (filterFetchTimer) {
@@ -816,6 +816,15 @@ onMounted(() => {
   .company-tag {
     margin-right: 6px;
     margin-bottom: 4px;
+  }
+
+  .position-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    color: $text-secondary;
+    font-size: 13px;
+    line-height: 18px;
   }
 
   .text-muted {

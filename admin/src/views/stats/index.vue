@@ -2,7 +2,10 @@
   <div class="stats-page">
     <!-- 顶部筛选 -->
     <div class="page-header">
-      <span class="page-title">数据分析</span>
+      <div class="title-block">
+        <h1 class="page-title">数据分析</h1>
+        <p class="page-desc">先给结论和口径，再给趋势、排行和明细。</p>
+      </div>
     </div>
 
     <div class="filter-bar">
@@ -50,6 +53,12 @@
 
     <!-- ECharts 折线图 -->
     <div class="card-wrapper chart-section">
+      <div class="section-header">
+        <div>
+          <span class="section-title">趋势图</span>
+          <p class="section-tip">不能只给图表，必须说明来源和更新时间。</p>
+        </div>
+      </div>
       <div ref="chartRef" class="chart-container" />
     </div>
 
@@ -111,7 +120,7 @@ import { mapTempFileURLs } from '@/cloud/file'
 import CompanyTabs from '@/components/CompanyTabs.vue'
 
 const companyId = ref('')
-const timeRange = ref('week')
+const timeRange = ref('month')
 const loading = ref(false)
 const lastUpdatedAt = ref('')
 

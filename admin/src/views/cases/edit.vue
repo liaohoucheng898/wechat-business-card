@@ -1,161 +1,160 @@
 <template>
   <div class="case-edit-page">
-    <!-- 面包屑 -->
     <div class="page-header">
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/cases' }">案例管理</el-breadcrumb-item>
-        <el-breadcrumb-item>{{ isEdit ? '编辑案例' : '新增案例' }}</el-breadcrumb-item>
-      </el-breadcrumb>
-      <span class="text-muted">保存前请先预览小程序展示效果</span>
+      <div class="title-block">
+        <h1 class="page-title">{{ isEdit ? '编辑案例' : '新增案例' }}</h1>
+        <p class="page-desc">多公司、多栏目、封面、富文本详情统一维护，保存前可预览。</p>
+      </div>
+      <div class="page-actions">
+        <el-button @click="handleCancel">返回列表</el-button>
+        <el-button @click="handlePreview">预览</el-button>
+        <el-button type="primary" :loading="saving" @click="handleSave">保存案例</el-button>
+      </div>
     </div>
 
     <div class="case-edit-layout">
-      <div class="case-edit-main">
-        <!-- 表单 -->
-        <div class="card-wrapper">
+      <section class="admin-panel case-edit-main">
+        <div class="panel-header">
+          <div>
+            <h2>基础信息</h2>
+            <p class="panel-desc">必填字段保持可见，高级字段不打断主流程。</p>
+          </div>
+          <el-tag effect="plain" type="warning">草稿未保存</el-tag>
+        </div>
+
           <el-form
             ref="formRef"
             :model="form"
             :rules="rules"
-            label-width="100px"
-            label-position="right"
+            label-position="top"
             v-loading="pageLoading"
+            class="case-form"
           >
-            <!-- 所属公司 -->
-            <el-form-item label="所属公司" prop="companyIds">
-              <el-checkbox-group v-model="form.companyIds">
-                <el-checkbox
-                  v-for="(name, id) in companyMap"
-                  :key="id"
-                  :label="id"
-                >
-                  {{ name }}
-                </el-checkbox>
-              </el-checkbox-group>
-            </el-form-item>
+            <div class="case-form-grid">
+              <el-form-item label="所属公司" prop="companyIds">
+                <el-checkbox-group v-model="form.companyIds">
+                  <el-checkbox
+                    v-for="(name, id) in companyMap"
+                    :key="id"
+                    :label="id"
+                  >
+                    {{ name }}
+                  </el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
 
-            <!-- 企业全称 -->
-            <el-form-item label="企业全称" prop="title">
-              <el-input
-                v-model="form.title"
-                placeholder="请输入企业全称"
-                maxlength="50"
-                show-word-limit
-              />
-            </el-form-item>
+              <el-form-item label="企业全称" prop="title">
+                <el-input
+                  v-model="form.title"
+                  placeholder="请输入企业全称"
+                  maxlength="50"
+                  show-word-limit
+                />
+              </el-form-item>
 
-            <!-- 封面图 -->
-            <el-form-item label="封面图" prop="cover">
-              <ImageUpload
-                v-model="form.cover"
-                ratio="16:9"
-                :width="240"
-                :max-size="3"
-                fit-crop-box-to-image
-                :crop-output-width="608"
-                :crop-output-height="342"
-                :thumb-width="160"
-                :thumb-height="160"
-                :thumb-quality="0.75"
-                @uploaded="handleCoverUploaded"
-                placeholder="建议上传分辨率608*342以上的16:9图片"
-              />
-            </el-form-item>
+              <el-form-item label="排序值">
+                <el-input-number
+                  v-model="form.sort"
+                  :min="0"
+                  :max="9999"
+                />
+                <span class="form-tip">数字越小越靠前</span>
+              </el-form-item>
 
-            <!-- 简要描述 -->
-            <el-form-item label="简要描述">
-              <el-input
-                v-model="form.description"
-                type="textarea"
-                :rows="3"
-                placeholder="选填，简要描述案例内容"
-                maxlength="200"
-                show-word-limit
-              />
-            </el-form-item>
+              <el-form-item label="是否可见">
+                <el-switch v-model="form.visible" />
+              </el-form-item>
 
-            <!-- 排序值 -->
-            <el-form-item label="排序值">
-              <el-input-number
-                v-model="form.sort"
-                :min="0"
-                :max="9999"
-              />
-              <span class="form-tip">数字越小越靠前</span>
-            </el-form-item>
-
-            <!-- 所属栏目 -->
-            <el-form-item label="所属栏目" prop="categoryIds">
-              <el-checkbox-group v-model="form.categoryIds" class="category-group-list">
-                <div
-                  v-for="group in categoryGroups"
-                  :key="group.companyId"
-                  class="category-company-block"
-                >
-                  <div class="category-company-title">{{ group.companyName }}</div>
-                  <div v-if="group.categories.length" class="category-checkboxes">
-                    <el-checkbox
-                      v-for="cat in group.categories"
-                      :key="cat.categoryId"
-                      :label="cat.categoryId"
-                    >
-                      {{ cat.name }}
-                    </el-checkbox>
+              <el-form-item label="所属栏目" prop="categoryIds" class="form-row-full">
+                <el-checkbox-group v-model="form.categoryIds" class="category-group-list">
+                  <div
+                    v-for="group in categoryGroups"
+                    :key="group.companyId"
+                    class="category-company-block"
+                  >
+                    <div class="category-company-title">{{ group.companyName }}</div>
+                    <div v-if="group.categories.length" class="category-checkboxes">
+                      <el-checkbox
+                        v-for="cat in group.categories"
+                        :key="cat.categoryId"
+                        :label="cat.categoryId"
+                      >
+                        {{ cat.name }}
+                      </el-checkbox>
+                    </div>
+                    <div v-else class="category-empty">
+                      暂无栏目，请先在案例列表页添加栏目
+                    </div>
                   </div>
-                  <div v-else class="category-empty">
-                    暂无栏目，请先在案例列表页添加栏目
-                  </div>
+                </el-checkbox-group>
+                <div v-if="!categoryGroups.length && form.companyIds.length" class="form-tip">
+                  暂无栏目，请先在案例列表页添加栏目
                 </div>
-              </el-checkbox-group>
-              <div v-if="!categoryGroups.length && form.companyIds.length" class="form-tip">
-                暂无栏目，请先在案例列表页添加栏目
-              </div>
-              <div v-if="!form.companyIds.length" class="form-tip">
-                请先选择所属公司
-              </div>
-            </el-form-item>
+                <div v-if="!form.companyIds.length" class="form-tip">
+                  请先选择所属公司
+                </div>
+              </el-form-item>
 
-            <!-- 是否可见 -->
-            <el-form-item label="是否可见">
-              <el-switch v-model="form.visible" />
-            </el-form-item>
+              <el-form-item label="简要描述" class="form-row-full">
+                <el-input
+                  v-model="form.description"
+                  type="textarea"
+                  :rows="3"
+                  placeholder="选填，简要描述案例内容"
+                  maxlength="200"
+                  show-word-limit
+                />
+              </el-form-item>
 
-            <!-- 案例详情 -->
-            <el-form-item label="案例详情" prop="content">
-              <TinyEditor v-model="form.content" :height="400" />
-            </el-form-item>
-
-            <!-- 底部操作 -->
-            <el-form-item>
-              <el-button @click="handlePreview">
-                预览
-              </el-button>
-              <el-button type="primary" :loading="saving" @click="handleSave">
-                保存
-              </el-button>
-              <el-button @click="handleCancel">取消</el-button>
-            </el-form-item>
+              <el-form-item label="案例详情" prop="content" class="form-row-full">
+                <TinyEditor v-model="form.content" :height="400" />
+              </el-form-item>
+            </div>
           </el-form>
-        </div>
-      </div>
+      </section>
 
-      <aside class="case-edit-preview">
-        <div class="preview-cover-card">
-          <img v-if="previewCoverUrl" :src="previewCoverUrl" alt="案例封面预览">
-          <div v-else class="preview-cover-placeholder">暂无封面图</div>
-        </div>
-        <h3>{{ form.title || '未填写企业全称' }}</h3>
-        <p>{{ form.description || '暂无简要描述' }}</p>
-        <div class="preview-meta">
-          <el-tag
-            v-for="name in previewCategoryNames"
-            :key="name"
-            effect="plain"
-          >
-            {{ name }}
-          </el-tag>
-          <span v-if="!previewCategoryNames.length" class="preview-meta-empty">暂无栏目</span>
-        </div>
+      <aside class="case-edit-side">
+        <section class="admin-panel preview-card">
+          <div class="preview-cover-card">
+            <img v-if="previewCoverUrl" :src="previewCoverUrl" alt="案例封面预览">
+            <div v-else class="preview-cover-placeholder">暂无封面图</div>
+          </div>
+          <h3>{{ form.title || '未填写企业全称' }}</h3>
+          <p>{{ form.description || '移动端案例顶部保持 16:9 完整显示，非 16:9 图片允许留白不裁切。' }}</p>
+          <div class="preview-meta">
+            <el-tag
+              v-for="name in previewCategoryNames"
+              :key="name"
+              effect="plain"
+            >
+              {{ name }}
+            </el-tag>
+            <span v-if="!previewCategoryNames.length" class="preview-meta-empty">暂无栏目</span>
+          </div>
+        </section>
+
+        <section class="admin-panel asset-panel">
+          <div class="panel-header">
+            <div>
+              <h2>展示素材</h2>
+              <p class="panel-desc">保留原有封面字段，避免影响小程序展示。</p>
+            </div>
+          </div>
+          <ImageUpload
+            v-model="form.cover"
+            ratio="16:9"
+            :width="240"
+            :max-size="3"
+            fit-crop-box-to-image
+            :crop-output-width="608"
+            :crop-output-height="342"
+            :thumb-width="160"
+            :thumb-height="160"
+            :thumb-quality="0.75"
+            @uploaded="handleCoverUploaded"
+            placeholder="建议上传分辨率608*342以上的16:9图片"
+          />
+        </section>
       </aside>
     </div>
 
@@ -588,17 +587,25 @@ onMounted(() => {
     min-width: 0;
   }
 
-  .card-wrapper {
-    width: 100%;
+  .case-form-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px;
+    gap: 4px 16px;
   }
 
-  .case-edit-preview {
+  .form-row-full {
+    grid-column: 1 / -1;
+  }
+
+  .case-edit-side {
     position: sticky;
     top: 16px;
-    border: 1px solid $border-color;
-    border-radius: $radius-card;
-    background: $card-bg;
-    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .preview-card {
 
     h3 {
       margin: 14px 0 6px;
@@ -659,7 +666,7 @@ onMounted(() => {
   .category-company-block {
     padding: 12px 14px;
     border: 1px solid $border-color;
-    border-radius: 10px;
+    border-radius: $radius-card;
     background: #fafbfc;
   }
 
