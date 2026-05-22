@@ -183,7 +183,7 @@ async function fetchStats() {
     if (companyId.value) {
       params.companyId = companyId.value
     }
-    const data = await callFunction('adminGetStats', params)
+    const data = await callFunction('adminGetStats', params, { loading: false })
 
     // 总览
     overview.value = normalizeOverview(data)

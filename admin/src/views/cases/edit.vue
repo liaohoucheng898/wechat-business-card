@@ -437,7 +437,7 @@ watch(
     try {
       // 按公司分组保留栏目来源，避免同名栏目混在一起看不清。
       const results = await Promise.all(
-        ids.map((id) => adminGetCategoryList(id).catch(() => []))
+        ids.map((id) => adminGetCategoryList(id, { loading: false }).catch(() => []))
       )
       const groups = ids.map((companyId, index) => {
         const data = results[index]
@@ -492,7 +492,7 @@ watch(
 async function loadCaseData() {
   pageLoading.value = true
   try {
-    const data = await callFunction('adminGetCase', { caseId: caseId.value })
+    const data = await callFunction('adminGetCase', { caseId: caseId.value }, { loading: false })
     form.companyIds = data.companyIds || []
     form.title = data.title || ''
     form.cover = data.cover || ''
@@ -554,9 +554,9 @@ async function handleSave() {
         caseId: caseId.value,
         fields,
         pageLoadedAt: pageLoadedAt.value
-      })
+      }, { loading: false })
     } else {
-      await callFunction('adminCreateCase', fields)
+      await callFunction('adminCreateCase', fields, { loading: false })
     }
     ElMessage.success(isEdit.value ? '保存成功' : '创建成功')
     router.push('/cases')

@@ -119,7 +119,7 @@ async function handlePasswordLogin() {
 
   loginLoading.value = true
   try {
-    const data = await adminPasswordLogin(passwordForm.phone, passwordForm.password)
+    const data = await adminPasswordLogin(passwordForm.phone, passwordForm.password, { loading: false })
     await finishLogin(data)
   } catch {
     // api.js 已统一处理错误

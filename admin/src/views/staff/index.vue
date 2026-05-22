@@ -554,7 +554,7 @@ async function importStaffInBatches(rows = []) {
   }
 
   for (let index = 0; index < batches.length; index += 1) {
-    const result = await adminImportStaff(batches[index])
+    const result = await adminImportStaff(batches[index], { loading: false })
     const failures = Array.isArray(result.failures) ? result.failures : []
     summary.successCount += Number(result.successCount || 0)
     summary.failCount += Number(result.failCount || failures.length || 0)
@@ -657,7 +657,7 @@ async function fetchList() {
       keyword: keyword.value.trim(),
       statusFilter: statusFilter.value,
       bindingFilter: bindingFilter.value
-    })
+    }, { loading: false })
     if (requestSeq !== staffListRequestSeq) return
     staffList.value = data.list || []
     total.value = data.total || 0

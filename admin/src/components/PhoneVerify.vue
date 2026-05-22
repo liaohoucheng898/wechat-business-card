@@ -106,7 +106,7 @@ async function handleSendCode() {
   if (!isPhoneValid.value) return
   sendingCode.value = true
   try {
-    await sendSmsCode(form.phone, 'login')
+    await sendSmsCode(form.phone, 'login', { loading: false })
     ElMessage.success('验证码已发送')
     startCountdown()
   } catch {

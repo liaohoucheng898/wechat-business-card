@@ -123,7 +123,7 @@ async function handleSubmit() {
 
   submitting.value = true
   try {
-    await changePassword(form.oldPassword, form.newPassword)
+    await changePassword(form.oldPassword, form.newPassword, { loading: false })
     userStore.updateAdminInfo({
       mustChangePassword: false,
       passwordStatus: 'active'

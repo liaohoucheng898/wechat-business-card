@@ -368,9 +368,9 @@ async function handleSave() {
   try {
     let result
     if (isEdit.value) {
-      result = await adminUpdateStaff(props.staffData.staffId, payload, props.staffData.pageLoadedAt)
+      result = await adminUpdateStaff(props.staffData.staffId, payload, props.staffData.pageLoadedAt, { loading: false })
     } else {
-      result = await adminCreateStaff(payload)
+      result = await adminCreateStaff(payload, { loading: false })
     }
 
     ElMessage.success(isEdit.value ? '保存成功' : '创建成功')

@@ -151,7 +151,7 @@ const locationText = computed(() => {
 async function fetchData() {
   loading.value = true
   try {
-    const data = await adminGetCompany(companyId)
+    const data = await adminGetCompany(companyId, { loading: false })
     form.name = data.name || ''
     form.logo = data.logo || ''
     form.intro = data.intro || ''
@@ -217,7 +217,7 @@ async function handleSave() {
       phone: form.phone,
       website: form.website,
       ...buildLocationFields()
-    }, pageLoadedAt.value)
+    }, pageLoadedAt.value, { loading: false })
 
     ElMessage.success('保存成功')
     router.push('/company')

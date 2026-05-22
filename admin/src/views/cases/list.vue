@@ -488,7 +488,7 @@ async function fetchCases() {
     if (filterCompanyId.value) {
       params.companyId = filterCompanyId.value
     }
-    const data = await adminGetCaseList(params)
+    const data = await adminGetCaseList(params, { loading: false })
     caseList.value = await mapTempFileURLs(data.list || [], 'cover')
   } catch {
     // api.js 已统一处理错误
@@ -520,7 +520,7 @@ async function handlePreview(row) {
   }
 
   try {
-    const data = await adminGetCase(row.caseId)
+    const data = await adminGetCase(row.caseId, { loading: false })
     previewData.value = {
       title: data.title || row.title || '',
       description: data.description || row.description || '',
@@ -563,7 +563,7 @@ async function handleDelete(row) {
 async function fetchCategories() {
   catLoading.value = true
   try {
-    const data = await adminGetCategoryList(catActiveTab.value)
+    const data = await adminGetCategoryList(catActiveTab.value, { loading: false })
     categoryList.value = data.list || []
   } catch {
     categoryList.value = []
@@ -596,7 +596,7 @@ async function handleAddCategory() {
       companyId: catActiveTab.value,
       name: newCategoryName.value.trim(),
       sort: newCategorySort.value
-    })
+    }, { loading: false })
     ElMessage.success('添加成功')
     newCategoryName.value = ''
     newCategorySort.value = 0
@@ -621,7 +621,7 @@ async function handleUpdateCategory(row) {
       categoryId: row.categoryId,
       name: editingCategoryName.value.trim(),
       sort: editingCategorySort.value
-    })
+    }, { loading: false })
     ElMessage.success('保存成功')
     handleCancelEditCategory()
     fetchCategories()
