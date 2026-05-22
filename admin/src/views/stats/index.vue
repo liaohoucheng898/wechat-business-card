@@ -2,7 +2,7 @@
   <div class="stats-page">
     <!-- 顶部筛选 -->
     <div class="page-header">
-      <span class="page-title">企业数据统计</span>
+      <span class="page-title">数据分析</span>
     </div>
 
     <div class="filter-bar">
@@ -15,6 +15,15 @@
         </el-radio-group>
       </div>
     </div>
+
+    <el-alert class="trust-alert" type="info" :closable="false" show-icon>
+      <template #title>
+        <div class="trust-alert-content">
+          <span>统计口径：只统计外部访客打开名片产生的 card_view 日志；已登录员工访问不计入。数据更新时间以当前页面刷新完成时间为准。</span>
+          <span v-if="lastUpdatedAt" class="last-updated">更新时间：{{ lastUpdatedAt }}</span>
+        </div>
+      </template>
+    </el-alert>
 
     <!-- 总览卡片 -->
     <div class="overview-cards">
@@ -32,6 +41,11 @@
         <div class="stat-label">累计浏览量</div>
         <div class="stat-value">{{ formatNumber(overview.totalViews) }}</div>
       </div>
+      <div class="stat-card">
+        <div class="stat-label">高活跃员工</div>
+        <div class="stat-value">{{ formatNumber(activeRankCount) }}</div>
+        <div class="stat-desc">近30天浏览量 ≥ 500 的启用员工</div>
+      </div>
     </div>
 
     <!-- ECharts 折线图 -->
@@ -48,10 +62,7 @@
       <el-table :data="rankList" v-loading="loading" stripe>
         <el-table-column label="排名" width="70" align="center">
           <template #default="{ $index }">
-            <span v-if="$index === 0" class="rank-medal">🥇</span>
-            <span v-else-if="$index === 1" class="rank-medal">🥈</span>
-            <span v-else-if="$index === 2" class="rank-medal">🥉</span>
-            <span v-else class="rank-num">{{ $index + 1 }}</span>
+            <span class="rank-num">{{ $index + 1 }}</span>
           </template>
         </el-table-column>
 
@@ -93,7 +104,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import * as echarts from 'echarts'
 import { callFunction } from '@/cloud/api'
 import { mapTempFileURLs } from '@/cloud/file'
@@ -102,6 +113,7 @@ import CompanyTabs from '@/components/CompanyTabs.vue'
 const companyId = ref('')
 const timeRange = ref('week')
 const loading = ref(false)
+const lastUpdatedAt = ref('')
 
 const overview = ref({
   periodViews: 0,
@@ -111,6 +123,7 @@ const overview = ref({
 
 const chartData = ref({ dates: [], values: [] })
 const rankList = ref([])
+const activeRankCount = computed(() => rankList.value.filter((item) => Number(item.monthViews || 0) >= 500).length)
 
 const chartRef = ref(null)
 let chartInstance = null
@@ -118,6 +131,11 @@ let chartInstance = null
 function formatNumber(n) {
   if (n == null) return '0'
   return Number(n).toLocaleString()
+}
+
+function formatDateTime(date) {
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
 }
 
 async function fetchStats() {
@@ -146,6 +164,7 @@ async function fetchStats() {
     const list = [...(data.staffRank || [])]
     list.sort((a, b) => (b.monthViews || 0) - (a.monthViews || 0))
     rankList.value = await mapTempFileURLs(list, 'avatar')
+    lastUpdatedAt.value = formatDateTime(new Date())
 
     await nextTick()
     renderChart()
@@ -247,20 +266,43 @@ onBeforeUnmount(() => {
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .trust-alert {
+    margin-bottom: 16px;
+  }
+
+  .trust-alert-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    line-height: 20px;
+  }
+
+  .last-updated {
+    color: $text-auxiliary;
+    font-weight: 400;
+    white-space: nowrap;
   }
 
   // ---- 总览卡片 ----
   .overview-cards {
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
     margin-bottom: 20px;
   }
 
   .stat-card {
     flex: 1;
+    min-width: 220px;
     background: $card-bg;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid $border-color;
+    border-radius: $radius-card;
+    box-shadow: $shadow-card;
     padding: 20px 24px;
 
     .stat-label {
@@ -291,6 +333,12 @@ onBeforeUnmount(() => {
         color: $color-error;
         font-weight: 600;
       }
+    }
+
+    .stat-desc {
+      margin-top: 6px;
+      font-size: 12px;
+      color: $text-auxiliary;
     }
   }
 
@@ -324,12 +372,8 @@ onBeforeUnmount(() => {
       color: $text-auxiliary;
     }
 
-    .rank-medal {
-      font-size: 18px;
-    }
-
     .rank-num {
-      font-family: 'Inter', '思源黑体', 'Source Han Sans SC', 'Source Han Sans CN', 'Source Han Sans', sans-serif;
+      font-family: $font-family-number;
       font-weight: 600;
       color: $text-secondary;
     }
