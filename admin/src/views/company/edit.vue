@@ -29,7 +29,6 @@
           <div>
             <h2>{{ form.name || '公司资料' }}</h2>
           </div>
-          <el-tag effect="plain" type="success">资料完整</el-tag>
         </div>
         <div class="form-grid company-main-grid">
           <el-form-item label="公司名称" prop="name">

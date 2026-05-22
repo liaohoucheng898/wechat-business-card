@@ -25,7 +25,6 @@
             <div>
               <h2>基础信息</h2>
             </div>
-            <el-tag effect="plain" type="warning">草稿未保存</el-tag>
           </div>
 
           <div class="case-form-grid">

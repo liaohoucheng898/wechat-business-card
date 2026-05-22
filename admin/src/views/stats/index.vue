@@ -21,7 +21,7 @@
     <el-alert class="trust-alert" type="info" :closable="false" show-icon>
       <template #title>
         <div class="trust-alert-content">
-          <span>统计口径：只统计外部访客打开名片产生的 card_view 日志；已登录员工访问不计入。数据更新时间以当前页面刷新完成时间为准。</span>
+          <span>统计口径：只统计外部访客打开名片产生的访问记录；已登录员工访问不计入。数据更新时间以当前页面刷新完成时间为准。</span>
           <span v-if="lastUpdatedAt" class="last-updated">更新时间：{{ lastUpdatedAt }}</span>
         </div>
       </template>

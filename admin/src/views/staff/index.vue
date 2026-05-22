@@ -39,9 +39,6 @@
 
     <div class="admin-toolbar">
       <span>共 {{ filteredStaffList.length }} 名员工</span>
-      <div class="toolbar-actions">
-        <el-button plain size="small" disabled>批量导出</el-button>
-      </div>
     </div>
 
     <div class="card-wrapper">

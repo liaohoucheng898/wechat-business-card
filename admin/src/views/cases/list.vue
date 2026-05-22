@@ -31,10 +31,6 @@
 
     <div class="admin-toolbar">
       <span>共 {{ filteredCaseList.length }} 条案例</span>
-      <div class="toolbar-actions">
-        <el-button plain size="small" disabled>列设置</el-button>
-        <el-button plain size="small" disabled>导出</el-button>
-      </div>
     </div>
 
     <div class="card-wrapper">
@@ -552,7 +548,7 @@ async function handleToggleVisible(row, val) {
 async function handleDelete(row) {
   try {
     await ElMessageBox.confirm(
-      `确认删除案例「${row.title}」吗？删除后该案例不会在小程序展示，后台不可直接恢复。本操作会记录操作人和时间。`,
+      `确认删除案例「${row.title}」吗？删除后该案例不会在小程序展示，后台不可直接恢复。`,
       '删除案例确认',
       { confirmButtonText: '确认删除案例', cancelButtonText: '取消', type: 'warning' }
     )

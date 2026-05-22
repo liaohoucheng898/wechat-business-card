@@ -178,9 +178,8 @@
       <section class="admin-panel operation-panel">
         <div class="panel-header">
           <div>
-            <h2 class="panel-title">最近操作</h2>
+            <h2 class="panel-title">数据状态</h2>
           </div>
-          <el-button type="primary" link disabled>操作日志</el-button>
         </div>
 
         <div class="operation-list">
@@ -191,6 +190,11 @@
           <article class="operation-item">
             <span class="operation-item__label">当前筛选</span>
             <strong>{{ currentCompanyName }} · {{ currentTimeRangeLabel }}</strong>
+          </article>
+          <article class="operation-item">
+            <span class="operation-item__label">统计范围</span>
+            <strong>外部访客访问</strong>
+            <p>已排除内部员工访问。</p>
           </article>
           <article class="operation-item">
             <span class="operation-item__label">内容状态</span>
@@ -264,13 +268,6 @@ const riskItems = computed(() => [
     action: '查看员工',
     route: '/staff'
   },
-  {
-    title: '统计口径已排除内部员工访问',
-    desc: `当前数据更新时间：${lastUpdatedAt.value || '-'}`,
-    type: 'info',
-    action: '查看统计',
-    route: '/stats'
-  }
 ])
 
 const metricCards = computed(() => [
@@ -280,7 +277,7 @@ const metricCards = computed(() => [
     value: formatNumber(overview.value.periodViews),
     tag: getChangeText(),
     tagType: overview.value.changePercent === null ? 'info' : overview.value.changePercent >= 0 ? 'success' : 'danger',
-    desc: `当前筛选范围内 ${currentTimeRangeLabel.value} 的客户访问量。`,
+    desc: `筛选范围内 ${currentTimeRangeLabel.value} 的客户访问量。`,
     tone: 'primary'
   },
   {
@@ -289,7 +286,7 @@ const metricCards = computed(() => [
     value: formatNumber(activeStaffCount.value),
     tag: `${formatNumber(staffList.value.length)} 人总数`,
     tagType: 'info',
-    desc: '统计未停用员工，用于判断名片承接能力。',
+    desc: '当前可承接客户访问的员工数。',
     tone: 'success'
   },
   {
@@ -298,7 +295,7 @@ const metricCards = computed(() => [
     value: formatNumber(visibleCaseCount.value),
     tag: `${formatNumber(caseList.value.length)} 个总数`,
     tagType: 'info',
-    desc: '统计小程序端可展示的客户案例数量。',
+    desc: '小程序端当前可展示的客户案例数。',
     tone: 'info'
   },
   {
@@ -307,7 +304,7 @@ const metricCards = computed(() => [
     value: formatNumber(riskCount.value),
     tag: riskCount.value ? '需要关注' : '状态正常',
     tagType: riskCount.value ? 'warning' : 'success',
-    desc: '汇总缺少栏目案例和未绑定微信员工。',
+    desc: '缺少栏目案例和未绑定微信员工。',
     tone: riskCount.value ? 'warning' : 'success'
   }
 ])
