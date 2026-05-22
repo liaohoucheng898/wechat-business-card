@@ -3,7 +3,20 @@
     <!-- 侧边栏 -->
     <el-aside :width="sidebarCollapsed ? '64px' : '232px'" class="admin-sidebar">
       <div class="sidebar-logo" @click="router.push('/dashboard')">
-        <img src="https://static-s3.skyworkcdn.com/fe/skywork-site-assets/images/skybot/avatar1-new.png" alt="Logo" class="logo-img" />
+        <span class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" focusable="false">
+            <defs>
+              <linearGradient id="logoGradient" x1="6" y1="4" x2="26" y2="28" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#4C9AFF" />
+                <stop offset="1" stop-color="#1677FF" />
+              </linearGradient>
+            </defs>
+            <rect x="2.5" y="3.5" width="27" height="25" rx="7" fill="url(#logoGradient)" />
+            <rect x="7" y="9" width="18" height="14" rx="3" fill="#FFFFFF" opacity="0.96" />
+            <circle cx="12" cy="16" r="3" fill="#1677FF" opacity="0.9" />
+            <path d="M17 13.5H23M17 17H23M10 21C10.8 19.8 13.2 19.8 14 21" stroke="#1677FF" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+        </span>
         <span v-show="!sidebarCollapsed" class="logo-text">电子名片</span>
       </div>
       <el-menu
@@ -36,10 +49,6 @@
         <div class="header-right">
           <span class="admin-name">{{ userStore.adminName }}</span>
           <el-divider direction="vertical" />
-          <el-button text @click="helpVisible = true">
-            <el-icon><QuestionFilled /></el-icon>
-            帮助
-          </el-button>
           <el-button text type="primary" @click="handleLogout">
             <el-icon><SwitchButton /></el-icon>
             退出
@@ -52,25 +61,16 @@
         <router-view />
       </el-main>
     </el-container>
-
-    <el-dialog v-model="helpVisible" title="帮助与数据口径" width="520px">
-      <div class="help-dialog">
-        如需维护公司资料、客户案例或员工账号，请进入左侧对应菜单。保存失败时，请根据页面提示检查必填项；账号和密码问题请联系主管理员处理。
-      </div>
-      <template #footer>
-        <el-button type="primary" @click="helpVisible = false">知道了</el-button>
-      </template>
-    </el-dialog>
   </el-container>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import {
   DataLine, User, OfficeBuilding, Suitcase, DataAnalysis,
-  Fold, Expand, SwitchButton, QuestionFilled
+  Fold, Expand, SwitchButton
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { useAppStore } from '@/stores/app'
@@ -79,7 +79,6 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const appStore = useAppStore()
-const helpVisible = ref(false)
 
 const menuItems = [
   { index: '/dashboard', label: '运营驾驶舱', icon: DataLine },
@@ -137,11 +136,21 @@ async function handleLogout() {
     cursor: pointer;
     border-bottom: 1px solid $sidebar-border;
 
-    .logo-img {
+    .logo-mark {
       width: 32px;
       height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 8px;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
       flex-shrink: 0;
+
+      svg {
+        width: 32px;
+        height: 32px;
+        display: block;
+      }
     }
 
     .logo-text {
@@ -230,9 +239,4 @@ async function handleLogout() {
   padding: $spacing-lg;
 }
 
-.help-dialog {
-  color: $text-secondary;
-  font-size: 14px;
-  line-height: 24px;
-}
 </style>
