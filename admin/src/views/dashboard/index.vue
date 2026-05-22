@@ -59,11 +59,6 @@
         </div>
         <div class="metric-card__value num-cell">{{ item.value }}</div>
         <p class="metric-card__desc">{{ item.desc }}</p>
-        <div class="metric-card__meta">
-          <span>来源：{{ item.source }}</span>
-          <span>口径：{{ item.scope }}</span>
-          <span>更新：{{ item.updatedAt }}</span>
-        </div>
       </article>
     </section>
 
@@ -293,9 +288,6 @@ const metricCards = computed(() => [
     tag: getChangeText(),
     tagType: overview.value.changePercent === null ? 'info' : overview.value.changePercent >= 0 ? 'success' : 'danger',
     desc: `当前筛选范围内 ${currentTimeRangeLabel.value} 的客户访问量。`,
-    source: 'adminGetStats',
-    scope: `${currentCompanyName.value} / ${currentTimeRangeLabel.value}`,
-    updatedAt: lastUpdatedAt.value || '-',
     tone: 'primary'
   },
   {
@@ -305,9 +297,6 @@ const metricCards = computed(() => [
     tag: `${formatNumber(staffList.value.length)} 人总数`,
     tagType: 'info',
     desc: '统计未停用员工，用于判断名片承接能力。',
-    source: 'adminGetStaffList',
-    scope: '排除 disabled 状态',
-    updatedAt: lastUpdatedAt.value || '-',
     tone: 'success'
   },
   {
@@ -317,9 +306,6 @@ const metricCards = computed(() => [
     tag: `${formatNumber(caseList.value.length)} 个总数`,
     tagType: 'info',
     desc: '统计小程序端可展示的客户案例数量。',
-    source: 'adminGetCaseList',
-    scope: `${currentCompanyName.value} / visible 不为 false`,
-    updatedAt: lastUpdatedAt.value || '-',
     tone: 'info'
   },
   {
@@ -329,9 +315,6 @@ const metricCards = computed(() => [
     tag: riskCount.value ? '需要关注' : '状态正常',
     tagType: riskCount.value ? 'warning' : 'success',
     desc: '汇总缺少栏目案例和未绑定微信员工。',
-    source: '员工与案例接口',
-    scope: '未绑定员工 + 缺栏目案例',
-    updatedAt: lastUpdatedAt.value || '-',
     tone: riskCount.value ? 'warning' : 'success'
   }
 ])
@@ -560,17 +543,6 @@ onMounted(() => {
   color: $text-secondary;
   font-size: 13px;
   line-height: 20px;
-}
-
-.metric-card__meta {
-  display: grid;
-  gap: 2px;
-  margin-top: $spacing-sm;
-  padding-top: $spacing-sm;
-  border-top: 1px solid $border-color;
-  color: $text-auxiliary;
-  font-size: 12px;
-  line-height: 18px;
 }
 
 .dashboard-main-grid {
