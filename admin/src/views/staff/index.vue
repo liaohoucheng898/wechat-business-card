@@ -341,7 +341,18 @@ const importResult = ref({
 })
 const userStore = useUserStore()
 
-const filteredStaffList = computed(() => staffList.value)
+const filteredStaffList = computed(() => {
+  const text = keyword.value.trim()
+  return staffList.value.filter((item) => {
+    const keywordMatched = !text || [item.name, item.phone, item.secondPhone].some((value) => String(value || '').includes(text))
+    const statusMatched = !statusFilter.value || item.status === statusFilter.value
+    const bindingMatched =
+      !bindingFilter.value ||
+      (bindingFilter.value === 'bound' && item.isBound) ||
+      (bindingFilter.value === 'unbound' && !item.isBound)
+    return keywordMatched && statusMatched && bindingMatched
+  })
+})
 
 let filterFetchTimer = null
 let staffListRequestSeq = 0
