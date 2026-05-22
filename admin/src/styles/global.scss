@@ -142,9 +142,6 @@ a {
     color: $text-primary;
   }
 
-  .page-desc {
-    margin-top: $spacing-xs;
-  }
 }
 
 .title-block {
@@ -167,13 +164,6 @@ a {
   line-height: 28px;
   font-weight: 600;
   color: $text-primary;
-}
-
-.page-desc {
-  margin: $spacing-xs 0 0;
-  color: $text-auxiliary;
-  font-size: 13px;
-  line-height: 20px;
 }
 
 .admin-panel,
@@ -203,14 +193,6 @@ a {
     font-weight: 600;
   }
 
-  .panel-sub,
-  .panel-desc,
-  .section-sub {
-    margin: 2px 0 0;
-    color: $text-auxiliary;
-    font-size: 13px;
-    line-height: 20px;
-  }
 }
 
 .admin-toolbar {

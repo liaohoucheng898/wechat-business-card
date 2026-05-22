@@ -3,7 +3,6 @@
     <div class="page-header">
       <div class="title-block">
         <h1 class="page-title">编辑公司</h1>
-        <p class="page-desc">公司简介、业务介绍、地址、电话和定位统一维护。</p>
       </div>
       <div class="page-actions">
         <el-button @click="goBack">
@@ -29,7 +28,6 @@
         <div class="section-header">
           <div>
             <h2>{{ form.name || '公司资料' }}</h2>
-            <p class="section-sub">保存前校验必填、并发版本和地图定位。</p>
           </div>
           <el-tag effect="plain" type="success">资料完整</el-tag>
         </div>
@@ -84,7 +82,6 @@
         <div class="section-header">
           <div>
             <h2>更多资料</h2>
-            <p class="section-sub">保留原有 Logo 和官网字段，不影响主编辑流程。</p>
           </div>
         </div>
         <div class="form-grid support-grid">

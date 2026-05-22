@@ -4,7 +4,6 @@
     <div class="page-header">
       <div class="title-block">
         <h1 class="page-title">数据分析</h1>
-        <p class="page-desc">先给结论和口径，再给趋势、排行和明细。</p>
       </div>
     </div>
 
@@ -54,10 +53,7 @@
     <!-- ECharts 折线图 -->
     <div class="card-wrapper chart-section">
       <div class="section-header">
-        <div>
-          <span class="section-title">趋势图</span>
-          <p class="section-tip">不能只给图表，必须说明来源和更新时间。</p>
-        </div>
+        <span class="section-title">趋势图</span>
       </div>
       <div ref="chartRef" class="chart-container" />
     </div>

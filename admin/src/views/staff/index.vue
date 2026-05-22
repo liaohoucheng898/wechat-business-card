@@ -3,7 +3,6 @@
     <div class="page-header">
       <div class="title-block">
         <h1 class="page-title">人员管理</h1>
-        <p class="page-desc">维护员工账号、公司开通关系、职位、绑定微信和密码状态。</p>
       </div>
       <div class="header-actions">
         <el-button class="header-action-btn" type="primary" plain @click="openImportDialog">
@@ -39,7 +38,7 @@
     </div>
 
     <div class="admin-toolbar">
-      <span>共 {{ filteredStaffList.length }} 名员工 · 批量操作需先明确选择范围</span>
+      <span>共 {{ filteredStaffList.length }} 名员工</span>
       <div class="toolbar-actions">
         <el-button plain size="small" disabled>批量导出</el-button>
       </div>

@@ -3,7 +3,6 @@
     <div class="page-header">
       <div class="title-block">
         <h1 class="page-title">{{ isEdit ? '编辑案例' : '新增案例' }}</h1>
-        <p class="page-desc">多公司、多栏目、封面、富文本详情统一维护，保存前可预览。</p>
       </div>
       <div class="page-actions">
         <el-button @click="handleCancel">返回列表</el-button>
@@ -25,7 +24,6 @@
           <div class="panel-header">
             <div>
               <h2>基础信息</h2>
-              <p class="panel-desc">先确认案例名称、公司归属、栏目归属和展示状态。</p>
             </div>
             <el-tag effect="plain" type="warning">草稿未保存</el-tag>
           </div>
@@ -103,7 +101,6 @@
           <div class="panel-header">
             <div>
               <h2>案例内容</h2>
-              <p class="panel-desc">简要描述用于列表和预览摘要，案例详情用于小程序正文展示。</p>
             </div>
           </div>
 
@@ -131,7 +128,7 @@
             <div v-else class="preview-cover-placeholder">暂无封面图</div>
           </div>
           <h3>{{ form.title || '未填写企业全称' }}</h3>
-          <p>{{ form.description || '移动端案例顶部保持 16:9 完整显示，非 16:9 图片允许留白不裁切。' }}</p>
+          <p>{{ form.description || '暂无简要描述' }}</p>
           <div class="preview-meta">
             <el-tag
               v-for="name in previewCategoryNames"
@@ -148,7 +145,6 @@
           <div class="panel-header">
             <div>
               <h2>案例封面</h2>
-              <p class="panel-desc">保留原有封面字段，避免影响小程序展示。</p>
             </div>
           </div>
           <ImageUpload

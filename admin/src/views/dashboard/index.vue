@@ -3,7 +3,6 @@
     <div class="page-header dashboard-header">
       <div>
         <h1 class="page-title">运营驾驶舱</h1>
-        <p class="page-desc">先看关键结果、异常风险和待处理事项，再进入具体管理页面。</p>
       </div>
 
       <div class="dashboard-filters">
@@ -67,7 +66,6 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">浏览趋势</h2>
-            <p class="panel-desc">按天统计，排除内部员工访问。</p>
           </div>
           <el-tag effect="plain">{{ currentCompanyName }}</el-tag>
         </div>
@@ -96,7 +94,6 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">风险与待处理</h2>
-            <p class="panel-desc">页面内持续展示，不只依赖短暂提示。</p>
           </div>
           <el-button link type="primary" @click="goTo('/cases')">查看全部</el-button>
         </div>
@@ -125,7 +122,6 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">员工表现排行</h2>
-            <p class="panel-desc">按近30天浏览量排序。</p>
           </div>
           <el-button type="primary" link @click="goTo('/stats')">查看统计</el-button>
         </div>
@@ -183,7 +179,6 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">最近操作</h2>
-            <p class="panel-desc">用于追溯，不用于装饰。</p>
           </div>
           <el-button type="primary" link disabled>操作日志</el-button>
         </div>
@@ -192,12 +187,10 @@
           <article class="operation-item">
             <span class="operation-item__label">数据刷新</span>
             <strong>{{ lastUpdatedAt || '-' }}</strong>
-            <p>本页数据来自统计、员工和案例现有接口，未新增后台日志接口。</p>
           </article>
           <article class="operation-item">
             <span class="operation-item__label">当前筛选</span>
             <strong>{{ currentCompanyName }} · {{ currentTimeRangeLabel }}</strong>
-            <p>公司筛选会同步影响案例列表和统计数据，员工总数按现有员工接口计算。</p>
           </article>
           <article class="operation-item">
             <span class="operation-item__label">内容状态</span>
@@ -569,13 +562,6 @@ onMounted(() => {
   font-size: 16px;
   line-height: 24px;
   font-weight: 600;
-}
-
-.panel-desc {
-  margin: $spacing-xs 0 0;
-  color: $text-auxiliary;
-  font-size: 13px;
-  line-height: 20px;
 }
 
 .trend-panel {

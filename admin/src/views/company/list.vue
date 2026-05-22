@@ -3,15 +3,11 @@
     <div class="page-header">
       <div class="title-block">
         <h1 class="page-title">公司管理</h1>
-        <p class="page-desc">从卡片展示改为业务配置表，更适合维护公司资料、展示状态和更新时间。</p>
       </div>
     </div>
 
     <div class="admin-toolbar">
-      <span>固定 3 家公司 · 公司资料会影响小程序展示页</span>
-      <div class="toolbar-actions">
-        <el-button plain size="small" disabled>查看展示口径</el-button>
-      </div>
+      <span>共 {{ companyList.length }} 家公司</span>
     </div>
 
     <div class="card-wrapper">

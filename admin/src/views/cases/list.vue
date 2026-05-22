@@ -3,7 +3,6 @@
     <div class="page-header">
       <div class="title-block">
         <h1 class="page-title">内容中心</h1>
-        <p class="page-desc">管理客户案例、栏目、可见状态和小程序端展示内容。</p>
       </div>
       <div class="page-actions">
         <el-button plain @click="categoryDialogVisible = true">栏目管理</el-button>
@@ -31,7 +30,7 @@
     </div>
 
     <div class="admin-toolbar">
-      <span>已选 0 项 · 共 {{ filteredCaseList.length }} 条 · 返回本页保留筛选和滚动位置</span>
+      <span>共 {{ filteredCaseList.length }} 条案例</span>
       <div class="toolbar-actions">
         <el-button plain size="small" disabled>列设置</el-button>
         <el-button plain size="small" disabled>导出</el-button>
@@ -49,7 +48,7 @@
               </span>
               <div class="object-main">
                 <div class="object-title">{{ row.title || '未填写企业全称' }}</div>
-                <div class="object-sub">{{ row.description || '封面 16:9，详情含富文本图片' }}</div>
+                <div class="object-sub">{{ row.description || '暂无简要描述' }}</div>
               </div>
             </div>
           </template>

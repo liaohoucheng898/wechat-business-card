@@ -55,7 +55,7 @@
 
     <el-dialog v-model="helpVisible" title="帮助与数据口径" width="520px">
       <div class="help-dialog">
-        本后台以运营驾驶舱为首页，关键指标显示来源、口径、更新时间和权限范围。高风险操作会在确认前说明对象、范围、后果和是否可撤回。
+        如需维护公司资料、客户案例或员工账号，请进入左侧对应菜单。保存失败时，请根据页面提示检查必填项；账号和密码问题请联系主管理员处理。
       </div>
       <template #footer>
         <el-button type="primary" @click="helpVisible = false">知道了</el-button>
