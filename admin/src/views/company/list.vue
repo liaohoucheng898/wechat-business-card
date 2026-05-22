@@ -25,28 +25,8 @@
               </el-avatar>
               <div class="company-meta">
                 <span class="company-name">{{ row.name || '-' }}</span>
-                <span class="company-id">{{ getCompanySummary(row) }}</span>
+                <span class="company-sub">{{ row.address || '暂无地址' }}</span>
               </div>
-            </div>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="资料完整度" min-width="220">
-          <template #default="{ row }">
-            <div class="completeness-cell">
-              <el-tag
-                :type="getCompanyCompleteness(row).complete ? 'success' : 'warning'"
-                size="small"
-                effect="plain"
-              >
-                {{ getCompanyCompleteness(row).complete ? '完整' : `缺 ${getCompanyCompleteness(row).missing.length} 项` }}
-              </el-tag>
-              <span
-                v-if="!getCompanyCompleteness(row).complete"
-                class="missing-text"
-              >
-                {{ getCompanyCompleteness(row).missing.join('、') }}
-              </span>
             </div>
           </template>
         </el-table-column>
@@ -65,6 +45,21 @@
                 {{ getLocationText(row) }}
               </span>
             </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="官网" min-width="220">
+          <template #default="{ row }">
+            <a
+              v-if="hasTextValue(row.website)"
+              :href="getWebsiteHref(row.website)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="website-link"
+            >
+              {{ row.website }}
+            </a>
+            <span v-else class="text-muted">-</span>
           </template>
         </el-table-column>
 
@@ -107,15 +102,11 @@ const companyList = ref(
     companyId: id,
     name,
     logo: '',
-    intro: ''
+    address: '',
+    website: ''
   }))
 )
 const loading = ref(false)
-const RICH_TEXT_MEDIA_RE = /<(img|video|iframe)\b/i
-const BR_TAG_RE = /<br\s*\/?>/gi
-const HTML_TAG_RE = /<[^>]*>/g
-const BLANK_ENTITY_RE =
-  /&nbsp;|&amp;nbsp;|&#160;|&#x[aA]0;|&#12288;|&#x3000;|&ensp;|&emsp;|&thinsp;/gi
 
 async function fetchCompanies() {
   loading.value = true
@@ -134,50 +125,17 @@ async function fetchCompanies() {
   }
 }
 
-function hasMeaningfulRichText(value) {
-  const html = String(value || '')
-  if (!html.trim()) return false
-  if (RICH_TEXT_MEDIA_RE.test(html)) return true
-
-  const text = html
-    .replace(BR_TAG_RE, '')
-    .replace(HTML_TAG_RE, '')
-    .replace(BLANK_ENTITY_RE, ' ')
-    .replace(/[\u00a0\u3000\u200B-\u200D\uFEFF]/g, '')
-    .trim()
-
-  return Boolean(text)
-}
-
 function hasTextValue(value) {
   return Boolean(String(value || '').trim())
 }
 
-function hasCompanyLogo(company) {
-  return hasTextValue(company.logoSource || company.logoRaw || company.logo)
-}
-
-function getCompanyCompleteness(company) {
-  const missing = []
-  if (!hasMeaningfulRichText(company.intro)) missing.push('公司简介')
-  if (!hasMeaningfulRichText(company.businessIntro)) missing.push('业务介绍')
-  if (!hasCompanyLogo(company)) missing.push('Logo')
-  if (!hasTextValue(company.address)) missing.push('地址')
-  if (!hasTextValue(company.phone)) missing.push('电话')
-  return {
-    complete: missing.length === 0,
-    missing
-  }
-}
-
-function getCompanySummary(company) {
-  const missing = getCompanyCompleteness(company).missing
-  if (!missing.length) return '公司简介、业务介绍已维护'
-  return `缺少${missing[0]}`
-}
-
 function getFiniteNumber(value) {
-  return typeof value === 'number' && Number.isFinite(value) ? value : null
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  if (typeof value === 'string' && value.trim()) {
+    const parsed = Number(value.trim())
+    return Number.isFinite(parsed) ? parsed : null
+  }
+  return null
 }
 
 function getLocationParts(company) {
@@ -208,6 +166,12 @@ function getLocationText(company) {
     return `${lat.toFixed(6)}, ${lng.toFixed(6)}`
   }
   return '-'
+}
+
+function getWebsiteHref(value) {
+  const website = String(value || '').trim()
+  if (/^https?:\/\//i.test(website)) return website
+  return `https://${website}`
 }
 
 function formatDateTime(value) {
@@ -259,7 +223,6 @@ onMounted(() => {
   }
 
   .company-meta,
-  .completeness-cell,
   .location-cell {
     display: flex;
     flex-direction: column;
@@ -274,8 +237,7 @@ onMounted(() => {
     line-height: 20px;
   }
 
-  .company-id,
-  .missing-text,
+  .company-sub,
   .location-text {
     color: $text-auxiliary;
     font-size: 12px;
@@ -285,9 +247,29 @@ onMounted(() => {
     white-space: nowrap;
   }
 
-  .missing-text,
   .location-text {
     max-width: 180px;
+  }
+
+  .company-sub {
+    max-width: 220px;
+  }
+
+  .website-link {
+    display: inline-block;
+    max-width: 220px;
+    color: $color-primary;
+    font-size: 13px;
+    line-height: 20px;
+    overflow: hidden;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 </style>

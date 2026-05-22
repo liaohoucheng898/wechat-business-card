@@ -17,6 +17,15 @@ const { E0102 } = require('./_shared/error-codes')
 const { verifyAdminByStaffId } = require('./_shared/auth')
 const { COL, getDb } = require('./_shared/db')
 
+function normalizeCoordinate(value) {
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  if (typeof value === 'string' && value.trim()) {
+    const parsed = Number(value.trim())
+    return Number.isFinite(parsed) ? parsed : null
+  }
+  return null
+}
+
 exports.main = async (event) => {
   try {
 
@@ -43,8 +52,8 @@ exports.main = async (event) => {
         address: c.address || '',
         phone: c.phone || '',
         website: c.website || '',
-        latitude: typeof c.latitude === 'number' ? c.latitude : null,
-        longitude: typeof c.longitude === 'number' ? c.longitude : null,
+        latitude: normalizeCoordinate(c.latitude ?? c.location?.lat ?? c.location?.latitude),
+        longitude: normalizeCoordinate(c.longitude ?? c.location?.lng ?? c.location?.longitude),
         locationName: c.locationName || '',
         location: c.location || null,
         updatedAt: c.updatedAt ? c.updatedAt.getTime() : 0,

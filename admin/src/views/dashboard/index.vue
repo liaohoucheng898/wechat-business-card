@@ -460,12 +460,13 @@ onMounted(() => {
 }
 
 .dashboard-header {
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 0;
 }
 
 .dashboard-filters {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: $spacing-sm;
@@ -481,12 +482,17 @@ onMounted(() => {
 
 .metric-grid {
   display: grid;
+  align-items: stretch;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
   gap: $spacing-base;
 }
 
 .metric-card {
   min-width: 0;
+  min-height: 132px;
+  display: flex;
+  flex-direction: column;
   padding: $spacing-base;
   background: $card-bg;
   border: 1px solid $border-color;
@@ -528,7 +534,7 @@ onMounted(() => {
 }
 
 .metric-card__desc {
-  min-height: 40px;
+  flex: 1;
   margin: $spacing-xs 0 0;
   color: $text-secondary;
   font-size: 13px;
@@ -537,11 +543,18 @@ onMounted(() => {
 
 .dashboard-main-grid {
   display: grid;
+  align-items: stretch;
   grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.85fr);
+  grid-auto-rows: minmax(0, auto);
   gap: $spacing-base;
 
   &--bottom {
     grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.75fr);
+  }
+
+  > .admin-panel {
+    min-width: 0;
+    height: 100%;
   }
 }
 
@@ -562,7 +575,16 @@ onMounted(() => {
 }
 
 .trend-panel {
-  min-height: 340px;
+  min-height: 356px;
+}
+
+.risk-panel {
+  min-height: 356px;
+}
+
+.rank-panel,
+.operation-panel {
+  min-height: 360px;
 }
 
 .trend-chart {
