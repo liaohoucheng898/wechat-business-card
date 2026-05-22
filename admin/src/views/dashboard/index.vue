@@ -229,6 +229,9 @@ const caseList = ref([])
 const lastUpdatedAt = ref('')
 const errorMessage = ref('')
 
+const STAFF_PAGE_SIZE = 100
+let dashboardRequestSeq = 0
+
 const timeRangeOptions = [
   { label: '近 7 天', value: 'week' },
   { label: '近 15 天', value: 'half_month' },
@@ -338,6 +341,7 @@ const chartBars = computed(() => chartData.value.dates.map((date, index) => {
 }))
 
 async function fetchDashboard() {
+  const requestSeq = ++dashboardRequestSeq
   loading.value = true
   errorMessage.value = ''
   try {
@@ -346,30 +350,86 @@ async function fetchDashboard() {
 
     const [stats, staff, cases] = await Promise.all([
       adminGetStats(statsParams),
-      adminGetStaffList({ page: 1, pageSize: 200 }),
+      fetchAllStaff(),
       adminGetCaseList(companyId.value ? { companyId: companyId.value } : {})
     ])
 
-    overview.value = {
-      periodViews: stats.overview?.periodViews ?? 0,
-      totalViews: stats.overview?.totalViews ?? 0,
-      changePercent: stats.overview?.changePercent ?? null
-    }
-    chartData.value = {
-      dates: stats.chart?.dates || [],
-      values: stats.chart?.values || []
-    }
-    staffRank.value = [...(stats.staffRank || [])]
+    if (requestSeq !== dashboardRequestSeq) return
+
+    const normalizedStats = normalizeStats(stats)
+
+    overview.value = normalizedStats.overview
+    chartData.value = normalizedStats.chart
+    staffRank.value = normalizedStats.staffRank
       .sort((a, b) => (b.monthViews || 0) - (a.monthViews || 0))
       .slice(0, 5)
-    staffList.value = staff.list || []
+    staffList.value = staff
     caseList.value = cases.list || []
     lastUpdatedAt.value = formatDateTime(new Date())
   } catch (error) {
+    if (requestSeq !== dashboardRequestSeq) return
+
     errorMessage.value = error?.message || '请检查网络、云函数或当前账号权限后重试。'
     ElMessage.error('运营驾驶舱数据加载失败')
   } finally {
-    loading.value = false
+    if (requestSeq === dashboardRequestSeq) {
+      loading.value = false
+    }
+  }
+}
+
+async function fetchAllStaff() {
+  const firstPage = await adminGetStaffList({ page: 1, pageSize: 200 })
+  const firstList = firstPage.list || []
+  const parsedTotal = Number(firstPage.total ?? firstList.length)
+  const total = Number.isFinite(parsedTotal) ? parsedTotal : firstList.length
+  const pageCount = Math.ceil(total / STAFF_PAGE_SIZE)
+
+  if (pageCount <= 1) {
+    return firstList
+  }
+
+  const restPages = await Promise.all(
+    Array.from({ length: pageCount - 1 }, (_, index) => adminGetStaffList({
+      page: index + 2,
+      pageSize: STAFF_PAGE_SIZE
+    }))
+  )
+
+  return [
+    ...firstList,
+    ...restPages.flatMap((page) => page.list || [])
+  ]
+}
+
+function normalizeStats(stats = {}) {
+  const trend = Array.isArray(stats.trend) ? stats.trend : []
+  const ranking = Array.isArray(stats.ranking) ? stats.ranking : []
+  const staffRankSource = Array.isArray(stats.staffRank) && stats.staffRank.length
+    ? stats.staffRank
+    : ranking
+  const chartDates = Array.isArray(stats.chart?.dates) && stats.chart.dates.length
+    ? stats.chart.dates
+    : trend.map((item) => item.date)
+  const chartValues = Array.isArray(stats.chart?.values) && stats.chart.values.length
+    ? stats.chart.values
+    : trend.map((item) => item.count ?? 0)
+
+  return {
+    overview: {
+      periodViews: stats.overview?.periodViews ?? stats.periodTotal ?? 0,
+      totalViews: stats.overview?.totalViews ?? stats.allTimeTotal ?? 0,
+      changePercent: stats.overview?.changePercent ?? null
+    },
+    chart: {
+      dates: chartDates || [],
+      values: chartValues || []
+    },
+    staffRank: staffRankSource.map((item) => ({
+      ...item,
+      monthViews: item.monthViews ?? item.views30d ?? 0,
+      totalViews: item.totalViews ?? item.viewsTotal ?? 0
+    }))
   }
 }
 
