@@ -341,22 +341,13 @@ const importResult = ref({
 })
 const userStore = useUserStore()
 
-const filteredStaffList = computed(() => {
-  const text = keyword.value.trim()
-  return staffList.value.filter((item) => {
-    const keywordMatched = !text || [item.name, item.phone, item.secondPhone].some((value) => String(value || '').includes(text))
-    const statusMatched = !statusFilter.value || item.status === statusFilter.value
-    const bindingMatched =
-      !bindingFilter.value ||
-      (bindingFilter.value === 'bound' && item.isBound) ||
-      (bindingFilter.value === 'unbound' && !item.isBound)
-    return keywordMatched && statusMatched && bindingMatched
-  })
-})
+const filteredStaffList = computed(() => staffList.value)
 
 let filterFetchTimer = null
+let staffListRequestSeq = 0
 watch([keyword, statusFilter, bindingFilter], () => {
   page.value = 1
+  staffListRequestSeq += 1
   if (filterFetchTimer) {
     clearTimeout(filterFetchTimer)
   }
@@ -650,6 +641,7 @@ async function submitImport() {
 }
 
 async function fetchList() {
+  const requestSeq = ++staffListRequestSeq
   loading.value = true
   try {
     const data = await adminGetStaffList({
@@ -659,13 +651,16 @@ async function fetchList() {
       statusFilter: statusFilter.value,
       bindingFilter: bindingFilter.value
     })
+    if (requestSeq !== staffListRequestSeq) return
     staffList.value = data.list || []
     total.value = data.total || 0
     page.value = data.page || page.value
   } catch {
     // api.js 已统一处理错误
   } finally {
-    loading.value = false
+    if (requestSeq === staffListRequestSeq) {
+      loading.value = false
+    }
   }
 }
 
