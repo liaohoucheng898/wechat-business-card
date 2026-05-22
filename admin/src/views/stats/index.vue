@@ -154,6 +154,23 @@ function normalizeRankList(data = {}) {
   }))
 }
 
+function normalizeOverview(data = {}) {
+  return {
+    periodViews: data.overview?.periodViews ?? data.periodTotal ?? 0,
+    totalViews: data.overview?.totalViews ?? data.allTimeTotal ?? 0,
+    changePercent: data.overview?.changePercent ?? null
+  }
+}
+
+function normalizeChartData(data = {}) {
+  const trend = Array.isArray(data.trend) ? data.trend : []
+
+  return {
+    dates: data.chart?.dates ?? trend.map((item) => item.date),
+    values: data.chart?.values ?? trend.map((item) => item.count ?? 0)
+  }
+}
+
 async function fetchStats() {
   loading.value = true
   try {
@@ -164,17 +181,10 @@ async function fetchStats() {
     const data = await callFunction('adminGetStats', params)
 
     // 总览
-    overview.value = {
-      periodViews: data.overview?.periodViews ?? 0,
-      totalViews: data.overview?.totalViews ?? 0,
-      changePercent: data.overview?.changePercent ?? null
-    }
+    overview.value = normalizeOverview(data)
 
     // 折线图
-    chartData.value = {
-      dates: data.chart?.dates || [],
-      values: data.chart?.values || []
-    }
+    chartData.value = normalizeChartData(data)
 
     // 员工排行（按近30天降序）
     const list = normalizeRankList(data)
