@@ -1,94 +1,110 @@
 <template>
   <div class="company-edit-page">
-    <!-- 面包屑 -->
-    <el-breadcrumb separator="/" class="breadcrumb">
-      <el-breadcrumb-item :to="{ path: '/company' }">公司管理</el-breadcrumb-item>
-      <el-breadcrumb-item>编辑公司</el-breadcrumb-item>
-    </el-breadcrumb>
+    <div class="page-header">
+      <div class="title-block">
+        <h1 class="page-title">编辑公司</h1>
+        <p class="page-desc">维护公司资料、展示内容、联系方式和地图定位。</p>
+      </div>
+      <div class="page-actions">
+        <el-button @click="goBack">
+          <el-icon><ArrowLeft /></el-icon>
+          返回
+        </el-button>
+        <el-button type="primary" :loading="saving" @click="handleSave">
+          <el-icon><Check /></el-icon>
+          保存
+        </el-button>
+      </div>
+    </div>
 
-    <div class="card-wrapper">
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-position="top"
-        v-loading="loading"
-        class="edit-form"
-      >
-        <!-- 公司名称 -->
-        <el-form-item label="公司名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入公司名称" maxlength="30" show-word-limit />
-        </el-form-item>
+    <el-form
+      ref="formRef"
+      :model="form"
+      :rules="rules"
+      label-position="top"
+      v-loading="loading"
+      class="edit-form"
+    >
+      <section class="admin-panel form-section">
+        <div class="section-header">
+          <h2>基础资料</h2>
+          <span class="text-muted">公司名称和 Logo 会用于后台识别与小程序展示</span>
+        </div>
+        <div class="form-grid base-grid">
+          <el-form-item label="公司名称" prop="name">
+            <el-input v-model="form.name" placeholder="请输入公司名称" maxlength="30" show-word-limit />
+          </el-form-item>
 
-        <!-- Logo -->
-        <el-form-item label="公司Logo">
-          <ImageUpload
-            v-model="form.logo"
-            ratio="1:1"
-            :width="100"
-            placeholder="上传Logo"
-          />
-        </el-form-item>
+          <el-form-item label="公司Logo">
+            <ImageUpload
+              v-model="form.logo"
+              ratio="1:1"
+              :width="100"
+              placeholder="上传Logo"
+            />
+          </el-form-item>
+        </div>
+      </section>
 
-        <!-- 公司简介 -->
+      <section class="admin-panel form-section">
+        <div class="section-header">
+          <h2>展示内容</h2>
+          <span class="text-muted">富文本内容保存后会影响小程序客户首页展示</span>
+        </div>
         <el-form-item label="公司简介">
           <TinyEditor v-model="form.intro" :height="300" />
         </el-form-item>
 
-        <!-- 业务介绍 -->
         <el-form-item label="业务介绍">
           <TinyEditor v-model="form.businessIntro" :height="300" />
         </el-form-item>
+      </section>
 
-        <!-- 公司地址 -->
-        <el-form-item label="公司地址">
-          <el-input v-model="form.address" placeholder="请输入公司地址" maxlength="100" />
-        </el-form-item>
+      <section class="admin-panel form-section">
+        <div class="section-header">
+          <h2>联系方式与定位</h2>
+          <span class="text-muted">编辑后请在小程序端人工核对地图和电话展示</span>
+        </div>
+        <div class="form-grid contact-grid">
+          <el-form-item label="公司地址">
+            <el-input v-model="form.address" placeholder="请输入公司地址" maxlength="100" />
+          </el-form-item>
 
-        <!-- 公司电话 -->
-        <el-form-item label="公司电话">
-          <el-input v-model="form.phone" placeholder="请输入公司电话" maxlength="20" />
-        </el-form-item>
+          <el-form-item label="公司电话">
+            <el-input v-model="form.phone" placeholder="请输入公司电话" maxlength="20" />
+          </el-form-item>
 
-        <!-- 公司定位 -->
-        <el-form-item label="公司定位">
-          <div class="location-field">
-            <el-input
-              :model-value="locationText"
-              placeholder="点击选择定位"
-              readonly
-              @click="mapPickerVisible = true"
-            >
-              <template #suffix>
-                <el-icon class="location-icon"><Location /></el-icon>
-              </template>
-            </el-input>
-            <el-button
-              v-if="form.location?.lat"
-              text
-              type="danger"
-              size="small"
-              @click="clearLocation"
-            >
-              清除
-            </el-button>
-          </div>
-        </el-form-item>
+          <el-form-item label="公司官网">
+            <el-input v-model="form.website" placeholder="https://" maxlength="200" />
+          </el-form-item>
 
-        <!-- 公司官网 -->
-        <el-form-item label="公司官网">
-          <el-input v-model="form.website" placeholder="https://" maxlength="200" />
-        </el-form-item>
-      </el-form>
+          <el-form-item label="公司定位" class="location-form-item">
+            <div class="location-field">
+              <el-input
+                :model-value="locationText"
+                placeholder="点击选择定位"
+                readonly
+                @click="mapPickerVisible = true"
+              >
+                <template #suffix>
+                  <el-icon class="location-icon"><Location /></el-icon>
+                </template>
+              </el-input>
+              <el-button
+                v-if="form.location?.lat"
+                text
+                type="danger"
+                size="small"
+                @click="clearLocation"
+              >
+                清除
+              </el-button>
+            </div>
+          </el-form-item>
+        </div>
+      </section>
+    </el-form>
 
-      <!-- 底部按钮 -->
-      <div class="form-footer">
-        <el-button @click="goBack">取消</el-button>
-        <el-button type="primary" :loading="saving" @click="handleSave">保存</el-button>
-      </div>
-    </div>
-
-    <!-- 地图选点弹窗 -->
     <MapPicker
       v-model:visible="mapPickerVisible"
       :value="form.location"
@@ -101,7 +117,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Location } from '@element-plus/icons-vue'
+import { ArrowLeft, Check, Location } from '@element-plus/icons-vue'
 import { adminGetCompany, adminUpdateCompany } from '@/cloud/api'
 import ImageUpload from '@/components/ImageUpload.vue'
 import TinyEditor from '@/components/TinyEditor.vue'
@@ -230,44 +246,101 @@ onMounted(() => {
 @use '@/styles/variables' as *;
 
 .company-edit-page {
-  .breadcrumb {
-    margin-bottom: $spacing-lg;
+  .title-block {
+    min-width: 0;
   }
 
-  .card-wrapper {
-    background: $card-bg;
-    border-radius: $radius-card;
-    padding: $spacing-xl;
-    box-shadow: $shadow-card;
+  .page-actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    flex: 0 0 auto;
   }
 
   .edit-form {
-    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-base;
+  }
 
-    .location-field {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      width: 100%;
+  .form-section {
+    padding: $spacing-xl;
+  }
 
-      .el-input {
-        flex: 1;
-        cursor: pointer;
-      }
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $spacing-base;
+    margin-bottom: $spacing-lg;
 
-      .location-icon {
-        color: $color-primary;
-        cursor: pointer;
-      }
+    h2 {
+      margin: 0;
+      color: $text-primary;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 24px;
     }
   }
 
-  .form-footer {
-    margin-top: $spacing-xl;
-    padding-top: $spacing-lg;
-    border-top: 1px solid $border-color;
+  .form-grid {
+    display: grid;
+    gap: $spacing-base $spacing-xl;
+  }
+
+  .base-grid {
+    grid-template-columns: minmax(0, 1fr) 180px;
+    align-items: start;
+  }
+
+  .contact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .location-form-item {
+    grid-column: 1 / -1;
+  }
+
+  .location-field {
     display: flex;
-    gap: 12px;
+    align-items: center;
+    gap: $spacing-sm;
+    width: 100%;
+
+    .el-input {
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .location-icon {
+      color: $color-primary;
+      cursor: pointer;
+    }
+  }
+
+  :deep(.tox-tinymce) {
+    border-radius: $radius-card;
+  }
+
+  @media (max-width: 900px) {
+    .page-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .page-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+
+    .base-grid,
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-section {
+      padding: $spacing-base;
+    }
   }
 }
 </style>
