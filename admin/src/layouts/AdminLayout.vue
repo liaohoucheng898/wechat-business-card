@@ -1,8 +1,8 @@
 <template>
   <el-container class="admin-layout">
     <!-- 侧边栏 -->
-    <el-aside :width="sidebarCollapsed ? '64px' : '200px'" class="admin-sidebar">
-      <div class="sidebar-logo" @click="router.push('/')">
+    <el-aside :width="sidebarCollapsed ? '64px' : '232px'" class="admin-sidebar">
+      <div class="sidebar-logo" @click="router.push('/dashboard')">
         <img src="https://static-s3.skyworkcdn.com/fe/skywork-site-assets/images/skybot/avatar1-new.png" alt="Logo" class="logo-img" />
         <span v-show="!sidebarCollapsed" class="logo-text">电子名片</span>
       </div>
@@ -11,25 +11,13 @@
         :collapse="sidebarCollapsed"
         router
         class="sidebar-menu"
-        background-color="#fff"
-        text-color="#646A73"
-        active-text-color="#1677ff"
+        background-color="#0F172A"
+        text-color="#D1D5DB"
+        active-text-color="#FFFFFF"
       >
-        <el-menu-item index="/staff">
-          <el-icon><User /></el-icon>
-          <template #title>员工管理</template>
-        </el-menu-item>
-        <el-menu-item index="/company">
-          <el-icon><OfficeBuilding /></el-icon>
-          <template #title>公司管理</template>
-        </el-menu-item>
-        <el-menu-item index="/cases">
-          <el-icon><Suitcase /></el-icon>
-          <template #title>案例管理</template>
-        </el-menu-item>
-        <el-menu-item index="/stats">
-          <el-icon><DataAnalysis /></el-icon>
-          <template #title>数据统计</template>
+        <el-menu-item v-for="item in menuItems" :key="item.index" :index="item.index">
+          <el-icon><component :is="item.icon" /></el-icon>
+          <template #title>{{ item.label }}</template>
         </el-menu-item>
       </el-menu>
     </el-aside>
@@ -43,7 +31,7 @@
             <Fold v-if="!sidebarCollapsed" />
             <Expand v-else />
           </el-icon>
-          <span class="header-title">电子名片管理后台</span>
+          <span class="header-title">{{ route.meta.title || '运营驾驶舱' }}</span>
         </div>
         <div class="header-right">
           <span class="admin-name">{{ userStore.adminName }}</span>
@@ -68,7 +56,7 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import {
-  User, OfficeBuilding, Suitcase, DataAnalysis,
+  DataLine, User, OfficeBuilding, Suitcase, DataAnalysis,
   Fold, Expand, SwitchButton
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
@@ -79,6 +67,14 @@ const router = useRouter()
 const userStore = useUserStore()
 const appStore = useAppStore()
 
+const menuItems = [
+  { index: '/dashboard', label: '运营驾驶舱', icon: DataLine },
+  { index: '/cases', label: '内容中心', icon: Suitcase },
+  { index: '/staff', label: '人员管理', icon: User },
+  { index: '/company', label: '公司管理', icon: OfficeBuilding },
+  { index: '/stats', label: '数据分析', icon: DataAnalysis }
+]
+
 const sidebarCollapsed = computed(() => appStore.sidebarCollapsed)
 
 // 当前激活菜单：取路由的第一层路径
@@ -86,7 +82,7 @@ const activeMenu = computed(() => {
   const path = route.path
   // 匹配 /company/edit/xxx → /company
   const match = path.match(/^\/[^/]+/)
-  return match ? match[0] : '/staff'
+  return match ? match[0] : '/dashboard'
 })
 
 async function handleLogout() {
@@ -114,8 +110,8 @@ async function handleLogout() {
 }
 
 .admin-sidebar {
-  background: $card-bg;
-  border-right: 1px solid $border-color;
+  background: $sidebar-bg;
+  border-right: 1px solid $sidebar-border;
   transition: width 0.3s ease;
   overflow: hidden;
 
@@ -125,7 +121,7 @@ async function handleLogout() {
     align-items: center;
     padding: 0 16px;
     cursor: pointer;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $sidebar-border;
 
     .logo-img {
       width: 32px;
@@ -138,7 +134,7 @@ async function handleLogout() {
       margin-left: 10px;
       font-size: 16px;
       font-weight: 600;
-      color: $text-primary;
+      color: $sidebar-text-active;
       white-space: nowrap;
     }
   }
@@ -146,14 +142,21 @@ async function handleLogout() {
   .sidebar-menu {
     height: calc(100vh - #{$header-height});
     overflow-y: auto;
+    border-right: 0;
+    background: $sidebar-bg;
 
     .el-menu-item {
       height: 48px;
       line-height: 48px;
       font-size: 15px;
+      color: $sidebar-text;
+
+      &:hover {
+        background-color: $sidebar-hover-bg;
+      }
 
       &.is-active {
-        background-color: rgba($color-primary, 0.06);
+        background-color: $sidebar-active-bg;
         font-weight: 500;
       }
     }
