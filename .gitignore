@@ -37,6 +37,8 @@ miniprogram/cloudfunctions/**/tcb_custom_login.local.json
 .npm-cache/
 .cloudbase-home/
 .cloudbase-deploy-tmp/
+.rtk/
+备份/
 
 # Local release artifacts
 release_backups/
