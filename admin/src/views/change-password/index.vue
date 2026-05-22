@@ -6,6 +6,9 @@
         <p class="card-desc">
           {{ userStore.mustChangePassword ? '当前账号正在使用临时密码，请先设置一个新密码。' : '请修改为你自己的常用密码。' }}
         </p>
+        <p class="password-note">
+          修改成功后会进入运营驾驶舱。新密码需为 8-20 位，且必须同时包含字母和数字。
+        </p>
       </div>
 
       <el-form
@@ -20,6 +23,7 @@
             v-model="form.oldPassword"
             type="password"
             show-password
+            size="large"
             placeholder="请输入当前密码或临时密码"
             @keyup.enter="handleSubmit"
           />
@@ -30,6 +34,7 @@
             v-model="form.newPassword"
             type="password"
             show-password
+            size="large"
             placeholder="8-20位，且必须同时包含字母和数字"
             @keyup.enter="handleSubmit"
           />
@@ -40,6 +45,7 @@
             v-model="form.confirmPassword"
             type="password"
             show-password
+            size="large"
             placeholder="请再次输入新密码"
             @keyup.enter="handleSubmit"
           />
@@ -47,8 +53,8 @@
 
         <el-form-item>
           <div class="action-row">
-            <el-button @click="handleLogout">退出登录</el-button>
-            <el-button type="primary" :loading="submitting" @click="handleSubmit">
+            <el-button size="large" @click="handleLogout">退出登录</el-button>
+            <el-button type="primary" size="large" :loading="submitting" @click="handleSubmit">
               保存新密码
             </el-button>
           </div>
@@ -145,34 +151,57 @@ async function handleLogout() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, rgba(22, 119, 255, 0.08) 0%, #F5F6FA 100%);
+  background: $page-bg;
   padding: 24px;
 }
 
 .change-password-card {
-  width: 480px;
+  width: 440px;
   max-width: 100%;
-  background: #fff;
-  border-radius: 20px;
-  padding: 28px 28px 20px;
-  box-shadow: 0 18px 48px rgba(22, 119, 255, 0.08);
+  background: $card-bg;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  box-shadow: none;
+  padding: 28px;
+  box-sizing: border-box;
 }
 
 .card-header {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .card-title {
   margin: 0 0 8px;
   font-size: 24px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
   color: $text-primary;
 }
 
 .card-desc {
   margin: 0;
-  font-size: 15px;
-  line-height: 1.8;
+  font-size: 14px;
+  line-height: 1.7;
   color: $text-secondary;
+}
+
+.password-note {
+  margin: 16px 0 0;
+  padding: 12px;
+  border: 1px solid $color-primary-border;
+  border-radius: $radius-button;
+  background: $color-primary-soft;
+  color: $text-secondary;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.change-password-form {
+  :deep(.el-form-item__label) {
+    color: $text-secondary;
+    font-weight: 500;
+  }
 }
 
 .action-row {
@@ -180,5 +209,28 @@ async function handleLogout() {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .change-password-page {
+    padding: 16px;
+  }
+
+  .change-password-card {
+    padding: 24px 20px;
+  }
+
+  .card-title {
+    font-size: 22px;
+  }
+
+  .action-row {
+    flex-direction: column-reverse;
+
+    .el-button {
+      width: 100%;
+      margin-left: 0;
+    }
+  }
 }
 </style>
