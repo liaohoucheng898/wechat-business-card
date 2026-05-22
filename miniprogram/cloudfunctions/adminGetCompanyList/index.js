@@ -38,9 +38,15 @@ exports.main = async (event) => {
         companyId: c._id,
         name: c.name,
         logo: c.logo || '',
+        intro: c.intro || '',
+        businessIntro: c.businessIntro || '',
         address: c.address || '',
         phone: c.phone || '',
         website: c.website || '',
+        latitude: typeof c.latitude === 'number' ? c.latitude : null,
+        longitude: typeof c.longitude === 'number' ? c.longitude : null,
+        locationName: c.locationName || '',
+        location: c.location || null,
         updatedAt: c.updatedAt ? c.updatedAt.getTime() : 0,
       }))
     })

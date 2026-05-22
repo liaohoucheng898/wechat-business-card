@@ -113,6 +113,11 @@ const companyList = ref(
   }))
 )
 const loading = ref(false)
+const RICH_TEXT_MEDIA_RE = /<(img|video|iframe)\b/i
+const BR_TAG_RE = /<br\s*\/?>/gi
+const HTML_TAG_RE = /<[^>]*>/g
+const BLANK_ENTITY_RE =
+  /&nbsp;|&amp;nbsp;|&#160;|&#x[aA]0;|&#12288;|&#x3000;|&ensp;|&emsp;|&thinsp;/gi
 
 async function fetchCompanies() {
   loading.value = true
@@ -131,32 +136,69 @@ async function fetchCompanies() {
   }
 }
 
+function hasMeaningfulRichText(value) {
+  const html = String(value || '')
+  if (!html.trim()) return false
+  if (RICH_TEXT_MEDIA_RE.test(html)) return true
+
+  const text = html
+    .replace(BR_TAG_RE, '')
+    .replace(HTML_TAG_RE, '')
+    .replace(BLANK_ENTITY_RE, ' ')
+    .replace(/[\u00a0\u3000\u200B-\u200D\uFEFF]/g, '')
+    .trim()
+
+  return Boolean(text)
+}
+
+function hasTextValue(value) {
+  return Boolean(String(value || '').trim())
+}
+
+function hasCompanyLogo(company) {
+  return hasTextValue(company.logoSource || company.logoRaw || company.logo)
+}
+
 function getCompanyCompleteness(company) {
   const missing = []
-  if (!company.intro) missing.push('公司简介')
-  if (!company.businessIntro) missing.push('业务介绍')
-  if (!company.logo) missing.push('Logo')
-  if (!company.address) missing.push('地址')
-  if (!company.phone) missing.push('电话')
+  if (!hasMeaningfulRichText(company.intro)) missing.push('公司简介')
+  if (!hasMeaningfulRichText(company.businessIntro)) missing.push('业务介绍')
+  if (!hasCompanyLogo(company)) missing.push('Logo')
+  if (!hasTextValue(company.address)) missing.push('地址')
+  if (!hasTextValue(company.phone)) missing.push('电话')
   return {
     complete: missing.length === 0,
     missing
   }
 }
 
+function getFiniteNumber(value) {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null
+}
+
 function getLocationParts(company) {
-  const lat = typeof company.latitude === 'number' ? company.latitude : company.location?.lat
-  const lng = typeof company.longitude === 'number' ? company.longitude : company.location?.lng
+  const lat =
+    getFiniteNumber(company.latitude) ??
+    getFiniteNumber(company.location?.lat) ??
+    getFiniteNumber(company.location?.latitude)
+  const lng =
+    getFiniteNumber(company.longitude) ??
+    getFiniteNumber(company.location?.lng) ??
+    getFiniteNumber(company.location?.longitude)
   return { lat, lng }
 }
 
 function hasCompanyLocation(company) {
   const { lat, lng } = getLocationParts(company)
-  return Boolean(company.locationName) || (typeof lat === 'number' && typeof lng === 'number')
+  return (
+    hasTextValue(company.locationName || company.location?.name) ||
+    (typeof lat === 'number' && typeof lng === 'number')
+  )
 }
 
 function getLocationText(company) {
-  if (company.locationName) return company.locationName
+  if (hasTextValue(company.locationName)) return company.locationName.trim()
+  if (hasTextValue(company.location?.name)) return company.location.name.trim()
   const { lat, lng } = getLocationParts(company)
   if (typeof lat === 'number' && typeof lng === 'number') {
     return `${lat.toFixed(6)}, ${lng.toFixed(6)}`
