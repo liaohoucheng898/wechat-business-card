@@ -408,9 +408,10 @@ async function handleSave() {
   .company-title-panel {
     margin-top: 4px;
     padding: 8px 16px;
-    background: $page-bg;
-    border: 1px solid rgba(219, 222, 227, 0.9);
+    background: $surface-inset;
+    border: 1px solid $border-color;
     border-radius: $radius-card;
+    box-shadow: none;
   }
 
   .second-phone-row {
@@ -442,7 +443,7 @@ async function handleSave() {
     align-items: center;
     min-height: 56px;
     gap: 14px;
-    border-bottom: 1px solid rgba(219, 222, 227, 0.9);
+    border-bottom: 1px solid $border-color;
 
     &:last-child {
       border-bottom: none;
@@ -470,9 +471,10 @@ async function handleSave() {
   .checkbox-panel {
     width: 100%;
     padding: 14px 16px;
-    background: $page-bg;
-    border: 1px solid rgba(219, 222, 227, 0.9);
+    background: $surface-inset;
+    border: 1px solid $border-color;
     border-radius: $radius-card;
+    box-shadow: none;
   }
 
   .form-tip {
@@ -484,9 +486,10 @@ async function handleSave() {
 
   .wechat-binding-panel {
     padding: 14px 16px;
-    background: $page-bg;
-    border: 1px solid rgba(219, 222, 227, 0.9);
+    background: $surface-inset;
+    border: 1px solid $border-color;
     border-radius: $radius-card;
+    box-shadow: none;
   }
 
   .wechat-binding-count {
@@ -505,7 +508,7 @@ async function handleSave() {
     align-items: center;
     gap: 12px;
     min-height: 52px;
-    border-bottom: 1px solid rgba(219, 222, 227, 0.9);
+    border-bottom: 1px solid $border-color;
 
     &:last-child {
       border-bottom: none;

@@ -13,8 +13,26 @@
       </div>
     </div>
 
+    <div class="admin-filter-panel">
+      <el-input v-model="keyword" clearable placeholder="搜索姓名或手机号" style="width: 220px" />
+      <el-select v-model="statusFilter" clearable placeholder="账号状态" style="width: 140px">
+        <el-option label="正常" value="active" />
+        <el-option label="已停用" value="disabled" />
+      </el-select>
+      <el-select v-model="bindingFilter" clearable placeholder="绑定状态" style="width: 140px">
+        <el-option label="已绑定" value="bound" />
+        <el-option label="未绑定" value="unbound" />
+      </el-select>
+      <el-button @click="keyword = ''; statusFilter = ''; bindingFilter = ''">重置</el-button>
+    </div>
+
+    <div class="admin-toolbar">
+      <span>共 {{ filteredStaffList.length }} 名员工 · 批量导入前请先下载模板</span>
+      <span class="text-muted">密码和绑定状态只用于后台管理</span>
+    </div>
+
     <div class="card-wrapper">
-      <el-table :data="staffList" v-loading="loading" stripe>
+      <el-table :data="filteredStaffList" v-loading="loading" stripe>
         <el-table-column type="index" label="序号" width="60" align="center" />
 
         <el-table-column label="头像" width="70" align="center">
@@ -215,11 +233,11 @@
             <span class="summary-card__label">总记录数</span>
             <strong class="summary-card__value">{{ importResult.total }}</strong>
           </div>
-          <div class="summary-card">
+          <div class="summary-card summary-card--success">
             <span class="summary-card__label">成功导入</span>
             <strong class="summary-card__value success">{{ importResult.successCount }}</strong>
           </div>
-          <div class="summary-card">
+          <div class="summary-card summary-card--danger">
             <span class="summary-card__label">失败条数</span>
             <strong class="summary-card__value danger">{{ importResult.failCount }}</strong>
           </div>
@@ -272,7 +290,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import * as XLSX from '@e965/xlsx'
@@ -300,6 +318,9 @@ const editingStaff = ref(null)
 const page = ref(1)
 const pageSize = ref(20)
 const total = ref(0)
+const keyword = ref('')
+const statusFilter = ref('')
+const bindingFilter = ref('')
 const credentialDialogVisible = ref(false)
 const credentialDialog = ref({
   phone: '',
@@ -319,6 +340,19 @@ const importResult = ref({
   failures: []
 })
 const userStore = useUserStore()
+
+const filteredStaffList = computed(() => {
+  const text = keyword.value.trim()
+  return staffList.value.filter((item) => {
+    const keywordMatched = !text || [item.name, item.phone, item.secondPhone].some((value) => String(value || '').includes(text))
+    const statusMatched = !statusFilter.value || item.status === statusFilter.value
+    const bindingMatched =
+      !bindingFilter.value ||
+      (bindingFilter.value === 'bound' && item.isBound) ||
+      (bindingFilter.value === 'unbound' && !item.isBound)
+    return keywordMatched && statusMatched && bindingMatched
+  })
+})
 
 function getCompanyName(companyId) {
   return COMPANY_MAP[companyId] || companyId
@@ -659,7 +693,7 @@ function openCredentialDialog(data, tip) {
 async function handleResetPassword(row) {
   try {
     await ElMessageBox.confirm(
-      `确认重置员工“${row.name}”的登录密码？重置后旧密码会立即失效。`,
+      `确认重置员工“${row.name}”的登录密码？重置后旧密码会立即失效，需要把新临时密码发给本人。`,
       '重置密码',
       {
         confirmButtonText: '确认',
@@ -688,7 +722,7 @@ async function handleResetPassword(row) {
 async function handleDelete(row) {
   try {
     await ElMessageBox.confirm(
-      `确认彻底删除员工“${row.name}”吗？删除后该员工将无法登录，且员工数据会从后台员工表中移除。`,
+      `确认彻底删除员工“${row.name}”吗？删除后该员工将无法登录，员工资料会从后台员工表移除。本操作不可直接恢复。`,
       '删除员工',
       {
         confirmButtonText: '确认删除',
@@ -840,8 +874,19 @@ onMounted(() => {
   .summary-card {
     padding: 18px 16px;
     border: 1px solid $border-color;
-    border-radius: 16px;
-    background: $page-bg;
+    border-radius: $radius-card;
+    background: $card-bg;
+    box-shadow: none;
+  }
+
+  .summary-card--success {
+    border-color: rgba($color-success, 0.3);
+    background: rgba($color-success, 0.06);
+  }
+
+  .summary-card--danger {
+    border-color: rgba($color-error, 0.3);
+    background: rgba($color-error, 0.06);
   }
 
   .summary-card__label {
