@@ -32,7 +32,7 @@
     </div>
 
     <div class="card-wrapper">
-      <el-table :data="filteredStaffList" v-loading="loading" stripe>
+      <el-table :data="pagedStaffList" v-loading="loading" stripe>
         <el-table-column type="index" label="序号" width="60" align="center" />
 
         <el-table-column label="头像" width="70" align="center">
@@ -161,7 +161,7 @@
         <el-pagination
           background
           layout="total, prev, pager, next"
-          :total="total"
+          :total="filteredStaffList.length"
           :page-size="pageSize"
           :current-page="page"
           @current-change="handlePageChange"
@@ -290,7 +290,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import * as XLSX from '@e965/xlsx'
@@ -303,6 +303,7 @@ const IMPORT_HEADERS = ['姓名', '手机号', '华悦职位', '华宝职位']
 const IMPORT_MAX_FILE_SIZE = 5 * 1024 * 1024
 const IMPORT_MAX_ROWS = 5000
 const IMPORT_BATCH_SIZE = 500
+const STAFF_PAGE_SIZE = 100
 const IMPORT_FIELD_LIMITS = {
   name: 20,
   phone: 11,
@@ -317,7 +318,6 @@ const drawerVisible = ref(false)
 const editingStaff = ref(null)
 const page = ref(1)
 const pageSize = ref(20)
-const total = ref(0)
 const keyword = ref('')
 const statusFilter = ref('')
 const bindingFilter = ref('')
@@ -352,6 +352,15 @@ const filteredStaffList = computed(() => {
       (bindingFilter.value === 'unbound' && !item.isBound)
     return keywordMatched && statusMatched && bindingMatched
   })
+})
+
+const pagedStaffList = computed(() => {
+  const start = (page.value - 1) * pageSize.value
+  return filteredStaffList.value.slice(start, start + pageSize.value)
+})
+
+watch([keyword, statusFilter, bindingFilter], () => {
+  page.value = 1
 })
 
 function getCompanyName(companyId) {
@@ -637,16 +646,40 @@ async function submitImport() {
   }
 }
 
+async function fetchAllStaff() {
+  const firstPage = await adminGetStaffList({
+    page: 1,
+    pageSize: STAFF_PAGE_SIZE
+  })
+  const firstList = Array.isArray(firstPage.list) ? firstPage.list : []
+  const rawTotal = Number(firstPage.total)
+  const totalCount = Number.isFinite(rawTotal) && rawTotal > 0 ? rawTotal : firstList.length
+  const pageCount = Math.ceil(totalCount / STAFF_PAGE_SIZE)
+
+  if (pageCount <= 1) {
+    return firstList
+  }
+
+  const restPages = Array.from({ length: pageCount - 1 }, (_, index) => index + 2)
+  const restResults = await Promise.all(
+    restPages.map((nextPage) => adminGetStaffList({
+      page: nextPage,
+      pageSize: STAFF_PAGE_SIZE
+    }))
+  )
+  const restList = restResults.flatMap((item) => Array.isArray(item.list) ? item.list : [])
+
+  return [...firstList, ...restList]
+}
+
 async function fetchList() {
   loading.value = true
   try {
-    const data = await adminGetStaffList({
-      page: page.value,
-      pageSize: pageSize.value
-    })
-    staffList.value = data.list || []
-    total.value = data.total || 0
-    page.value = data.page || page.value
+    staffList.value = await fetchAllStaff()
+    const maxPage = Math.max(Math.ceil(filteredStaffList.value.length / pageSize.value), 1)
+    if (page.value > maxPage) {
+      page.value = maxPage
+    }
   } catch {
     // api.js 已统一处理错误
   } finally {
@@ -769,7 +802,6 @@ function onSaved(payload) {
 
 function handlePageChange(nextPage) {
   page.value = nextPage
-  fetchList()
 }
 
 onMounted(() => {
