@@ -13,43 +13,78 @@
     </div>
 
     <div class="case-edit-layout">
-      <section class="admin-panel case-edit-main">
-        <div class="panel-header">
-          <div>
-            <h2>基础信息</h2>
-            <p class="panel-desc">必填字段保持可见，高级字段不打断主流程。</p>
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-position="top"
+        v-loading="pageLoading"
+        class="case-edit-main-stack"
+      >
+        <section class="admin-panel case-edit-main">
+          <div class="panel-header">
+            <div>
+              <h2>基础信息</h2>
+              <p class="panel-desc">先确认案例名称、公司归属、栏目归属和展示状态。</p>
+            </div>
+            <el-tag effect="plain" type="warning">草稿未保存</el-tag>
           </div>
-          <el-tag effect="plain" type="warning">草稿未保存</el-tag>
-        </div>
 
-          <el-form
-            ref="formRef"
-            :model="form"
-            :rules="rules"
-            label-position="top"
-            v-loading="pageLoading"
-            class="case-form"
-          >
-            <div class="case-form-grid">
-              <el-form-item label="所属公司" prop="companyIds">
-                <el-checkbox-group v-model="form.companyIds">
-                  <el-checkbox
-                    v-for="(name, id) in companyMap"
-                    :key="id"
-                    :label="id"
-                  >
-                    {{ name }}
-                  </el-checkbox>
-                </el-checkbox-group>
-              </el-form-item>
+          <div class="case-form-grid">
+            <el-form-item label="企业全称" prop="title">
+              <el-input
+                v-model="form.title"
+                placeholder="请输入企业全称"
+                maxlength="50"
+                show-word-limit
+              />
+            </el-form-item>
 
-              <el-form-item label="企业全称" prop="title">
-                <el-input
-                  v-model="form.title"
-                  placeholder="请输入企业全称"
-                  maxlength="50"
-                  show-word-limit
-                />
+            <el-form-item label="所属公司" prop="companyIds">
+              <el-checkbox-group v-model="form.companyIds">
+                <el-checkbox
+                  v-for="(name, id) in companyMap"
+                  :key="id"
+                  :label="id"
+                >
+                  {{ name }}
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+
+            <el-form-item label="所属栏目" prop="categoryIds">
+              <el-checkbox-group v-model="form.categoryIds" class="category-group-list">
+                <div
+                  v-for="group in categoryGroups"
+                  :key="group.companyId"
+                  class="category-company-block"
+                >
+                  <div class="category-company-title">{{ group.companyName }}</div>
+                  <div v-if="group.categories.length" class="category-checkboxes">
+                    <el-checkbox
+                      v-for="cat in group.categories"
+                      :key="cat.categoryId"
+                      :label="cat.categoryId"
+                    >
+                      {{ cat.name }}
+                    </el-checkbox>
+                  </div>
+                  <div v-else class="category-empty">
+                    暂无栏目，请先在案例列表页添加栏目
+                  </div>
+                </div>
+              </el-checkbox-group>
+              <div v-if="!categoryGroups.length && form.companyIds.length" class="form-tip">
+                暂无栏目，请先在案例列表页添加栏目
+              </div>
+              <div v-if="!form.companyIds.length" class="form-tip">
+                请先选择所属公司
+              </div>
+            </el-form-item>
+
+            <div class="case-inline-row">
+              <el-form-item label="是否可见">
+                <el-switch v-model="form.visible" />
               </el-form-item>
 
               <el-form-item label="排序值">
@@ -60,58 +95,34 @@
                 />
                 <span class="form-tip">数字越小越靠前</span>
               </el-form-item>
-
-              <el-form-item label="是否可见">
-                <el-switch v-model="form.visible" />
-              </el-form-item>
-
-              <el-form-item label="所属栏目" prop="categoryIds" class="form-row-full">
-                <el-checkbox-group v-model="form.categoryIds" class="category-group-list">
-                  <div
-                    v-for="group in categoryGroups"
-                    :key="group.companyId"
-                    class="category-company-block"
-                  >
-                    <div class="category-company-title">{{ group.companyName }}</div>
-                    <div v-if="group.categories.length" class="category-checkboxes">
-                      <el-checkbox
-                        v-for="cat in group.categories"
-                        :key="cat.categoryId"
-                        :label="cat.categoryId"
-                      >
-                        {{ cat.name }}
-                      </el-checkbox>
-                    </div>
-                    <div v-else class="category-empty">
-                      暂无栏目，请先在案例列表页添加栏目
-                    </div>
-                  </div>
-                </el-checkbox-group>
-                <div v-if="!categoryGroups.length && form.companyIds.length" class="form-tip">
-                  暂无栏目，请先在案例列表页添加栏目
-                </div>
-                <div v-if="!form.companyIds.length" class="form-tip">
-                  请先选择所属公司
-                </div>
-              </el-form-item>
-
-              <el-form-item label="简要描述" class="form-row-full">
-                <el-input
-                  v-model="form.description"
-                  type="textarea"
-                  :rows="3"
-                  placeholder="选填，简要描述案例内容"
-                  maxlength="200"
-                  show-word-limit
-                />
-              </el-form-item>
-
-              <el-form-item label="案例详情" prop="content" class="form-row-full">
-                <TinyEditor v-model="form.content" :height="400" />
-              </el-form-item>
             </div>
-          </el-form>
-      </section>
+          </div>
+        </section>
+
+        <section class="admin-panel case-content-panel">
+          <div class="panel-header">
+            <div>
+              <h2>案例内容</h2>
+              <p class="panel-desc">简要描述用于列表和预览摘要，案例详情用于小程序正文展示。</p>
+            </div>
+          </div>
+
+          <el-form-item label="简要描述">
+            <el-input
+              v-model="form.description"
+              type="textarea"
+              :rows="3"
+              placeholder="选填，简要描述案例内容"
+              maxlength="200"
+              show-word-limit
+            />
+          </el-form-item>
+
+          <el-form-item label="案例详情" prop="content">
+            <TinyEditor v-model="form.content" :height="400" />
+          </el-form-item>
+        </section>
+      </el-form>
 
       <aside class="case-edit-side">
         <section class="admin-panel preview-card">
@@ -136,7 +147,7 @@
         <section class="admin-panel asset-panel">
           <div class="panel-header">
             <div>
-              <h2>展示素材</h2>
+              <h2>案例封面</h2>
               <p class="panel-desc">保留原有封面字段，避免影响小程序展示。</p>
             </div>
           </div>
@@ -583,18 +594,28 @@ onMounted(() => {
     align-items: start;
   }
 
-  .case-edit-main {
+  .case-edit-main-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     min-width: 0;
   }
 
   .case-form-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 180px;
-    gap: 4px 16px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
   }
 
   .form-row-full {
     grid-column: 1 / -1;
+  }
+
+  .case-inline-row {
+    display: grid;
+    grid-template-columns: minmax(160px, 220px) minmax(220px, 1fr);
+    gap: 16px;
+    align-items: start;
   }
 
   .case-edit-side {
@@ -830,8 +851,12 @@ onMounted(() => {
       grid-template-columns: 1fr;
     }
 
-    .case-edit-preview {
+    .case-edit-side {
       position: static;
+    }
+
+    .case-inline-row {
+      grid-template-columns: 1fr;
     }
   }
 }
