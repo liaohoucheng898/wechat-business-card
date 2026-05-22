@@ -1,0 +1,1409 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PC端后台强数据驾驶舱原型 V1</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --primary-border: #bfdbfe;
+      --ink: #111827;
+      --body: #374151;
+      --secondary: #4b5563;
+      --muted: #6b7280;
+      --placeholder: #9ca3af;
+      --disabled: #d1d5db;
+      --page: #f5f7fa;
+      --surface: #ffffff;
+      --surface-inset: #f3f4f6;
+      --table-head: #f9fafb;
+      --line: #e5e7eb;
+      --line-strong: #d1d5db;
+      --success: #16a34a;
+      --success-soft: #ecfdf3;
+      --warning: #d97706;
+      --warning-soft: #fffbeb;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --sidebar: #0f172a;
+      --sidebar-active: #1e293b;
+      --sidebar-hover: #1f2a3d;
+      --sidebar-text: #d1d5db;
+      --radius: 8px;
+      --radius-sm: 6px;
+      --shadow-float: 0 20px 48px rgba(15, 23, 42, .18);
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      --mono: "DIN Alternate", "Roboto Mono", "SFMono-Regular", Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--page);
+      color: var(--body);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font-family: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .prototype-shell {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .sidebar {
+      width: 232px;
+      min-height: 100vh;
+      flex: 0 0 232px;
+      background: var(--sidebar);
+      color: var(--sidebar-text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      color: #fff;
+      font-weight: 650;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #2563eb;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .nav-section {
+      padding: 12px 10px 6px;
+    }
+
+    .nav-label {
+      padding: 8px 10px 5px;
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    .nav-item {
+      width: 100%;
+      height: 36px;
+      border: 0;
+      border-radius: 6px;
+      padding: 0 10px;
+      background: transparent;
+      color: var(--sidebar-text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .nav-item:hover {
+      background: var(--sidebar-hover);
+    }
+
+    .nav-item.active {
+      background: var(--sidebar-active);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .nav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: transparent;
+    }
+
+    .nav-item.active .nav-dot {
+      background: var(--primary);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 12px 10px 16px;
+      border-top: 1px solid rgba(255, 255, 255, .08);
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    .workspace {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      height: 56px;
+      flex: 0 0 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-left,
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .crumb {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .global-search {
+      width: 280px;
+      height: 32px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      padding: 0 12px;
+      color: var(--body);
+      outline: none;
+    }
+
+    .global-search:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+    }
+
+    .admin-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--secondary);
+      font-size: 13px;
+    }
+
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-weight: 650;
+    }
+
+    .main {
+      min-width: 0;
+      flex: 1;
+      padding: 20px 24px 28px;
+      overflow: auto;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .title-block h1 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 20px;
+      font-weight: 650;
+      line-height: 1.4;
+      letter-spacing: 0;
+    }
+
+    .title-block p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      height: 32px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      padding: 0 14px;
+      background: #fff;
+      color: var(--body);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .btn:hover {
+      border-color: var(--primary-border);
+      color: var(--primary);
+    }
+
+    .btn.primary {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn.primary:hover {
+      background: var(--primary-hover);
+      color: #fff;
+    }
+
+    .btn.danger {
+      border-color: #fecaca;
+      background: #fff;
+      color: var(--danger);
+    }
+
+    .btn.text {
+      height: auto;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--primary);
+    }
+
+    .btn.text.danger {
+      color: var(--danger);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .grid.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .panel.pad {
+      padding: 16px;
+    }
+
+    .panel-head {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-title {
+      color: var(--ink);
+      font-size: 16px;
+      font-weight: 650;
+    }
+
+    .panel-sub {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .metric-card .label {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metric-card .value {
+      margin-top: 8px;
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .metric-card .meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .trend-up {
+      color: var(--success);
+      font-weight: 650;
+    }
+
+    .trend-down {
+      color: var(--danger);
+      font-weight: 650;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--secondary);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .tag.primary {
+      border-color: var(--primary-border);
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .tag.success {
+      border-color: #bbf7d0;
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .tag.warning {
+      border-color: #fed7aa;
+      background: var(--warning-soft);
+      color: var(--warning);
+    }
+
+    .tag.danger {
+      border-color: #fecaca;
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .filter-panel {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .field,
+    .select,
+    .textarea {
+      height: 32px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      color: var(--body);
+      padding: 0 10px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .field:focus,
+    .select:focus,
+    .textarea:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+    }
+
+    .textarea {
+      min-height: 72px;
+      padding: 8px 10px;
+      resize: vertical;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-bottom: 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 0 0 var(--radius) var(--radius);
+      background: var(--surface);
+    }
+
+    table {
+      width: 100%;
+      min-width: 860px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      height: 40px;
+      background: var(--table-head);
+      color: var(--secondary);
+      font-weight: 650;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    td {
+      height: 48px;
+      color: var(--body);
+      background: #fff;
+      border-top: 1px solid var(--line);
+      vertical-align: middle;
+    }
+
+    th,
+    td {
+      padding: 8px 12px;
+    }
+
+    tr:hover td {
+      background: #f9fafb;
+    }
+
+    .num {
+      font-family: var(--mono);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .object-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .thumb {
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #dbeafe, #f8fafc);
+    }
+
+    .object-main {
+      min-width: 0;
+    }
+
+    .object-title {
+      color: var(--ink);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .object-sub {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chart {
+      height: 260px;
+      padding: 18px;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 12px;
+    }
+
+    .chart-lines {
+      position: relative;
+      overflow: hidden;
+      border-left: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(to top, rgba(229, 231, 235, .7) 1px, transparent 1px) 0 0 / 100% 25%,
+        linear-gradient(to right, rgba(229, 231, 235, .6) 1px, transparent 1px) 0 0 / 12.5% 100%;
+    }
+
+    .chart-poly {
+      position: absolute;
+      inset: 18px 16px 18px 16px;
+      clip-path: polygon(0 72%, 12% 62%, 25% 66%, 38% 45%, 50% 52%, 62% 34%, 75% 38%, 88% 22%, 100% 27%, 100% 100%, 0 100%);
+      background: linear-gradient(180deg, rgba(37, 99, 235, .28), rgba(37, 99, 235, .04));
+    }
+
+    .chart-line {
+      position: absolute;
+      inset: 18px 16px 18px 16px;
+      clip-path: polygon(0 72%, 12% 62%, 25% 66%, 38% 45%, 50% 52%, 62% 34%, 75% 38%, 88% 22%, 100% 27%, 100% 31%, 88% 26%, 75% 42%, 62% 38%, 50% 56%, 38% 49%, 25% 70%, 12% 66%, 0 76%);
+      background: var(--primary);
+    }
+
+    .chart-labels {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .risk-list,
+    .activity-list {
+      padding: 8px 16px 16px;
+    }
+
+    .risk-item,
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .risk-item:last-child,
+    .activity-item:last-child {
+      border-bottom: 0;
+    }
+
+    .risk-title,
+    .activity-title {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .risk-desc,
+    .activity-desc {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .form-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 16px;
+      padding: 16px;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .form-row.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: var(--secondary);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .rich-editor {
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .rich-toolbar {
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      border-bottom: 1px solid var(--line);
+      background: var(--table-head);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .rich-body {
+      min-height: 160px;
+      padding: 12px;
+      color: var(--body);
+    }
+
+    .preview-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .preview-cover {
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #dbeafe, #eef2ff);
+      border: 1px solid var(--line);
+    }
+
+    .login-view {
+      min-height: calc(100vh - 96px);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      width: min(420px, 100%);
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .login-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .login-brand h1 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 20px;
+    }
+
+    .login-card .form-row {
+      margin-bottom: 14px;
+    }
+
+    .helper {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .alert {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .alert.info {
+      border: 1px solid var(--primary-border);
+      background: var(--primary-soft);
+      color: #1e40af;
+    }
+
+    .alert.warning {
+      border: 1px solid #fed7aa;
+      background: var(--warning-soft);
+      color: #92400e;
+    }
+
+    .alert.danger {
+      border: 1px solid #fecaca;
+      background: var(--danger-soft);
+      color: #991b1b;
+    }
+
+    .state-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .state-card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .state-card h2 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-size: 16px;
+    }
+
+    .state-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .modal-mask,
+    .drawer-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      background: rgba(15, 23, 42, .35);
+    }
+
+    .modal-mask.active,
+    .drawer-mask.active {
+      display: block;
+    }
+
+    .modal {
+      width: min(560px, calc(100vw - 32px));
+      margin: 10vh auto 0;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: var(--shadow-float);
+      overflow: hidden;
+    }
+
+    .modal-head,
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-head h2,
+    .drawer-head h2 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 16px;
+      font-weight: 650;
+    }
+
+    .modal-body {
+      padding: 18px;
+    }
+
+    .modal-foot,
+    .drawer-foot {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 14px 18px;
+      border-top: 1px solid var(--line);
+      background: var(--table-head);
+    }
+
+    .drawer {
+      width: min(520px, 100vw);
+      height: 100%;
+      margin-left: auto;
+      background: #fff;
+      box-shadow: var(--shadow-float);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer-body {
+      flex: 1;
+      overflow: auto;
+      padding: 18px;
+    }
+
+    .close {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .prototype-note {
+      margin: 0 0 16px;
+      padding: 10px 12px;
+      border: 1px solid var(--primary-border);
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+      color: #1e40af;
+      font-size: 13px;
+    }
+
+    @media (max-width: 1080px) {
+      .grid.cols-4,
+      .grid.cols-3,
+      .grid.cols-2,
+      .form-layout,
+      .state-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .global-search {
+        width: 180px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .prototype-shell {
+        display: block;
+      }
+
+      .sidebar {
+        width: 100%;
+        min-height: auto;
+        flex: none;
+      }
+
+      .nav-section {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 10px;
+      }
+
+      .nav-label,
+      .sidebar-footer {
+        display: none;
+      }
+
+      .nav-item {
+        width: auto;
+        flex: 0 0 auto;
+        white-space: nowrap;
+      }
+
+      .topbar {
+        height: auto;
+        min-height: 56px;
+        flex-wrap: wrap;
+        padding: 12px 16px;
+      }
+
+      .global-search {
+        width: 100%;
+      }
+
+      .main {
+        padding: 16px;
+      }
+
+      .page-header {
+        display: block;
+      }
+
+      .actions {
+        margin-top: 12px;
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="prototype-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">名</span>
+        <span>电子名片管理后台</span>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">入口与总览</div>
+        <button class="nav-item active" data-page="dashboard"><span>运营驾驶舱</span><span class="nav-dot"></span></button>
+        <button class="nav-item" data-page="login"><span>登录页</span><span class="nav-dot"></span></button>
+        <button class="nav-item" data-page="password"><span>首次改密</span><span class="nav-dot"></span></button>
+        <div class="nav-label">业务模块</div>
+        <button class="nav-item" data-page="cases"><span>内容中心</span><span class="nav-dot"></span></button>
+        <button class="nav-item" data-page="case-edit"><span>案例编辑</span><span class="nav-dot"></span></button>
+        <button class="nav-item" data-page="staff"><span>人员管理</span><span class="nav-dot"></span></button>
+        <button class="nav-item" data-page="company"><span>公司管理</span><span class="nav-dot"></span></button>
+        <button class="nav-item" data-page="company-edit"><span>公司编辑</span><span class="nav-dot"></span></button>
+        <button class="nav-item" data-page="stats"><span>数据分析</span><span class="nav-dot"></span></button>
+        <button class="nav-item" data-page="states"><span>状态与风险</span><span class="nav-dot"></span></button>
+      </div>
+      <div class="sidebar-footer">
+        V1 原型 · 强数据驾驶舱路线<br>
+        数据均为静态示例
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <header class="topbar">
+        <div class="topbar-left">
+          <span class="crumb" id="crumb">入口与总览 / 运营驾驶舱</span>
+        </div>
+        <div class="topbar-right">
+          <input class="global-search" placeholder="搜索员工、案例、公司">
+          <button class="btn" data-modal="helpModal">帮助</button>
+          <div class="admin-user"><span class="avatar">管</span><span>管理员</span></div>
+          <button class="btn" data-modal="logoutModal">退出</button>
+        </div>
+      </header>
+
+      <main class="main">
+        <p class="prototype-note">这是独立静态原型，不连接真实数据，不改现有程序。重点看信息层级、页面结构、状态表达和整体视觉气质。</p>
+
+        <section class="page active" id="dashboard">
+          <div class="page-header">
+            <div class="title-block">
+              <h1>运营驾驶舱</h1>
+              <p>先看关键结果、异常风险和待处理事项，再进入具体管理页面。</p>
+            </div>
+            <div class="actions">
+              <select class="select"><option>全部公司</option><option>华悦</option><option>华宝</option><option>卓辰</option></select>
+              <select class="select"><option>近30天</option><option>近15天</option><option>近7天</option></select>
+              <button class="btn primary">刷新数据</button>
+            </div>
+          </div>
+
+          <div class="grid cols-4">
+            <div class="metric-card">
+              <div class="label"><span>期间浏览量</span><span class="trend-up">+12.8%</span></div>
+              <div class="value">18,426</div>
+              <div class="meta">来源：view_logs；更新时间 2026-05-22 00:46</div>
+            </div>
+            <div class="metric-card">
+              <div class="label"><span>活跃员工</span><span class="trend-up">+6</span></div>
+              <div class="value">42</div>
+              <div class="meta">口径：近30天产生外部浏览的员工</div>
+            </div>
+            <div class="metric-card">
+              <div class="label"><span>可见案例</span><span class="trend-down">-2</span></div>
+              <div class="value">37</div>
+              <div class="meta">含多公司归属案例，按案例去重</div>
+            </div>
+            <div class="metric-card">
+              <div class="label"><span>待处理风险</span><span class="tag warning">需关注</span></div>
+              <div class="value">5</div>
+              <div class="meta">含无栏目案例、未绑定员工和统计延迟</div>
+            </div>
+          </div>
+
+          <div class="grid cols-2" style="margin-top:16px;">
+            <div class="panel">
+              <div class="panel-head">
+                <div><div class="panel-title">浏览趋势</div><div class="panel-sub">按天统计，排除内部员工访问</div></div>
+                <span class="tag primary">近30天</span>
+              </div>
+              <div class="chart">
+                <div class="chart-lines"><div class="chart-poly"></div><div class="chart-line"></div></div>
+                <div class="chart-labels"><span>04-23</span><span>04-30</span><span>05-07</span><span>05-14</span><span>05-22</span></div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <div><div class="panel-title">风险与待处理</div><div class="panel-sub">页面内持续展示，不只依赖短暂提示</div></div>
+                <button class="btn">查看全部</button>
+              </div>
+              <div class="risk-list">
+                <div class="risk-item"><div><div class="risk-title">3 个案例没有归属栏目</div><div class="risk-desc">会影响小程序端筛选体验</div></div><span class="tag warning">内容</span></div>
+                <div class="risk-item"><div><div class="risk-title">2 名员工尚未绑定微信</div><div class="risk-desc">已生成临时密码，建议跟进首次登录</div></div><span class="tag primary">人员</span></div>
+                <div class="risk-item"><div><div class="risk-title">统计数据延迟 12 分钟</div><div class="risk-desc">当前展示为权限范围内数据，不等同实时数据</div></div><span class="tag warning">统计</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid cols-2" style="margin-top:16px;">
+            <div class="panel">
+              <div class="panel-head"><div><div class="panel-title">员工表现排行</div><div class="panel-sub">按近30天浏览量排序</div></div><button class="btn text" data-page-jump="stats">查看统计</button></div>
+              <div class="table-scroll">
+                <table>
+                  <thead><tr><th>员工</th><th>公司</th><th class="num">近7天</th><th class="num">近30天</th><th>状态</th></tr></thead>
+                  <tbody>
+                    <tr><td><div class="object-cell"><span class="avatar">陈</span><div><div class="object-title">陈经理</div><div class="object-sub">销售负责人</div></div></div></td><td>华悦</td><td class="num">842</td><td class="num">3,284</td><td><span class="tag success">正常</span></td></tr>
+                    <tr><td><div class="object-cell"><span class="avatar">李</span><div><div class="object-title">李顾问</div><div class="object-sub">客户顾问</div></div></div></td><td>华宝</td><td class="num">621</td><td class="num">2,916</td><td><span class="tag success">正常</span></td></tr>
+                    <tr><td><div class="object-cell"><span class="avatar">周</span><div><div class="object-title">周主管</div><div class="object-sub">项目主管</div></div></div></td><td>卓辰</td><td class="num">318</td><td class="num">1,740</td><td><span class="tag warning">待跟进</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><div><div class="panel-title">最近操作</div><div class="panel-sub">用于追溯，不用于装饰</div></div><button class="btn">操作日志</button></div>
+              <div class="activity-list">
+                <div class="activity-item"><div><div class="activity-title">管理员更新了案例“智能制造客户项目”</div><div class="activity-desc">2026-05-22 00:38 · 内容中心</div></div><span class="tag">编辑</span></div>
+                <div class="activity-item"><div><div class="activity-title">导入员工 126 条，失败 3 条</div><div class="activity-desc">失败原因已保留在导入结果中</div></div><span class="tag warning">部分成功</span></div>
+                <div class="activity-item"><div><div class="activity-title">重置了“王主管”的临时密码</div><div class="activity-desc">旧密码已失效，需通知本人</div></div><span class="tag danger">安全</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="login">
+          <div class="login-view">
+            <div class="login-card">
+              <div class="login-brand"><span class="brand-mark">名</span><div><h1>电子名片管理后台</h1><div class="helper">请使用管理员手机号和密码登录</div></div></div>
+              <div class="form-row"><label>手机号</label><input class="field" value="13800000000"></div>
+              <div class="form-row"><label>密码</label><input class="field" type="password" value="12345678"></div>
+              <div class="alert warning" style="margin-bottom:14px;">连续输错 5 次后将临时锁定 15 分钟。如忘记密码，请联系主管理员重置。</div>
+              <button class="btn primary" style="width:100%;">登录后台</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="password">
+          <div class="login-view">
+            <div class="login-card">
+              <div class="login-brand"><span class="brand-mark">安</span><div><h1>首次登录，请修改密码</h1><div class="helper">临时密码只用于首次进入后台</div></div></div>
+              <div class="alert info" style="margin-bottom:14px;">修改成功后会进入运营驾驶舱。新密码需至少 8 位，建议包含数字和字母。</div>
+              <div class="form-row"><label>当前临时密码</label><input class="field" type="password" value="12345678"></div>
+              <div class="form-row"><label>新密码</label><input class="field" type="password" value="newpass2026"></div>
+              <div class="form-row"><label>确认新密码</label><input class="field" type="password" value="newpass2026"></div>
+              <button class="btn primary" style="width:100%;">保存并进入后台</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="cases">
+          <div class="page-header">
+            <div class="title-block"><h1>内容中心</h1><p>管理客户案例、栏目、可见状态和小程序端展示内容。</p></div>
+            <div class="actions"><button class="btn" data-modal="categoryModal">栏目管理</button><button class="btn primary" data-page-jump="case-edit">新增案例</button></div>
+          </div>
+          <div class="filter-panel">
+            <select class="select"><option>全部公司</option><option>华悦</option><option>华宝</option><option>卓辰</option></select>
+            <select class="select"><option>全部栏目</option><option>制造业</option><option>服务业</option><option>综合集团</option></select>
+            <select class="select"><option>全部状态</option><option>可见</option><option>隐藏</option><option>无栏目</option></select>
+            <input class="field" placeholder="搜索企业全称">
+            <button class="btn primary">查询</button>
+            <button class="btn">重置</button>
+          </div>
+          <div class="toolbar"><span>已选 0 项 · 共 37 条 · 返回本页保留筛选和滚动位置</span><span><button class="btn">列设置</button> <button class="btn">导出</button></span></div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>案例</th><th>所属公司</th><th>栏目</th><th class="num">排序</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead>
+              <tbody>
+                <tr><td><div class="object-cell"><span class="thumb"></span><div class="object-main"><div class="object-title">智能制造客户项目</div><div class="object-sub">封面 16:9，详情含富文本图片</div></div></div></td><td><span class="tag primary">华悦</span></td><td>制造业</td><td class="num">10</td><td><span class="tag success">可见</span></td><td>2026-05-21 22:18</td><td><button class="btn text" data-modal="previewModal">预览</button>　<button class="btn text" data-page-jump="case-edit">编辑</button>　<button class="btn text danger" data-modal="deleteCaseModal">删除</button></td></tr>
+                <tr><td><div class="object-cell"><span class="thumb"></span><div class="object-main"><div class="object-title">连锁服务数字化案例</div><div class="object-sub">同时展示在华悦、华宝</div></div></div></td><td><span class="tag primary">华悦</span> <span class="tag">华宝</span></td><td>服务业</td><td class="num">20</td><td><span class="tag warning">缺少栏目</span></td><td>2026-05-20 17:42</td><td><button class="btn text" data-modal="previewModal">预览</button>　<button class="btn text" data-page-jump="case-edit">编辑</button>　<button class="btn text danger" data-modal="deleteCaseModal">删除</button></td></tr>
+                <tr><td><div class="object-cell"><span class="thumb"></span><div class="object-main"><div class="object-title">集团客户协同案例</div><div class="object-sub">前台暂不展示</div></div></div></td><td><span class="tag">卓辰</span></td><td>综合集团</td><td class="num">35</td><td><span class="tag">隐藏</span></td><td>2026-05-19 10:25</td><td><button class="btn text" data-modal="previewModal">预览</button>　<button class="btn text" data-page-jump="case-edit">编辑</button>　<button class="btn text danger" data-modal="deleteCaseModal">删除</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="page" id="case-edit">
+          <div class="page-header">
+            <div class="title-block"><h1>编辑案例</h1><p>多公司、多栏目、封面、富文本详情统一维护，保存前可预览。</p></div>
+            <div class="actions"><button class="btn" data-page-jump="cases">返回列表</button><button class="btn" data-modal="previewModal">预览</button><button class="btn primary">保存案例</button></div>
+          </div>
+          <div class="form-layout">
+            <div class="panel">
+              <div class="panel-head"><div><div class="panel-title">基础信息</div><div class="panel-sub">必填字段保持可见，高级字段不打断主流程</div></div><span class="tag warning">草稿未保存</span></div>
+              <div class="form-grid">
+                <div class="form-row full"><label>所属公司</label><div><span class="tag primary">华悦</span> <span class="tag">华宝</span> <button class="btn">选择公司</button></div></div>
+                <div class="form-row"><label>企业全称</label><input class="field" value="智能制造客户项目"></div>
+                <div class="form-row"><label>排序值</label><input class="field" value="10"></div>
+                <div class="form-row full"><label>所属栏目</label><div class="alert info">栏目按公司分组展示，避免多个公司同名栏目混在一起。</div></div>
+                <div class="form-row full"><label>简要描述</label><textarea class="textarea">面向制造业客户的数字化名片与案例展示方案。</textarea></div>
+                <div class="form-row full"><label>案例详情</label><div class="rich-editor"><div class="rich-toolbar"><span>正文</span><span>加粗</span><span>字号</span><span>颜色</span><span>图片</span><span>预览</span></div><div class="rich-body">这里展示 TinyMCE 富文本编辑区。图片上传后先显示临时地址，保存时写入云文件 ID，预览时再换成可访问地址。</div></div></div>
+              </div>
+            </div>
+            <aside class="preview-card">
+              <div class="preview-cover"></div>
+              <h2 style="margin:14px 0 6px;color:var(--ink);font-size:16px;">智能制造客户项目</h2>
+              <p style="margin:0;color:var(--muted);font-size:13px;">移动端案例顶部保持 16:9 完整显示，非 16:9 图片允许留白不裁切。</p>
+              <div style="margin-top:14px;"><span class="tag primary">制造业</span> <span class="tag">华悦</span></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="page" id="staff">
+          <div class="page-header">
+            <div class="title-block"><h1>人员管理</h1><p>维护员工账号、公司开通关系、职位、绑定微信和密码状态。</p></div>
+            <div class="actions"><button class="btn" data-modal="importModal">导入员工</button><button class="btn primary" data-drawer="staffDrawer">新增员工</button></div>
+          </div>
+          <div class="filter-panel">
+            <input class="field" placeholder="搜索姓名或手机号">
+            <select class="select"><option>全部公司</option><option>华悦</option><option>华宝</option><option>卓辰</option></select>
+            <select class="select"><option>全部账号状态</option><option>正常</option><option>已停用</option></select>
+            <select class="select"><option>全部绑定状态</option><option>已绑定</option><option>未绑定</option></select>
+            <button class="btn primary">查询</button>
+          </div>
+          <div class="toolbar"><span>共 126 名员工 · 批量操作需先明确选择范围</span><span><button class="btn">批量导出</button></span></div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>员工</th><th>手机号</th><th>职位</th><th class="num">绑定微信数</th><th>密码状态</th><th>账号状态</th><th>操作</th></tr></thead>
+              <tbody>
+                <tr><td><div class="object-cell"><span class="avatar">陈</span><div><div class="object-title">陈经理</div><div class="object-sub">华悦 / 华宝</div></div></div></td><td>13800000000 / 13900000000</td><td>销售负责人</td><td class="num">2</td><td><span class="tag success">已设置</span></td><td><span class="tag success">正常</span></td><td><button class="btn text" data-modal="resetPasswordModal">重置密码</button>　<button class="btn text" data-drawer="staffDrawer">编辑</button>　<button class="btn text danger">停用</button></td></tr>
+                <tr><td><div class="object-cell"><span class="avatar">李</span><div><div class="object-title">李顾问</div><div class="object-sub">华宝</div></div></div></td><td>13700000000</td><td>客户顾问</td><td class="num">0</td><td><span class="tag warning">临时密码</span></td><td><span class="tag success">正常</span></td><td><button class="btn text" data-modal="resetPasswordModal">重置密码</button>　<button class="btn text" data-drawer="staffDrawer">编辑</button>　<button class="btn text danger">停用</button></td></tr>
+                <tr><td><div class="object-cell"><span class="avatar">周</span><div><div class="object-title">周主管</div><div class="object-sub">卓辰</div></div></div></td><td>13600000000</td><td>项目主管</td><td class="num">1</td><td><span class="tag success">已设置</span></td><td><span class="tag danger">已停用</span></td><td><button class="btn text" data-modal="resetPasswordModal">重置密码</button>　<button class="btn text" data-drawer="staffDrawer">编辑</button>　<button class="btn text">启用</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="page" id="company">
+          <div class="page-header">
+            <div class="title-block"><h1>公司管理</h1><p>从卡片展示改为业务配置表，更适合维护公司资料、展示状态和更新时间。</p></div>
+          </div>
+          <div class="toolbar"><span>固定 3 家公司 · 公司资料会影响小程序展示页</span><span><button class="btn">查看展示口径</button></span></div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>公司</th><th>资料完整度</th><th>定位</th><th>联系电话</th><th>更新时间</th><th>操作</th></tr></thead>
+              <tbody>
+                <tr><td><div class="object-cell"><span class="thumb"></span><div><div class="object-title">华悦科技</div><div class="object-sub">公司简介、业务介绍已维护</div></div></div></td><td><span class="tag success">完整</span></td><td>已设置</td><td>0755-000000</td><td>2026-05-21 19:20</td><td><button class="btn text" data-page-jump="company-edit">编辑</button></td></tr>
+                <tr><td><div class="object-cell"><span class="thumb"></span><div><div class="object-title">华宝实业</div><div class="object-sub">缺少业务介绍</div></div></div></td><td><span class="tag warning">待补充</span></td><td>已设置</td><td>0755-111111</td><td>2026-05-20 13:12</td><td><button class="btn text" data-page-jump="company-edit">编辑</button></td></tr>
+                <tr><td><div class="object-cell"><span class="thumb"></span><div><div class="object-title">卓辰服务</div><div class="object-sub">缺少定位</div></div></div></td><td><span class="tag warning">待补充</span></td><td>-</td><td>0755-222222</td><td>2026-05-18 09:46</td><td><button class="btn text" data-page-jump="company-edit">编辑</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="page" id="company-edit">
+          <div class="page-header">
+            <div class="title-block"><h1>编辑公司</h1><p>公司简介、业务介绍、地址、电话和定位统一维护。</p></div>
+            <div class="actions"><button class="btn" data-page-jump="company">取消</button><button class="btn primary">保存公司资料</button></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div><div class="panel-title">华悦科技</div><div class="panel-sub">保存前校验必填、并发版本和地图定位</div></div><span class="tag primary">资料完整</span></div>
+            <div class="form-grid">
+              <div class="form-row"><label>公司名称</label><input class="field" value="华悦科技"></div>
+              <div class="form-row"><label>公司电话</label><input class="field" value="0755-000000"></div>
+              <div class="form-row full"><label>公司地址</label><input class="field" value="深圳市南山区科技园"></div>
+              <div class="form-row full"><label>公司定位</label><div style="display:flex;gap:8px;"><input class="field" style="flex:1;" value="深圳市南山区科技园 A 座" readonly><button class="btn">选择定位</button><button class="btn danger">清除</button></div></div>
+              <div class="form-row full"><label>公司简介</label><div class="rich-editor"><div class="rich-toolbar"><span>字号</span><span>颜色</span><span>图片</span><span>链接</span></div><div class="rich-body">公司简介只取 PC 端维护内容，小程序端按富文本展示。</div></div></div>
+              <div class="form-row full"><label>业务介绍</label><div class="rich-editor"><div class="rich-toolbar"><span>字号</span><span>颜色</span><span>图片</span><span>链接</span></div><div class="rich-body">业务介绍用于客户首页业务模块，需和公司简介分开维护。</div></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="stats">
+          <div class="page-header">
+            <div class="title-block"><h1>数据分析</h1><p>先给结论和口径，再给趋势、排行和明细。</p></div>
+            <div class="actions"><select class="select"><option>全部公司</option></select><select class="select"><option>近30天</option><option>近15天</option><option>近7天</option></select></div>
+          </div>
+          <div class="alert info" style="margin-bottom:16px;">统计口径：只统计外部访客打开名片产生的 card_view 日志；已登录员工访问不计入。更新时间：2026-05-22 00:46:18。</div>
+          <div class="grid cols-3">
+            <div class="metric-card"><div class="label"><span>期间浏览量</span><span class="trend-up">+12.8%</span></div><div class="value">18,426</div><div class="meta">较上一周期增加 2,086</div></div>
+            <div class="metric-card"><div class="label"><span>累计浏览量</span><span>全部历史</span></div><div class="value">126,930</div><div class="meta">来源：view_logs 汇总</div></div>
+            <div class="metric-card"><div class="label"><span>高活跃员工</span><span class="trend-up">+4</span></div><div class="value">18</div><div class="meta">近30天浏览量超过 500</div></div>
+          </div>
+          <div class="grid cols-2" style="margin-top:16px;">
+            <div class="panel"><div class="panel-head"><div><div class="panel-title">趋势图</div><div class="panel-sub">不能只给图表，必须说明来源和更新时间</div></div></div><div class="chart"><div class="chart-lines"><div class="chart-poly"></div><div class="chart-line"></div></div><div class="chart-labels"><span>04-23</span><span>04-30</span><span>05-07</span><span>05-14</span><span>05-22</span></div></div></div>
+            <div class="panel"><div class="panel-head"><div><div class="panel-title">员工排行榜</div><div class="panel-sub">仅展示启用状态员工</div></div></div><div class="table-scroll"><table><thead><tr><th>排名</th><th>员工</th><th class="num">近7天</th><th class="num">近30天</th></tr></thead><tbody><tr><td>1</td><td>陈经理</td><td class="num">842</td><td class="num">3,284</td></tr><tr><td>2</td><td>李顾问</td><td class="num">621</td><td class="num">2,916</td></tr><tr><td>3</td><td>周主管</td><td class="num">318</td><td class="num">1,740</td></tr></tbody></table></div></div>
+          </div>
+        </section>
+
+        <section class="page" id="states">
+          <div class="page-header">
+            <div class="title-block"><h1>状态与风险样例</h1><p>关键状态持续展示在页面内，不能只靠短暂提示。</p></div>
+          </div>
+          <div class="state-grid">
+            <div class="state-card"><span class="tag warning">空状态</span><h2>暂无案例</h2><p>当前筛选条件下没有案例。可清空筛选，或新建一个客户案例。</p><button class="btn primary" data-page-jump="case-edit">新建案例</button></div>
+            <div class="state-card"><span class="tag danger">权限不足</span><h2>不能删除员工</h2><p>当前账号没有员工删除权限。如确需处理，请联系主管理员授权。</p><button class="btn">复制说明</button></div>
+            <div class="state-card"><span class="tag warning">数据冲突</span><h2>资料已被他人更新</h2><p>你打开页面后，公司资料被其他管理员保存过。请刷新后再编辑，避免覆盖新内容。</p><button class="btn primary">刷新页面</button></div>
+            <div class="state-card"><span class="tag warning">部分成功</span><h2>导入完成但有失败</h2><p>本次导入 126 条，成功 123 条，失败 3 条。失败原因已列出，可修改 Excel 后重新导入。</p><button class="btn">查看失败明细</button></div>
+            <div class="state-card"><span class="tag danger">高风险确认</span><h2>确认删除案例</h2><p>删除后该案例不会在小程序展示，且后台列表中不可恢复。本操作会记录日志。</p><button class="btn danger" data-modal="deleteCaseModal">确认删除</button></div>
+            <div class="state-card"><span class="tag primary">长任务</span><h2>正在导入员工</h2><p>系统正在分批处理 Excel。你可以离开本页，稍后在最近操作中查看结果。</p><button class="btn">查看后台任务</button></div>
+          </div>
+        </section>
+      </main>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="helpModal">
+    <div class="modal">
+      <div class="modal-head"><h2>帮助与数据口径</h2><button class="close" data-close>&times;</button></div>
+      <div class="modal-body"><p>本后台以运营驾驶舱为首页，所有关键指标必须显示来源、口径、更新时间和权限范围。高风险操作会在确认前说明对象、范围、后果和是否可撤回。</p></div>
+      <div class="modal-foot"><button class="btn primary" data-close>知道了</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="logoutModal">
+    <div class="modal">
+      <div class="modal-head"><h2>确认退出登录</h2><button class="close" data-close>&times;</button></div>
+      <div class="modal-body"><div class="alert warning">退出后需要重新输入管理员账号和密码。未保存的编辑内容不会自动提交。</div></div>
+      <div class="modal-foot"><button class="btn" data-close>取消</button><button class="btn primary" data-close>确认退出</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="categoryModal">
+    <div class="modal">
+      <div class="modal-head"><h2>栏目管理</h2><button class="close" data-close>&times;</button></div>
+      <div class="modal-body">
+        <div class="filter-panel" style="margin-bottom:12px;"><select class="select"><option>华悦</option><option>华宝</option><option>卓辰</option></select><input class="field" placeholder="输入栏目名称"><input class="field" value="10" style="width:90px;"><button class="btn primary">添加栏目</button></div>
+        <div class="table-scroll"><table><thead><tr><th>栏目名称</th><th class="num">排序</th><th>案例数</th><th>操作</th></tr></thead><tbody><tr><td>制造业</td><td class="num">10</td><td>12</td><td><button class="btn text">编辑</button>　<button class="btn text danger">删除</button></td></tr><tr><td>服务业</td><td class="num">20</td><td>8</td><td><button class="btn text">编辑</button>　<button class="btn text danger">删除</button></td></tr></tbody></table></div>
+      </div>
+      <div class="modal-foot"><button class="btn primary" data-close>完成</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="previewModal">
+    <div class="modal">
+      <div class="modal-head"><h2>案例预览</h2><button class="close" data-close>&times;</button></div>
+      <div class="modal-body">
+        <div class="preview-cover"></div>
+        <h2 style="margin:16px 0 6px;color:var(--ink);">智能制造客户项目</h2>
+        <p style="margin:0 0 12px;color:var(--muted);">预览使用当前可访问图片地址，富文本图片保持最大宽度 100%。</p>
+        <span class="tag primary">制造业</span> <span class="tag">华悦</span>
+      </div>
+      <div class="modal-foot"><button class="btn" data-close>关闭</button><button class="btn primary" data-page-jump="case-edit" data-close>继续编辑</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="deleteCaseModal">
+    <div class="modal">
+      <div class="modal-head"><h2>删除案例确认</h2><button class="close" data-close>&times;</button></div>
+      <div class="modal-body"><div class="alert danger">确认删除案例“智能制造客户项目”吗？删除后该案例不会在小程序展示，后台不可直接恢复。本操作会记录操作人和时间。</div></div>
+      <div class="modal-foot"><button class="btn" data-close>取消</button><button class="btn danger" data-close>确认删除案例</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="importModal">
+    <div class="modal">
+      <div class="modal-head"><h2>导入员工</h2><button class="close" data-close>&times;</button></div>
+      <div class="modal-body">
+        <div class="alert info">模板字段：姓名、手机号、华悦职位、华宝职位。只要填写公司职位，系统会自动开通该公司。</div>
+        <div class="filter-panel" style="margin-top:12px;"><button class="btn">下载模板</button><button class="btn primary">选择 Excel</button><span class="helper">支持 .xlsx / .xls，最多 5000 条</span></div>
+        <div class="alert warning">导入前会检查重复手机号、公式单元格、字段长度和空职位行。</div>
+      </div>
+      <div class="modal-foot"><button class="btn" data-close>取消</button><button class="btn primary" data-close>开始导入</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="resetPasswordModal">
+    <div class="modal">
+      <div class="modal-head"><h2>重置密码</h2><button class="close" data-close>&times;</button></div>
+      <div class="modal-body">
+        <div class="alert warning">确认重置“陈经理”的登录密码？重置后旧密码立即失效，需要把新临时密码发给本人。</div>
+        <div class="form-row" style="margin-top:12px;"><label>新临时密码</label><input class="field" value="A8k29Pq1" readonly></div>
+      </div>
+      <div class="modal-foot"><button class="btn" data-close>取消</button><button class="btn primary" data-close>复制并关闭</button></div>
+    </div>
+  </div>
+
+  <div class="drawer-mask" id="staffDrawer">
+    <aside class="drawer">
+      <div class="drawer-head"><h2>编辑员工</h2><button class="close" data-close>&times;</button></div>
+      <div class="drawer-body">
+        <div class="form-row"><label>姓名</label><input class="field" value="陈经理"></div>
+        <div class="form-row"><label>手机号</label><input class="field" value="13800000000"></div>
+        <div class="form-row"><label>开通公司与职位</label><div class="alert info">华悦：销售负责人；华宝：客户顾问；卓辰：未开通。</div></div>
+        <div class="form-row"><label>绑定微信</label><div class="alert warning">已绑定 2 个微信。备注只用于后台识别解绑对象，不对客户展示。</div></div>
+        <div class="form-row"><label>账号状态</label><select class="select"><option>正常</option><option>停用</option></select></div>
+      </div>
+      <div class="drawer-foot"><button class="btn" data-close>取消</button><button class="btn primary" data-close>保存员工</button></div>
+    </aside>
+  </div>
+
+  <script>
+    const pages = Array.from(document.querySelectorAll(".page"));
+    const navItems = Array.from(document.querySelectorAll(".nav-item"));
+    const crumb = document.getElementById("crumb");
+    const crumbMap = {
+      dashboard: "入口与总览 / 运营驾驶舱",
+      login: "入口与总览 / 登录页",
+      password: "入口与总览 / 首次改密",
+      cases: "业务模块 / 内容中心",
+      "case-edit": "业务模块 / 案例编辑",
+      staff: "业务模块 / 人员管理",
+      company: "业务模块 / 公司管理",
+      "company-edit": "业务模块 / 公司编辑",
+      stats: "业务模块 / 数据分析",
+      states: "业务模块 / 状态与风险"
+    };
+
+    function showPage(id) {
+      pages.forEach((page) => page.classList.toggle("active", page.id === id));
+      navItems.forEach((item) => item.classList.toggle("active", item.dataset.page === id));
+      crumb.textContent = crumbMap[id] || "运营后台";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    navItems.forEach((item) => {
+      item.addEventListener("click", () => showPage(item.dataset.page));
+    });
+
+    document.querySelectorAll("[data-page-jump]").forEach((item) => {
+      item.addEventListener("click", () => showPage(item.dataset.pageJump));
+    });
+
+    document.querySelectorAll("[data-modal]").forEach((item) => {
+      item.addEventListener("click", () => {
+        document.getElementById(item.dataset.modal).classList.add("active");
+      });
+    });
+
+    document.querySelectorAll("[data-drawer]").forEach((item) => {
+      item.addEventListener("click", () => {
+        document.getElementById(item.dataset.drawer).classList.add("active");
+      });
+    });
+
+    document.querySelectorAll("[data-close]").forEach((item) => {
+      item.addEventListener("click", () => {
+        item.closest(".modal-mask, .drawer-mask").classList.remove("active");
+      });
+    });
+
+    document.querySelectorAll(".modal-mask, .drawer-mask").forEach((mask) => {
+      mask.addEventListener("click", (event) => {
+        if (event.target === mask) {
+          mask.classList.remove("active");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
