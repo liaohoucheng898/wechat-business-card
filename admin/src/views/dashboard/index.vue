@@ -221,7 +221,7 @@ import { COMPANY_MAP } from '@/config/env'
 const router = useRouter()
 const loading = ref(false)
 const companyId = ref('')
-const timeRange = ref('month')
+const timeRange = ref('half_month')
 const overview = ref({ periodViews: 0, totalViews: 0, changePercent: null })
 const chartData = ref({ dates: [], values: [] })
 const staffRank = ref([])
@@ -245,7 +245,7 @@ const companyOptions = computed(() => Object.entries(COMPANY_MAP).map(([value, l
 })))
 
 const currentCompanyName = computed(() => companyId.value ? getCompanyName(companyId.value) : '全部公司')
-const currentTimeRangeLabel = computed(() => timeRangeOptions.find((item) => item.value === timeRange.value)?.label || '近 30 天')
+const currentTimeRangeLabel = computed(() => timeRangeOptions.find((item) => item.value === timeRange.value)?.label || '近 15 天')
 const activeStaffCount = computed(() => staffList.value.filter((item) => item.status !== 'disabled').length)
 const unboundStaffCount = computed(() => staffList.value.filter((item) => !item.isBound).length)
 const visibleCaseCount = computed(() => caseList.value.filter((item) => item.visible !== false).length)
