@@ -14,10 +14,6 @@
             <p class="form-desc">进入后台，维护企业对外展示的全部内容。</p>
           </div>
 
-          <p class="login-note">
-            连续输错 5 次后将临时锁定 15 分钟。账号异常请联系主管理员。
-          </p>
-
           <el-form
             ref="passwordFormRef"
             :model="passwordForm"
@@ -304,17 +300,6 @@ async function handlePasswordLogin() {
   margin: 0;
   color: $text-secondary;
   font-size: 14px;
-  line-height: 1.7;
-}
-
-.login-note {
-  margin: 0 0 22px;
-  padding: 12px;
-  border: 1px solid $color-primary-border;
-  border-radius: $radius-button;
-  background: $color-primary-soft;
-  color: $text-secondary;
-  font-size: 13px;
   line-height: 1.7;
 }
 
