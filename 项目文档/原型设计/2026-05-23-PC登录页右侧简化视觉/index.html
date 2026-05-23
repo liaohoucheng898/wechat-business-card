@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PC 登录页右侧简化视觉原型</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-deep: #1d4ed8;
+      --ink: #111827;
+      --body: #374151;
+      --muted: #6b7280;
+      --hairline: #e5e7eb;
+      --canvas: #ffffff;
+      --page: #f5f7fa;
+      --sidebar: #0f172a;
+      --radius-card: 8px;
+      --radius-input: 6px;
+      --radius-pill: 999px;
+      font-family: Inter, "Source Han Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(115deg, rgba(37,99,235,.2), transparent 42%),
+        linear-gradient(245deg, rgba(15,118,110,.22), transparent 52%),
+        #111827;
+      background-size: 48px 48px, 48px 48px, auto, auto, auto;
+      color: var(--ink);
+    }
+
+    .page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .shell {
+      width: min(1180px, 100%);
+      min-height: 720px;
+      display: grid;
+      grid-template-columns: 500px minmax(0, 1fr);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius-card);
+      background: var(--sidebar);
+    }
+
+    .panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+      background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+    }
+
+    .card {
+      width: 390px;
+      max-width: 100%;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 54px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-card);
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .brand-name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      margin-bottom: 18px;
+      padding: 0 10px;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-pill);
+      background: #eff6ff;
+      color: var(--primary-deep);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .desc {
+      margin: 0 0 28px;
+      color: var(--body);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--body);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .input {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-input);
+      color: #9ca3af;
+      background: #fff;
+      font-size: 14px;
+    }
+
+    .input svg {
+      width: 15px;
+      height: 15px;
+      stroke: #9ca3af;
+    }
+
+    .submit {
+      width: 100%;
+      height: 44px;
+      margin-top: 8px;
+      border: 0;
+      border-radius: 6px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .visual {
+      position: relative;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      min-width: 0;
+      padding: 56px;
+      color: #fff;
+      isolation: isolate;
+    }
+
+    .visual::before {
+      content: "";
+      position: absolute;
+      inset: 56px 44px;
+      z-index: -2;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(96,165,250,.35), transparent 34%),
+        radial-gradient(circle at 48% 58%, rgba(20,184,166,.22), transparent 38%);
+      filter: blur(20px);
+    }
+
+    .hero-art {
+      position: relative;
+      width: min(440px, 78%);
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+      margin-bottom: 38px;
+    }
+
+    .halo {
+      position: absolute;
+      inset: 8%;
+      border-radius: 50%;
+      background: linear-gradient(180deg, rgba(59,130,246,.22), rgba(15,23,42,0));
+      border: 1px solid rgba(191,219,254,.18);
+    }
+
+    .orbit {
+      position: absolute;
+      border: 1px solid rgba(191,219,254,.2);
+      border-radius: 50%;
+    }
+
+    .orbit-1 {
+      width: 86%;
+      height: 86%;
+      transform: rotate(-18deg) scaleY(.72);
+    }
+
+    .orbit-2 {
+      width: 68%;
+      height: 68%;
+      transform: rotate(26deg) scaleY(.78);
+    }
+
+    .card-stack {
+      position: relative;
+      width: 260px;
+      height: 332px;
+    }
+
+    .sheet {
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 12px;
+      background: rgba(255,255,255,.08);
+      box-shadow: 0 30px 80px rgba(2,6,23,.36);
+      backdrop-filter: blur(18px);
+    }
+
+    .sheet.back {
+      transform: translate(34px, 18px) rotate(8deg);
+      opacity: .42;
+    }
+
+    .sheet.mid {
+      transform: translate(15px, 8px) rotate(3deg);
+      opacity: .66;
+    }
+
+    .sheet.front {
+      padding: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+    }
+
+    .identity {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #60a5fa, #14b8a6);
+    }
+
+    .line-group {
+      display: grid;
+      gap: 9px;
+      flex: 1;
+    }
+
+    .line {
+      display: block;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(219,234,254,.72);
+    }
+
+    .line.short {
+      width: 54%;
+      background: rgba(219,234,254,.38);
+    }
+
+    .preview {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .preview-row {
+      height: 44px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      background: rgba(15,23,42,.22);
+    }
+
+    .dot {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #93c5fd;
+      box-shadow: 0 0 24px rgba(147,197,253,.95);
+    }
+
+    .dot.one {
+      left: 12%;
+      top: 30%;
+    }
+
+    .dot.two {
+      right: 10%;
+      top: 48%;
+      background: #5eead4;
+    }
+
+    .dot.three {
+      left: 32%;
+      bottom: 14%;
+    }
+
+    .visual-copy {
+      max-width: 560px;
+      text-align: center;
+    }
+
+    .visual-copy h2 {
+      margin: 0;
+      color: #f8fafc;
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.22;
+      letter-spacing: 0;
+    }
+
+    .visual-copy p {
+      margin: 14px 0 0;
+      color: rgba(219,234,254,.78);
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 1080px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .visual {
+        padding: 40px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 0;
+      }
+
+      .shell {
+        min-height: 100vh;
+        border: 0;
+        border-radius: 0;
+      }
+
+      .panel {
+        padding: 24px 20px;
+      }
+
+      .visual {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="shell">
+      <aside class="panel">
+        <div class="card">
+          <div class="brand">
+            <span class="brand-mark">名</span>
+            <span class="brand-name">电子名片</span>
+          </div>
+
+          <span class="badge">企业名片管理后台</span>
+          <h1>管理员登录</h1>
+          <p class="desc">进入后台，维护企业对外展示的全部内容。</p>
+
+          <div class="field">
+            <label>手机号</label>
+            <div class="input">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" stroke-width="1.8"/><path d="M10 18h4" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span>请输入手机号</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>密码</label>
+            <div class="input">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 10V8a5 5 0 0 1 10 0v2" stroke-width="1.8" stroke-linecap="round"/><path d="M6 10h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z" stroke-width="1.8"/></svg>
+              <span>请输入密码</span>
+            </div>
+          </div>
+
+          <button class="submit">登录后台</button>
+
+          <div class="foot">
+            <span>安全登录</span>
+            <span>管理员权限</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="visual" aria-label="右侧视觉方案">
+        <div class="hero-art" aria-hidden="true">
+          <span class="halo"></span>
+          <span class="orbit orbit-1"></span>
+          <span class="orbit orbit-2"></span>
+          <span class="dot one"></span>
+          <span class="dot two"></span>
+          <span class="dot three"></span>
+
+          <div class="card-stack">
+            <div class="sheet back"></div>
+            <div class="sheet mid"></div>
+            <div class="sheet front">
+              <div class="identity">
+                <span class="avatar"></span>
+                <span class="line-group">
+                  <span class="line"></span>
+                  <span class="line short"></span>
+                </span>
+              </div>
+              <span class="line"></span>
+              <div class="preview">
+                <span class="preview-row"></span>
+                <span class="preview-row"></span>
+                <span class="preview-row"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="visual-copy">
+          <h2>让每一次对外展示，都清晰、准确、可信。</h2>
+          <p>公司资料、员工名片和客户案例，在一个后台统一维护。</p>
+        </div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
