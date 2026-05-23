@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PC 登录页产品价值视觉五方案</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --primary-border: #bfdbfe;
+      --ink: #111827;
+      --body: #374151;
+      --muted: #6b7280;
+      --hairline: #e5e7eb;
+      --deep: #0f172a;
+      --deep-2: #101b33;
+      --teal: #0f766e;
+      --cyan: #38bdf8;
+      --radius-card: 8px;
+      --radius-input: 6px;
+      --radius-pill: 999px;
+      font-family: Inter, "Source Han Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: #eef2f7;
+    }
+
+    .proto-nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 56px;
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(15,23,42,.08);
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(16px);
+    }
+
+    .proto-nav a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 0 13px;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-pill);
+      color: var(--body);
+      background: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .proto-nav a:hover {
+      color: var(--primary);
+      border-color: var(--primary-border);
+      background: var(--primary-soft);
+    }
+
+    .stage {
+      min-height: calc(100vh - 56px);
+      padding: 32px 24px 56px;
+      display: grid;
+      place-items: center;
+    }
+
+    .caption {
+      width: min(1180px, 100%);
+      margin: 0 auto 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .caption strong {
+      color: var(--ink);
+      font-size: 16px;
+      margin-right: 8px;
+    }
+
+    .shell {
+      width: min(1180px, 100%);
+      min-height: 720px;
+      display: grid;
+      grid-template-columns: 500px minmax(0, 1fr);
+      overflow: hidden;
+      border: 1px solid rgba(15,23,42,.1);
+      border-radius: var(--radius-card);
+      background: var(--deep);
+    }
+
+    .login-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+      background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+    }
+
+    .login-card {
+      width: 390px;
+      max-width: 100%;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 54px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-card);
+      color: #fff;
+      background: var(--primary);
+      font-weight: 800;
+    }
+
+    .brand-name {
+      color: var(--ink);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      margin-bottom: 18px;
+      padding: 0 10px;
+      border: 1px solid var(--primary-border);
+      border-radius: var(--radius-pill);
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-size: 26px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .desc {
+      margin: 0 0 28px;
+      color: var(--body);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--body);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .input {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-input);
+      color: #9ca3af;
+      background: #fff;
+      font-size: 14px;
+    }
+
+    .input svg {
+      width: 15px;
+      height: 15px;
+      stroke: #9ca3af;
+    }
+
+    .submit {
+      width: 100%;
+      height: 44px;
+      margin-top: 8px;
+      border: 0;
+      border-radius: 6px;
+      color: #fff;
+      background: var(--primary);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .visual {
+      position: relative;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      min-width: 0;
+      padding: 54px;
+      color: #fff;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -4;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,.04) 1px, transparent 1px),
+        #0f172a;
+      background-size: 52px 52px;
+    }
+
+    .visual::after {
+      content: "";
+      position: absolute;
+      width: 620px;
+      height: 620px;
+      z-index: -3;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 42% 48%, rgba(96,165,250,.34), transparent 34%),
+        radial-gradient(circle at 62% 58%, rgba(45,212,191,.22), transparent 40%);
+      filter: blur(26px);
+      opacity: .9;
+    }
+
+    .art {
+      width: min(560px, 90%);
+      height: 390px;
+      display: grid;
+      place-items: center;
+    }
+
+    .art svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .visual h2 {
+      margin: 32px 0 0;
+      max-width: 640px;
+      color: #f8fafc;
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.24;
+      text-align: center;
+      letter-spacing: 0;
+    }
+
+    .visual p {
+      margin: 14px 0 0;
+      max-width: 540px;
+      color: rgba(219,234,254,.78);
+      font-size: 15px;
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    .stroke-soft {
+      stroke: rgba(191,219,254,.48);
+    }
+
+    .stroke-faint {
+      stroke: rgba(191,219,254,.2);
+    }
+
+    .fill-glass {
+      fill: rgba(255,255,255,.08);
+      stroke: rgba(255,255,255,.18);
+    }
+
+    .fill-blue {
+      fill: url(#blueGradient);
+    }
+
+    .fill-teal {
+      fill: url(#tealGradient);
+    }
+
+    .fill-paper {
+      fill: rgba(248,250,252,.92);
+    }
+
+    .small-text {
+      fill: rgba(219,234,254,.82);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    .dark-text {
+      fill: #111827;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .muted-text {
+      fill: #64748b;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    @media (max-width: 1080px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .visual {
+        padding: 40px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .proto-nav,
+      .caption {
+        display: none;
+      }
+
+      .stage {
+        padding: 0;
+      }
+
+      .shell {
+        min-height: 100vh;
+        border: 0;
+        border-radius: 0;
+      }
+
+      .login-panel {
+        padding: 24px 20px;
+      }
+
+      .visual {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="proto-nav" aria-label="方案导航">
+    <a href="#first">方案 1：第一印象</a>
+    <a href="#identity">方案 2：正确身份</a>
+    <a href="#handoff">方案 3：专业递交</a>
+    <a href="#backing">方案 4：企业背书</a>
+    <a href="#journey">方案 5：从名片到合作</a>
+  </nav>
+
+  <section class="stage" id="first">
+    <div class="caption"><strong>方案 1：第一印象</strong>客户点开员工分享的名片，第一眼看见“人、公司、能力”都清楚。</div>
+    <div class="shell">
+      <aside class="login-panel">
+        <div class="login-card">
+          <div class="brand"><span class="brand-mark">名</span><span class="brand-name">电子名片</span></div>
+          <span class="badge">企业名片管理后台</span>
+          <h1>管理员登录</h1>
+          <p class="desc">进入后台，维护企业对外展示的全部内容。</p>
+          <div class="field"><label>手机号</label><div class="input"><svg viewBox="0 0 24 24" fill="none"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" stroke-width="1.8"/><path d="M10 18h4" stroke-width="1.8" stroke-linecap="round"/></svg><span>请输入手机号</span></div></div>
+          <div class="field"><label>密码</label><div class="input"><svg viewBox="0 0 24 24" fill="none"><path d="M7 10V8a5 5 0 0 1 10 0v2" stroke-width="1.8" stroke-linecap="round"/><path d="M6 10h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z" stroke-width="1.8"/></svg><span>请输入密码</span></div></div>
+          <button class="submit">登录后台</button>
+          <div class="foot"><span>安全登录</span><span>管理员权限</span></div>
+        </div>
+      </aside>
+      <section class="visual">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 560 390" role="img">
+            <defs>
+              <linearGradient id="blueGradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#dbeafe"/>
+                <stop offset="1" stop-color="#60a5fa"/>
+              </linearGradient>
+              <linearGradient id="tealGradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#99f6e4"/>
+                <stop offset="1" stop-color="#38bdf8"/>
+              </linearGradient>
+              <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#020617" flood-opacity=".42"/>
+              </filter>
+            </defs>
+            <ellipse cx="284" cy="298" rx="218" ry="38" fill="rgba(15,23,42,.36)"/>
+            <path d="M70 246 C140 184, 200 170, 276 196 C358 224, 412 192, 490 128" fill="none" stroke="rgba(147,197,253,.34)" stroke-width="2"/>
+            <g filter="url(#softShadow)">
+              <rect x="188" y="62" width="184" height="300" rx="32" fill="rgba(15,23,42,.72)" stroke="rgba(219,234,254,.22)"/>
+              <rect x="202" y="84" width="156" height="256" rx="24" class="fill-paper"/>
+              <circle cx="280" cy="128" r="28" class="fill-blue"/>
+              <rect x="236" y="171" width="88" height="10" rx="5" fill="#0f172a"/>
+              <rect x="248" y="192" width="64" height="7" rx="3.5" fill="#64748b"/>
+              <rect x="224" y="228" width="112" height="36" rx="10" fill="#eff6ff"/>
+              <rect x="238" y="242" width="84" height="8" rx="4" fill="#2563eb"/>
+              <rect x="224" y="278" width="48" height="36" rx="10" fill="#f1f5f9"/>
+              <rect x="288" y="278" width="48" height="36" rx="10" fill="#f1f5f9"/>
+            </g>
+            <g opacity=".94">
+              <circle cx="96" cy="156" r="32" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.22)"/>
+              <circle cx="96" cy="146" r="11" class="fill-teal"/>
+              <path d="M74 174 Q96 154 118 174" fill="rgba(219,234,254,.7)"/>
+              <text x="62" y="222" class="small-text">客户看到的不只是联系方式</text>
+            </g>
+            <g opacity=".94">
+              <circle cx="456" cy="126" r="38" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.22)"/>
+              <path d="M438 136 L438 116 L456 106 L474 116 L474 136 Z" class="fill-blue"/>
+              <path d="M446 136 V124 H466 V136" fill="#0f172a" opacity=".42"/>
+              <text x="390" y="184" class="small-text">也看见企业实力</text>
+            </g>
+            <circle cx="380" cy="210" r="7" fill="#93c5fd"/>
+            <circle cx="168" cy="218" r="5" fill="#5eead4"/>
+          </svg>
+        </div>
+        <h2>让客户第一眼，就看见专业和可信。</h2>
+        <p>员工分享出去的每一张名片，都是公司交给客户的第一印象。</p>
+      </section>
+    </div>
+  </section>
+
+  <section class="stage" id="identity">
+    <div class="caption"><strong>方案 2：正确身份</strong>同一员工面对不同客户，以正确公司身份展示，避免多品牌信息混乱。</div>
+    <div class="shell">
+      <aside class="login-panel">
+        <div class="login-card">
+          <div class="brand"><span class="brand-mark">名</span><span class="brand-name">电子名片</span></div>
+          <span class="badge">企业名片管理后台</span>
+          <h1>管理员登录</h1>
+          <p class="desc">进入后台，维护企业对外展示的全部内容。</p>
+          <div class="field"><label>手机号</label><div class="input"><svg viewBox="0 0 24 24" fill="none"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" stroke-width="1.8"/><path d="M10 18h4" stroke-width="1.8" stroke-linecap="round"/></svg><span>请输入手机号</span></div></div>
+          <div class="field"><label>密码</label><div class="input"><svg viewBox="0 0 24 24" fill="none"><path d="M7 10V8a5 5 0 0 1 10 0v2" stroke-width="1.8" stroke-linecap="round"/><path d="M6 10h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z" stroke-width="1.8"/></svg><span>请输入密码</span></div></div>
+          <button class="submit">登录后台</button>
+          <div class="foot"><span>安全登录</span><span>管理员权限</span></div>
+        </div>
+      </aside>
+      <section class="visual">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 560 390" role="img">
+            <defs>
+              <linearGradient id="blueGradient2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#dbeafe"/>
+                <stop offset="1" stop-color="#60a5fa"/>
+              </linearGradient>
+              <linearGradient id="tealGradient2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#99f6e4"/>
+                <stop offset="1" stop-color="#38bdf8"/>
+              </linearGradient>
+              <filter id="softShadow2" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#020617" flood-opacity=".44"/>
+              </filter>
+            </defs>
+            <ellipse cx="280" cy="302" rx="220" ry="42" fill="rgba(15,23,42,.38)"/>
+            <g opacity=".52" fill="none" stroke="rgba(147,197,253,.28)" stroke-width="2">
+              <path d="M280 188 C188 148, 142 104, 104 58"/>
+              <path d="M280 188 C370 150, 420 106, 462 62"/>
+              <path d="M280 188 C250 116, 262 84, 280 42"/>
+            </g>
+            <g filter="url(#softShadow2)">
+              <circle cx="280" cy="184" r="86" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.24)"/>
+              <circle cx="280" cy="154" r="30" fill="url(#blueGradient2)"/>
+              <path d="M226 222 Q280 174 334 222" fill="rgba(219,234,254,.72)"/>
+            </g>
+            <g>
+              <circle cx="104" cy="58" r="42" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.24)"/>
+              <path d="M85 68 L85 45 L104 35 L123 45 L123 68 Z" fill="url(#blueGradient2)"/>
+              <text x="77" y="124" class="small-text">华悦</text>
+            </g>
+            <g>
+              <circle cx="462" cy="62" r="42" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.24)"/>
+              <path d="M443 72 L443 49 L462 39 L481 49 L481 72 Z" fill="url(#tealGradient2)"/>
+              <text x="436" y="128" class="small-text">华宝</text>
+            </g>
+            <g>
+              <circle cx="280" cy="42" r="36" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.24)"/>
+              <path d="M264 52 L264 32 L280 23 L296 32 L296 52 Z" fill="#bfdbfe"/>
+              <text x="254" y="96" class="small-text">卓辰</text>
+            </g>
+            <g transform="translate(376 214)" opacity=".96">
+              <rect x="0" y="0" width="116" height="74" rx="14" fill="rgba(248,250,252,.94)" />
+              <text x="18" y="28" class="dark-text">正确公司</text>
+              <rect x="18" y="42" width="78" height="7" rx="3.5" fill="#2563eb"/>
+            </g>
+            <g transform="translate(78 226)" opacity=".78">
+              <rect x="0" y="0" width="118" height="62" rx="14" fill="rgba(255,255,255,.08)" stroke="rgba(219,234,254,.18)"/>
+              <text x="18" y="34" class="small-text">同一个员工</text>
+            </g>
+          </svg>
+        </div>
+        <h2>一个员工，多种身份，对外始终准确。</h2>
+        <p>按客户场景选择公司身份，避免错发、混发和品牌表达不一致。</p>
+      </section>
+    </div>
+  </section>
+
+  <section class="stage" id="handoff">
+    <div class="caption"><strong>方案 3：专业递交</strong>把电子名片看成一次商务递交，而不是一个后台链接。</div>
+    <div class="shell">
+      <aside class="login-panel">
+        <div class="login-card">
+          <div class="brand"><span class="brand-mark">名</span><span class="brand-name">电子名片</span></div>
+          <span class="badge">企业名片管理后台</span>
+          <h1>管理员登录</h1>
+          <p class="desc">进入后台，维护企业对外展示的全部内容。</p>
+          <div class="field"><label>手机号</label><div class="input"><svg viewBox="0 0 24 24" fill="none"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" stroke-width="1.8"/><path d="M10 18h4" stroke-width="1.8" stroke-linecap="round"/></svg><span>请输入手机号</span></div></div>
+          <div class="field"><label>密码</label><div class="input"><svg viewBox="0 0 24 24" fill="none"><path d="M7 10V8a5 5 0 0 1 10 0v2" stroke-width="1.8" stroke-linecap="round"/><path d="M6 10h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z" stroke-width="1.8"/></svg><span>请输入密码</span></div></div>
+          <button class="submit">登录后台</button>
+          <div class="foot"><span>安全登录</span><span>管理员权限</span></div>
+        </div>
+      </aside>
+      <section class="visual">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 560 390" role="img">
+            <defs>
+              <linearGradient id="blueGradient3" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#dbeafe"/>
+                <stop offset="1" stop-color="#60a5fa"/>
+              </linearGradient>
+              <filter id="softShadow3" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#020617" flood-opacity=".42"/>
+              </filter>
+            </defs>
+            <ellipse cx="280" cy="298" rx="230" ry="42" fill="rgba(15,23,42,.38)"/>
+            <path d="M118 250 C160 212, 194 206, 230 224 L266 242" fill="none" stroke="rgba(219,234,254,.58)" stroke-width="18" stroke-linecap="round"/>
+            <path d="M442 250 C400 212, 366 206, 330 224 L294 242" fill="none" stroke="rgba(219,234,254,.58)" stroke-width="18" stroke-linecap="round"/>
+            <g filter="url(#softShadow3)" transform="translate(214 142) rotate(-7 66 94)">
+              <rect x="0" y="0" width="132" height="188" rx="26" fill="rgba(15,23,42,.72)" stroke="rgba(219,234,254,.22)"/>
+              <rect x="10" y="14" width="112" height="158" rx="20" fill="rgba(248,250,252,.94)"/>
+              <circle cx="66" cy="54" r="20" fill="url(#blueGradient3)"/>
+              <rect x="36" y="86" width="60" height="8" rx="4" fill="#0f172a"/>
+              <rect x="46" y="104" width="40" height="6" rx="3" fill="#64748b"/>
+              <rect x="28" y="130" width="76" height="24" rx="8" fill="#eff6ff"/>
+            </g>
+            <path d="M72 150 Q122 96 194 118" fill="none" stroke="rgba(147,197,253,.24)" stroke-width="2"/>
+            <path d="M488 150 Q438 96 366 118" fill="none" stroke="rgba(147,197,253,.24)" stroke-width="2"/>
+            <g opacity=".88">
+              <circle cx="92" cy="142" r="36" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.22)"/>
+              <circle cx="92" cy="132" r="12" fill="#bfdbfe"/>
+              <path d="M68 162 Q92 140 116 162" fill="rgba(219,234,254,.62)"/>
+            </g>
+            <g opacity=".88">
+              <circle cx="468" cy="142" r="36" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.22)"/>
+              <circle cx="468" cy="132" r="12" fill="#5eead4"/>
+              <path d="M444 162 Q468 140 492 162" fill="rgba(219,234,254,.62)"/>
+            </g>
+            <circle cx="280" cy="238" r="8" fill="#93c5fd"/>
+            <circle cx="280" cy="238" r="34" fill="none" stroke="rgba(147,197,253,.2)"/>
+          </svg>
+        </div>
+        <h2>把一次介绍，递交成一次专业沟通。</h2>
+        <p>客户拿到的不只是联系方式，而是一份准确完整的企业介绍。</p>
+      </section>
+    </div>
+  </section>
+
+  <section class="stage" id="backing">
+    <div class="caption"><strong>方案 4：企业背书</strong>员工对外介绍时，背后有公司资料、业务介绍和客户案例统一支撑。</div>
+    <div class="shell">
+      <aside class="login-panel">
+        <div class="login-card">
+          <div class="brand"><span class="brand-mark">名</span><span class="brand-name">电子名片</span></div>
+          <span class="badge">企业名片管理后台</span>
+          <h1>管理员登录</h1>
+          <p class="desc">进入后台，维护企业对外展示的全部内容。</p>
+          <div class="field"><label>手机号</label><div class="input"><svg viewBox="0 0 24 24" fill="none"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" stroke-width="1.8"/><path d="M10 18h4" stroke-width="1.8" stroke-linecap="round"/></svg><span>请输入手机号</span></div></div>
+          <div class="field"><label>密码</label><div class="input"><svg viewBox="0 0 24 24" fill="none"><path d="M7 10V8a5 5 0 0 1 10 0v2" stroke-width="1.8" stroke-linecap="round"/><path d="M6 10h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z" stroke-width="1.8"/></svg><span>请输入密码</span></div></div>
+          <button class="submit">登录后台</button>
+          <div class="foot"><span>安全登录</span><span>管理员权限</span></div>
+        </div>
+      </aside>
+      <section class="visual">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 560 390" role="img">
+            <defs>
+              <linearGradient id="blueGradient4" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#dbeafe"/>
+                <stop offset="1" stop-color="#60a5fa"/>
+              </linearGradient>
+              <linearGradient id="tealGradient4" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#99f6e4"/>
+                <stop offset="1" stop-color="#38bdf8"/>
+              </linearGradient>
+              <filter id="softShadow4" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#020617" flood-opacity=".44"/>
+              </filter>
+            </defs>
+            <ellipse cx="280" cy="306" rx="232" ry="42" fill="rgba(15,23,42,.38)"/>
+            <g opacity=".78">
+              <path d="M116 274 V128 L184 92 L252 128 V274" fill="rgba(255,255,255,.08)" stroke="rgba(219,234,254,.22)"/>
+              <path d="M252 274 V112 L328 72 L404 112 V274" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.26)"/>
+              <path d="M404 274 V144 L462 114 L520 144 V274" fill="rgba(255,255,255,.07)" stroke="rgba(219,234,254,.2)"/>
+              <g fill="rgba(219,234,254,.26)">
+                <rect x="146" y="144" width="22" height="30" rx="4"/><rect x="198" y="144" width="22" height="30" rx="4"/>
+                <rect x="282" y="132" width="24" height="34" rx="4"/><rect x="350" y="132" width="24" height="34" rx="4"/>
+                <rect x="432" y="162" width="20" height="28" rx="4"/><rect x="472" y="162" width="20" height="28" rx="4"/>
+              </g>
+            </g>
+            <g filter="url(#softShadow4)">
+              <circle cx="282" cy="222" r="72" fill="rgba(15,23,42,.58)" stroke="rgba(219,234,254,.24)"/>
+              <circle cx="282" cy="194" r="26" fill="url(#blueGradient4)"/>
+              <path d="M232 250 Q282 204 332 250" fill="rgba(219,234,254,.72)"/>
+            </g>
+            <g transform="translate(90 64)">
+              <rect x="0" y="0" width="118" height="68" rx="14" fill="rgba(248,250,252,.94)"/>
+              <text x="18" y="29" class="dark-text">公司资料</text>
+              <rect x="18" y="44" width="78" height="7" rx="3.5" fill="#2563eb"/>
+            </g>
+            <g transform="translate(358 64)">
+              <rect x="0" y="0" width="118" height="68" rx="14" fill="rgba(248,250,252,.94)"/>
+              <text x="18" y="29" class="dark-text">客户案例</text>
+              <rect x="18" y="44" width="78" height="7" rx="3.5" fill="#0f766e"/>
+            </g>
+            <path d="M210 94 C242 128, 252 148, 266 184" fill="none" stroke="rgba(147,197,253,.34)" stroke-width="2"/>
+            <path d="M358 94 C324 128, 312 148, 296 184" fill="none" stroke="rgba(147,197,253,.34)" stroke-width="2"/>
+          </svg>
+        </div>
+        <h2>每个员工背后，都是统一可信的企业内容。</h2>
+        <p>公司资料、业务介绍和客户案例共同支撑一次对外沟通。</p>
+      </section>
+    </div>
+  </section>
+
+  <section class="stage" id="journey">
+    <div class="caption"><strong>方案 5：从名片到合作</strong>表达客户从收到名片、了解案例、发起联系，到形成合作机会的完整结果。</div>
+    <div class="shell">
+      <aside class="login-panel">
+        <div class="login-card">
+          <div class="brand"><span class="brand-mark">名</span><span class="brand-name">电子名片</span></div>
+          <span class="badge">企业名片管理后台</span>
+          <h1>管理员登录</h1>
+          <p class="desc">进入后台，维护企业对外展示的全部内容。</p>
+          <div class="field"><label>手机号</label><div class="input"><svg viewBox="0 0 24 24" fill="none"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" stroke-width="1.8"/><path d="M10 18h4" stroke-width="1.8" stroke-linecap="round"/></svg><span>请输入手机号</span></div></div>
+          <div class="field"><label>密码</label><div class="input"><svg viewBox="0 0 24 24" fill="none"><path d="M7 10V8a5 5 0 0 1 10 0v2" stroke-width="1.8" stroke-linecap="round"/><path d="M6 10h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z" stroke-width="1.8"/></svg><span>请输入密码</span></div></div>
+          <button class="submit">登录后台</button>
+          <div class="foot"><span>安全登录</span><span>管理员权限</span></div>
+        </div>
+      </aside>
+      <section class="visual">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 560 390" role="img">
+            <defs>
+              <linearGradient id="blueGradient5" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#dbeafe"/>
+                <stop offset="1" stop-color="#60a5fa"/>
+              </linearGradient>
+              <linearGradient id="tealGradient5" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#99f6e4"/>
+                <stop offset="1" stop-color="#38bdf8"/>
+              </linearGradient>
+              <filter id="softShadow5" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#020617" flood-opacity=".42"/>
+              </filter>
+            </defs>
+            <ellipse cx="280" cy="304" rx="230" ry="42" fill="rgba(15,23,42,.38)"/>
+            <path d="M94 214 C162 96, 288 96, 358 164 C418 222, 454 250, 506 178" fill="none" stroke="rgba(147,197,253,.28)" stroke-width="26" stroke-linecap="round"/>
+            <path d="M94 214 C162 96, 288 96, 358 164 C418 222, 454 250, 506 178" fill="none" stroke="rgba(219,234,254,.74)" stroke-width="3" stroke-linecap="round"/>
+            <g filter="url(#softShadow5)" transform="translate(66 170)">
+              <circle cx="0" cy="0" r="42" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.24)"/>
+              <path d="M-16 -9 H16 A10 10 0 0 1 26 1 V17 A10 10 0 0 1 16 27 H-16 A10 10 0 0 1-26 17 V1 A10 10 0 0 1-16 -9Z" fill="url(#blueGradient5)"/>
+              <text x="-24" y="64" class="small-text">收到名片</text>
+            </g>
+            <g filter="url(#softShadow5)" transform="translate(222 100)">
+              <circle cx="0" cy="0" r="44" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.24)"/>
+              <rect x="-22" y="-26" width="44" height="52" rx="8" fill="rgba(248,250,252,.94)"/>
+              <rect x="-13" y="-15" width="26" height="6" rx="3" fill="#2563eb"/>
+              <rect x="-13" y="1" width="26" height="6" rx="3" fill="#64748b"/>
+              <text x="-28" y="66" class="small-text">了解实力</text>
+            </g>
+            <g filter="url(#softShadow5)" transform="translate(374 190)">
+              <circle cx="0" cy="0" r="44" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.24)"/>
+              <path d="M-18 -18 H18 V18 H-18 Z" fill="url(#tealGradient5)"/>
+              <path d="M-8 2 L-1 9 L13 -9" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".45"/>
+              <text x="-28" y="66" class="small-text">确认案例</text>
+            </g>
+            <g filter="url(#softShadow5)" transform="translate(506 178)">
+              <circle cx="0" cy="0" r="48" fill="rgba(255,255,255,.1)" stroke="rgba(219,234,254,.24)"/>
+              <path d="M-24 6 C-8 -18, 8 -18, 24 6" fill="none" stroke="#dbeafe" stroke-width="10" stroke-linecap="round"/>
+              <path d="M-20 16 C-6 30, 8 30, 22 16" fill="none" stroke="#5eead4" stroke-width="10" stroke-linecap="round"/>
+              <text x="-28" y="72" class="small-text">开始合作</text>
+            </g>
+            <circle cx="144" cy="126" r="5" fill="#93c5fd"/>
+            <circle cx="304" cy="130" r="6" fill="#5eead4"/>
+            <circle cx="448" cy="232" r="5" fill="#93c5fd"/>
+          </svg>
+        </div>
+        <h2>分享不是结束，是合作开始。</h2>
+        <p>从一张电子名片，到一次清晰了解，再到一次有效联系。</p>
+      </section>
+    </div>
+  </section>
+</body>
+</html>
