@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PC 登录页沟通合作视觉三方案</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --primary-border: #bfdbfe;
+      --ink: #111827;
+      --body: #374151;
+      --muted: #6b7280;
+      --hairline: #e5e7eb;
+      --panel: #ffffff;
+      --deep: #0f172a;
+      --deep-2: #13213a;
+      --teal: #0f766e;
+      --cyan: #38bdf8;
+      --radius-card: 8px;
+      --radius-input: 6px;
+      --radius-pill: 999px;
+      font-family: Inter, "Source Han Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: #eef2f7;
+    }
+
+    .prototype-nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 56px;
+      padding: 0 16px;
+      background: rgba(255,255,255,.9);
+      border-bottom: 1px solid rgba(15,23,42,.08);
+      backdrop-filter: blur(16px);
+    }
+
+    .prototype-nav a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 0 14px;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-pill);
+      color: var(--body);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      background: #fff;
+    }
+
+    .prototype-nav a:hover {
+      border-color: var(--primary-border);
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .stage {
+      min-height: calc(100vh - 56px);
+      display: grid;
+      place-items: center;
+      padding: 32px 24px 56px;
+    }
+
+    .caption {
+      width: min(1180px, 100%);
+      margin: 0 auto 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .caption strong {
+      color: var(--ink);
+      font-size: 16px;
+      margin-right: 8px;
+    }
+
+    .shell {
+      width: min(1180px, 100%);
+      min-height: 720px;
+      display: grid;
+      grid-template-columns: 500px minmax(0, 1fr);
+      overflow: hidden;
+      border: 1px solid rgba(15,23,42,.1);
+      border-radius: var(--radius-card);
+      background: var(--deep);
+    }
+
+    .login-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+      background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+    }
+
+    .login-card {
+      width: 390px;
+      max-width: 100%;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 54px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-card);
+      color: #fff;
+      background: var(--primary);
+      font-weight: 800;
+    }
+
+    .brand-name {
+      color: var(--ink);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      margin-bottom: 18px;
+      padding: 0 10px;
+      border: 1px solid var(--primary-border);
+      border-radius: var(--radius-pill);
+      color: var(--primary-hover);
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--primary-soft);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-size: 26px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .desc {
+      margin: 0 0 28px;
+      color: var(--body);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--body);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .input {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-input);
+      color: #9ca3af;
+      background: #fff;
+      font-size: 14px;
+    }
+
+    .input svg {
+      width: 15px;
+      height: 15px;
+      stroke: #9ca3af;
+    }
+
+    .submit {
+      width: 100%;
+      height: 44px;
+      margin-top: 8px;
+      border: 0;
+      border-radius: 6px;
+      color: #fff;
+      background: var(--primary);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .visual {
+      position: relative;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      min-width: 0;
+      padding: 54px;
+      color: #fff;
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    .visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -3;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,.045) 1px, transparent 1px),
+        var(--deep);
+      background-size: 48px 48px;
+    }
+
+    .visual h2 {
+      margin: 34px 0 0;
+      max-width: 620px;
+      color: #f8fafc;
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.24;
+      text-align: center;
+      letter-spacing: 0;
+    }
+
+    .visual p {
+      margin: 14px 0 0;
+      max-width: 520px;
+      color: rgba(219,234,254,.78);
+      font-size: 15px;
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    .art {
+      position: relative;
+      width: min(520px, 88%);
+      aspect-ratio: 1.18 / 1;
+    }
+
+    .option-a::after,
+    .option-b::after,
+    .option-c::after {
+      content: "";
+      position: absolute;
+      inset: 12% 8%;
+      z-index: -2;
+      border-radius: 50%;
+      filter: blur(28px);
+      opacity: .72;
+    }
+
+    .option-a::after {
+      background:
+        radial-gradient(circle at 42% 46%, rgba(96,165,250,.46), transparent 34%),
+        radial-gradient(circle at 63% 54%, rgba(45,212,191,.3), transparent 38%);
+    }
+
+    .option-b::after {
+      background:
+        radial-gradient(circle at 50% 46%, rgba(59,130,246,.42), transparent 36%),
+        radial-gradient(circle at 46% 70%, rgba(125,211,252,.2), transparent 42%);
+    }
+
+    .option-c::after {
+      background:
+        radial-gradient(circle at 50% 50%, rgba(37,99,235,.46), transparent 36%),
+        radial-gradient(circle at 68% 42%, rgba(94,234,212,.28), transparent 34%);
+    }
+
+    /* Option A: 协作光场 */
+    .constellation {
+      display: grid;
+      place-items: center;
+    }
+
+    .beam {
+      position: absolute;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(191,219,254,.75), transparent);
+      transform-origin: 50% 50%;
+      box-shadow: 0 0 18px rgba(96,165,250,.45);
+    }
+
+    .beam.b1 { width: 260px; left: 128px; top: 186px; transform: rotate(11deg); }
+    .beam.b2 { width: 210px; left: 158px; top: 244px; transform: rotate(-23deg); }
+    .beam.b3 { width: 176px; left: 210px; top: 150px; transform: rotate(43deg); }
+    .beam.b4 { width: 150px; left: 128px; top: 284px; transform: rotate(26deg); opacity: .65; }
+
+    .person {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 82px;
+      height: 82px;
+      border: 1px solid rgba(219,234,254,.28);
+      border-radius: 50%;
+      background: rgba(15,23,42,.36);
+      box-shadow: 0 22px 72px rgba(2,6,23,.42);
+      backdrop-filter: blur(12px);
+    }
+
+    .person::before {
+      content: "";
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #bfdbfe, #38bdf8);
+      box-shadow: 0 0 28px rgba(147,197,253,.52);
+    }
+
+    .person::after {
+      content: "";
+      position: absolute;
+      bottom: 15px;
+      width: 42px;
+      height: 15px;
+      border-radius: 999px 999px 10px 10px;
+      background: rgba(219,234,254,.62);
+    }
+
+    .p1 { left: 70px; top: 154px; }
+    .p2 { right: 74px; top: 146px; }
+    .p3 { left: 214px; bottom: 40px; }
+    .p4 { left: 214px; top: 36px; width: 70px; height: 70px; opacity: .76; }
+
+    .signal {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      width: 122px;
+      height: 122px;
+      border: 1px solid rgba(125,211,252,.24);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .signal::before,
+    .signal::after {
+      content: "";
+      position: absolute;
+      inset: -26px;
+      border: 1px solid rgba(125,211,252,.16);
+      border-radius: 50%;
+    }
+
+    .signal::after {
+      inset: -54px;
+      opacity: .72;
+    }
+
+    /* Option B: 共创工作台 */
+    .workspace {
+      display: grid;
+      place-items: center;
+    }
+
+    .table-glow {
+      position: absolute;
+      left: 50%;
+      top: 54%;
+      width: 360px;
+      height: 152px;
+      border: 1px solid rgba(191,219,254,.22);
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(37,99,235,.3), rgba(15,23,42,.08) 62%, transparent);
+      transform: translate(-50%, -50%) rotate(-4deg);
+      box-shadow: inset 0 0 44px rgba(147,197,253,.18), 0 30px 86px rgba(2,6,23,.38);
+    }
+
+    .idea-core {
+      position: absolute;
+      left: 50%;
+      top: 51%;
+      width: 126px;
+      height: 126px;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 50%;
+      background: linear-gradient(145deg, rgba(255,255,255,.22), rgba(37,99,235,.2));
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 54px rgba(96,165,250,.42);
+      backdrop-filter: blur(16px);
+    }
+
+    .idea-core::before {
+      content: "";
+      position: absolute;
+      inset: 38px;
+      border-radius: 50%;
+      background: #dbeafe;
+      box-shadow: 0 0 32px rgba(219,234,254,.85);
+    }
+
+    .collaborator {
+      position: absolute;
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: rgba(15,23,42,.4);
+      border: 1px solid rgba(219,234,254,.24);
+      backdrop-filter: blur(12px);
+    }
+
+    .collaborator::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 15px;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e0f2fe, #60a5fa);
+      transform: translateX(-50%);
+    }
+
+    .collaborator::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 15px;
+      width: 38px;
+      height: 14px;
+      border-radius: 999px 999px 8px 8px;
+      background: rgba(219,234,254,.58);
+      transform: translateX(-50%);
+    }
+
+    .c1 { left: 84px; top: 126px; }
+    .c2 { right: 88px; top: 124px; }
+    .c3 { left: 118px; bottom: 66px; opacity: .82; }
+    .c4 { right: 122px; bottom: 64px; opacity: .82; }
+
+    .thread {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(191,219,254,.7), transparent);
+      transform-origin: center;
+    }
+
+    .t1 { width: 190px; left: 154px; top: 180px; transform: rotate(20deg); }
+    .t2 { width: 190px; right: 154px; top: 180px; transform: rotate(-20deg); }
+    .t3 { width: 156px; left: 170px; bottom: 122px; transform: rotate(-18deg); }
+    .t4 { width: 156px; right: 174px; bottom: 120px; transform: rotate(18deg); }
+
+    /* Option C: 连接桥梁 */
+    .bridge {
+      display: grid;
+      place-items: center;
+    }
+
+    .bridge-path {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 420px;
+      height: 158px;
+      border-top: 2px solid rgba(191,219,254,.7);
+      border-radius: 50%;
+      transform: translate(-50%, -28%);
+      filter: drop-shadow(0 0 20px rgba(96,165,250,.4));
+    }
+
+    .bridge-path::before,
+    .bridge-path::after {
+      content: "";
+      position: absolute;
+      bottom: -46px;
+      width: 2px;
+      height: 88px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(191,219,254,.62), transparent);
+    }
+
+    .bridge-path::before { left: 76px; transform: rotate(10deg); }
+    .bridge-path::after { right: 76px; transform: rotate(-10deg); }
+
+    .side-group {
+      position: absolute;
+      top: 155px;
+      width: 142px;
+      height: 142px;
+      border: 1px solid rgba(219,234,254,.22);
+      border-radius: 50%;
+      background: rgba(15,23,42,.34);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 28px 80px rgba(2,6,23,.36);
+    }
+
+    .side-group.left { left: 56px; }
+    .side-group.right { right: 56px; }
+
+    .side-group span {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e0f2fe, #60a5fa);
+      box-shadow: 0 0 28px rgba(96,165,250,.42);
+    }
+
+    .side-group span:nth-child(1) { left: 53px; top: 24px; }
+    .side-group span:nth-child(2) { left: 30px; bottom: 34px; opacity: .75; }
+    .side-group span:nth-child(3) { right: 28px; bottom: 34px; opacity: .75; }
+
+    .meeting-point {
+      position: absolute;
+      left: 50%;
+      top: 43%;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #dbeafe 0 22%, rgba(96,165,250,.32) 23% 55%, rgba(37,99,235,.08) 56%);
+      border: 1px solid rgba(219,234,254,.34);
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 64px rgba(96,165,250,.62);
+    }
+
+    .ripple {
+      position: absolute;
+      left: 50%;
+      top: 43%;
+      width: 164px;
+      height: 164px;
+      border: 1px solid rgba(147,197,253,.18);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .ripple.two {
+      width: 232px;
+      height: 232px;
+      opacity: .72;
+    }
+
+    @media (max-width: 1080px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .visual {
+        padding: 40px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .stage {
+        padding: 0;
+      }
+
+      .caption,
+      .prototype-nav {
+        display: none;
+      }
+
+      .shell {
+        min-height: 100vh;
+        border: 0;
+        border-radius: 0;
+      }
+
+      .login-panel {
+        padding: 24px 20px;
+      }
+
+      .visual {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="prototype-nav" aria-label="方案导航">
+    <a href="#option-a">方案 A：协作光场</a>
+    <a href="#option-b">方案 B：共创工作台</a>
+    <a href="#option-c">方案 C：连接桥梁</a>
+  </nav>
+
+  <section class="stage" id="option-a">
+    <div class="caption"><strong>方案 A：协作光场</strong>用抽象团队节点和光线表达沟通、响应、信任。</div>
+    <div class="shell">
+      <aside class="login-panel">
+        <div class="login-card">
+          <div class="brand">
+            <span class="brand-mark">名</span>
+            <span class="brand-name">电子名片</span>
+          </div>
+          <span class="badge">企业名片管理后台</span>
+          <h1>管理员登录</h1>
+          <p class="desc">进入后台，维护企业对外展示的全部内容。</p>
+          <div class="field">
+            <label>手机号</label>
+            <div class="input">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" stroke-width="1.8"/><path d="M10 18h4" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span>请输入手机号</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>密码</label>
+            <div class="input">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 10V8a5 5 0 0 1 10 0v2" stroke-width="1.8" stroke-linecap="round"/><path d="M6 10h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z" stroke-width="1.8"/></svg>
+              <span>请输入密码</span>
+            </div>
+          </div>
+          <button class="submit">登录后台</button>
+          <div class="foot">
+            <span>安全登录</span>
+            <span>管理员权限</span>
+          </div>
+        </div>
+      </aside>
+      <section class="visual option-a">
+        <div class="art constellation" aria-hidden="true">
+          <span class="signal"></span>
+          <span class="beam b1"></span>
+          <span class="beam b2"></span>
+          <span class="beam b3"></span>
+          <span class="beam b4"></span>
+          <span class="person p1"></span>
+          <span class="person p2"></span>
+          <span class="person p3"></span>
+          <span class="person p4"></span>
+        </div>
+        <h2>让每一次连接，都成为可信合作的开始。</h2>
+        <p>沟通更清晰，协作更稳定，对外展示更一致。</p>
+      </section>
+    </div>
+  </section>
+
+  <section class="stage" id="option-b">
+    <div class="caption"><strong>方案 B：共创工作台</strong>多人围绕同一个目标共创，画面更温和、更有合作感。</div>
+    <div class="shell">
+      <aside class="login-panel">
+        <div class="login-card">
+          <div class="brand">
+            <span class="brand-mark">名</span>
+            <span class="brand-name">电子名片</span>
+          </div>
+          <span class="badge">企业名片管理后台</span>
+          <h1>管理员登录</h1>
+          <p class="desc">进入后台，维护企业对外展示的全部内容。</p>
+          <div class="field">
+            <label>手机号</label>
+            <div class="input">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" stroke-width="1.8"/><path d="M10 18h4" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span>请输入手机号</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>密码</label>
+            <div class="input">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 10V8a5 5 0 0 1 10 0v2" stroke-width="1.8" stroke-linecap="round"/><path d="M6 10h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z" stroke-width="1.8"/></svg>
+              <span>请输入密码</span>
+            </div>
+          </div>
+          <button class="submit">登录后台</button>
+          <div class="foot">
+            <span>安全登录</span>
+            <span>管理员权限</span>
+          </div>
+        </div>
+      </aside>
+      <section class="visual option-b">
+        <div class="art workspace" aria-hidden="true">
+          <span class="table-glow"></span>
+          <span class="thread t1"></span>
+          <span class="thread t2"></span>
+          <span class="thread t3"></span>
+          <span class="thread t4"></span>
+          <span class="collaborator c1"></span>
+          <span class="collaborator c2"></span>
+          <span class="collaborator c3"></span>
+          <span class="collaborator c4"></span>
+          <span class="idea-core"></span>
+        </div>
+        <h2>把共同目标放在中间，让团队自然协同。</h2>
+        <p>一个入口维护信息，所有对外沟通保持同一套可信表达。</p>
+      </section>
+    </div>
+  </section>
+
+  <section class="stage" id="option-c">
+    <div class="caption"><strong>方案 C：连接桥梁</strong>强调从内部协作到客户合作的转化，秩序感最强。</div>
+    <div class="shell">
+      <aside class="login-panel">
+        <div class="login-card">
+          <div class="brand">
+            <span class="brand-mark">名</span>
+            <span class="brand-name">电子名片</span>
+          </div>
+          <span class="badge">企业名片管理后台</span>
+          <h1>管理员登录</h1>
+          <p class="desc">进入后台，维护企业对外展示的全部内容。</p>
+          <div class="field">
+            <label>手机号</label>
+            <div class="input">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" stroke-width="1.8"/><path d="M10 18h4" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span>请输入手机号</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>密码</label>
+            <div class="input">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 10V8a5 5 0 0 1 10 0v2" stroke-width="1.8" stroke-linecap="round"/><path d="M6 10h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z" stroke-width="1.8"/></svg>
+              <span>请输入密码</span>
+            </div>
+          </div>
+          <button class="submit">登录后台</button>
+          <div class="foot">
+            <span>安全登录</span>
+            <span>管理员权限</span>
+          </div>
+        </div>
+      </aside>
+      <section class="visual option-c">
+        <div class="art bridge" aria-hidden="true">
+          <span class="ripple"></span>
+          <span class="ripple two"></span>
+          <span class="bridge-path"></span>
+          <span class="side-group left"><span></span><span></span><span></span></span>
+          <span class="side-group right"><span></span><span></span><span></span></span>
+          <span class="meeting-point"></span>
+        </div>
+        <h2>让内部协作，成为客户信任的桥梁。</h2>
+        <p>信息统一、表达一致，合作从第一次沟通就更顺畅。</p>
+      </section>
+    </div>
+  </section>
+</body>
+</html>
