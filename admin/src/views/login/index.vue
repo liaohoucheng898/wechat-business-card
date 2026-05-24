@@ -72,65 +72,57 @@
       </aside>
 
       <section class="login-visual">
-        <div class="visual-top">
-          <span>Admin Console</span>
-          <span>资料准确 · 展示统一 · 数据可追溯</span>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 560 390" role="img">
+            <defs>
+              <linearGradient id="loginFirstBlue" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#dbeafe" />
+                <stop offset="1" stop-color="#60a5fa" />
+              </linearGradient>
+              <linearGradient id="loginFirstTeal" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#99f6e4" />
+                <stop offset="1" stop-color="#38bdf8" />
+              </linearGradient>
+              <filter id="loginFirstShadow" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#020617" flood-opacity=".42" />
+              </filter>
+            </defs>
+            <ellipse cx="284" cy="298" rx="218" ry="38" fill="rgba(15, 23, 42, .36)" />
+            <path
+              d="M70 246 C140 184, 200 170, 276 196 C358 224, 412 192, 490 128"
+              fill="none"
+              stroke="rgba(147, 197, 253, .34)"
+              stroke-width="2"
+            />
+            <g filter="url(#loginFirstShadow)">
+              <rect x="188" y="62" width="184" height="300" rx="32" fill="rgba(15, 23, 42, .72)" stroke="rgba(219, 234, 254, .22)" />
+              <rect x="202" y="84" width="156" height="256" rx="24" fill="rgba(248, 250, 252, .92)" />
+              <circle cx="280" cy="128" r="28" fill="url(#loginFirstBlue)" />
+              <rect x="236" y="171" width="88" height="10" rx="5" fill="#0f172a" />
+              <rect x="248" y="192" width="64" height="7" rx="3.5" fill="#64748b" />
+              <rect x="224" y="228" width="112" height="36" rx="10" fill="#eff6ff" />
+              <rect x="238" y="242" width="84" height="8" rx="4" fill="#2563eb" />
+              <rect x="224" y="278" width="48" height="36" rx="10" fill="#f1f5f9" />
+              <rect x="288" y="278" width="48" height="36" rx="10" fill="#f1f5f9" />
+            </g>
+            <g opacity=".94">
+              <circle cx="96" cy="156" r="32" fill="rgba(255, 255, 255, .1)" stroke="rgba(219, 234, 254, .22)" />
+              <circle cx="96" cy="146" r="11" fill="url(#loginFirstTeal)" />
+              <path d="M74 174 Q96 154 118 174" fill="rgba(219, 234, 254, .7)" />
+            </g>
+            <g opacity=".94">
+              <circle cx="456" cy="126" r="38" fill="rgba(255, 255, 255, .1)" stroke="rgba(219, 234, 254, .22)" />
+              <path d="M438 136 L438 116 L456 106 L474 116 L474 136 Z" fill="url(#loginFirstBlue)" />
+              <path d="M446 136 V124 H466 V136" fill="#0f172a" opacity=".42" />
+            </g>
+            <circle cx="380" cy="210" r="7" fill="#93c5fd" />
+            <circle cx="168" cy="218" r="5" fill="#5eead4" />
+          </svg>
         </div>
 
-        <div class="visual-main">
-          <div class="visual-copy">
-            <h2>把公司资料、员工名片和客户案例统一管起来</h2>
-            <p>后台负责保证对外信息准确、案例展示清晰、员工开通状态可查，让客户看到的每一张名片都可信。</p>
-          </div>
-
-          <div class="visual-metrics">
-            <article class="visual-metric">
-              <strong>客户访问</strong>
-              <span>持续追踪外部访问趋势</span>
-            </article>
-            <article class="visual-metric">
-              <strong>员工名片</strong>
-              <span>统一维护人员展示信息</span>
-            </article>
-            <article class="visual-metric">
-              <strong>案例内容</strong>
-              <span>按栏目管理客户案例</span>
-            </article>
-          </div>
-
-          <div class="visual-grid">
-            <article class="visual-panel visual-panel--wide">
-              <div class="visual-panel__header">
-                <strong>浏览趋势</strong>
-                <span>默认近 15 天</span>
-              </div>
-              <div class="trend-preview" aria-hidden="true">
-                <span style="height: 76%;" />
-                <span style="height: 38%;" />
-                <span style="height: 46%;" />
-                <span style="height: 62%;" />
-                <span style="height: 52%;" />
-                <span style="height: 58%;" />
-                <span style="height: 70%;" />
-                <span style="height: 48%;" />
-                <span style="height: 64%;" />
-              </div>
-            </article>
-
-            <article class="visual-panel">
-              <strong>内容状态</strong>
-              <div class="status-list">
-                <span>公司资料 <em>已维护</em></span>
-                <span>官网地址 <em>已填写</em></span>
-                <span>案例栏目 <em>可复核</em></span>
-              </div>
-            </article>
-
-            <article class="visual-panel">
-              <strong>待处理</strong>
-              <p>优先处理未绑定员工、未归类案例和资料缺失项，保持客户看到的信息准确。</p>
-            </article>
-          </div>
+        <div class="visual-copy">
+          <h2>让客户第一眼，<br />就看见专业和可信。</h2>
+          <p>员工分享出去的每一张名片，都是公司交给客户的第一印象。</p>
         </div>
       </section>
     </div>
@@ -333,158 +325,73 @@ async function handlePasswordLogin() {
 
 .login-visual {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  align-content: center;
+  justify-items: center;
   min-width: 0;
-  padding: 46px 54px;
+  padding: 54px;
   color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    background:
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      #0f172a;
+    background-size: 52px 52px;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: -2;
+    width: 620px;
+    height: 620px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 42% 48%, rgba(96, 165, 250, 0.34), transparent 34%),
+      radial-gradient(circle at 62% 58%, rgba(45, 212, 191, 0.22), transparent 40%);
+    opacity: 0.9;
+    filter: blur(26px);
+  }
 }
 
-.visual-top {
-  display: flex;
-  justify-content: space-between;
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 13px;
-}
+.hero-art {
+  width: min(560px, 90%);
+  height: 390px;
+  display: grid;
+  place-items: center;
 
-.visual-main {
-  margin-top: 72px;
+  svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
 }
 
 .visual-copy {
   max-width: 640px;
+  text-align: center;
 
   h2 {
     margin: 0;
-    color: #fff;
-    font-size: 44px;
+    color: rgba(255, 255, 255, 0.96);
+    font-size: 40px;
     font-weight: 700;
-    line-height: 1.16;
+    line-height: 1.2;
     letter-spacing: 0;
   }
 
   p {
-    max-width: 600px;
-    margin: 18px 0 0;
+    margin: 16px auto 0;
     color: rgba(255, 255, 255, 0.72);
     font-size: 16px;
-    line-height: 1.8;
-  }
-}
-
-.visual-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  max-width: 660px;
-  margin-top: 28px;
-}
-
-.visual-metric,
-.visual-panel {
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: $radius-card;
-  background: rgba(15, 23, 42, 0.7);
-}
-
-.visual-metric {
-  padding: 14px;
-
-  strong {
-    display: block;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 700;
-  }
-
-  span {
-    display: block;
-    margin-top: 5px;
-    color: rgba(255, 255, 255, 0.64);
-    font-size: 12px;
-    line-height: 1.5;
-  }
-}
-
-.visual-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 14px;
-  margin-top: 38px;
-}
-
-.visual-panel {
-  padding: 16px;
-
-  strong {
-    display: block;
-    margin-bottom: 12px;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-  }
-
-  p {
-    margin: 0;
-    color: rgba(255, 255, 255, 0.62);
-    font-size: 12px;
-    line-height: 1.7;
-  }
-}
-
-.visual-panel--wide {
-  grid-column: span 2;
-}
-
-.visual-panel__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  span {
-    color: #bfdbfe;
-    font-size: 12px;
-    font-weight: 600;
-  }
-}
-
-.trend-preview {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  height: 126px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
-
-  span {
-    flex: 1;
-    min-width: 10px;
-    border-radius: 6px 6px 0 0;
-    background: $color-primary;
-  }
-}
-
-.status-list {
-  display: grid;
-  gap: 10px;
-
-  span {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 38px;
-    padding: 0 12px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: $radius-button;
-    color: rgba(255, 255, 255, 0.74);
-    font-size: 12px;
-    background: rgba(255, 255, 255, 0.05);
-  }
-
-  em {
-    color: #bfdbfe;
-    font-style: normal;
-    font-weight: 600;
+    line-height: 1.75;
   }
 }
 
@@ -494,19 +401,12 @@ async function handlePasswordLogin() {
   }
 
   .login-visual {
-    padding: 34px;
+    padding: 40px;
   }
 
-  .visual-main {
-    margin-top: 42px;
-  }
-
-  .visual-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .visual-panel--wide {
-    grid-column: span 1;
+  .hero-art {
+    width: min(520px, 84%);
+    height: 360px;
   }
 }
 
