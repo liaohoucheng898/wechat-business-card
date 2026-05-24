@@ -9,9 +9,7 @@
           </div>
 
           <div class="form-header">
-            <span class="login-badge">企业名片管理后台</span>
             <h1 class="form-title">管理员登录</h1>
-            <p class="form-desc">进入后台，维护企业对外展示的全部内容。</p>
           </div>
 
           <el-form
@@ -64,10 +62,6 @@
             </el-form-item>
           </el-form>
 
-          <div class="login-foot">
-            <span>安全登录</span>
-            <span>管理员权限</span>
-          </div>
         </div>
       </aside>
 
@@ -262,37 +256,16 @@ async function handlePasswordLogin() {
 }
 
 .form-header {
-  margin-bottom: 22px;
-}
-
-.login-badge {
-  display: inline-flex;
-  align-items: center;
-  height: 28px;
-  margin-bottom: 18px;
-  padding: 0 10px;
-  border: 1px solid $color-primary-border;
-  border-radius: $radius-tag;
-  color: $color-primary-hover;
-  font-size: 12px;
-  font-weight: 600;
-  background: $color-primary-soft;
+  margin-bottom: 26px;
 }
 
 .form-title {
-  margin: 0 0 8px;
+  margin: 0;
   color: $text-primary;
   font-size: 26px;
   font-weight: 700;
   line-height: 1.35;
   letter-spacing: 0;
-}
-
-.form-desc {
-  margin: 0;
-  color: $text-secondary;
-  font-size: 14px;
-  line-height: 1.7;
 }
 
 .login-form {
@@ -313,14 +286,6 @@ async function handlePasswordLogin() {
   min-height: 44px;
   border-radius: $radius-button;
   font-weight: 600;
-}
-
-.login-foot {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 18px;
-  color: $text-auxiliary;
-  font-size: 12px;
 }
 
 .login-visual {
