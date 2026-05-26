@@ -1,0 +1,1501 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>海南华悦科技有限公司官网苹果风原型 V1</title>
+  <style>
+    :root {
+      --ink: #111111;
+      --body: #1d1d1f;
+      --muted: #6e6e73;
+      --soft: #f5f5f7;
+      --soft-2: #fbfbfd;
+      --line: rgba(0, 0, 0, 0.10);
+      --line-strong: rgba(0, 0, 0, 0.18);
+      --blue: #0071e3;
+      --blue-dark: #005bb5;
+      --white: #ffffff;
+      --black: #000000;
+      --green: #2f855a;
+      --amber: #b7791f;
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.10);
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.08);
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--soft-2);
+    }
+
+    body {
+      margin: 0;
+      color: var(--body);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      line-height: 1.6;
+      letter-spacing: 0;
+      background: var(--soft-2);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+      background: none;
+      border: 0;
+      padding: 0;
+    }
+
+    .site-nav {
+      position: fixed;
+      inset: 0 0 auto;
+      height: 52px;
+      z-index: 30;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      background: rgba(251, 251, 253, 0.78);
+      backdrop-filter: saturate(180%) blur(18px);
+    }
+
+    .nav-inner {
+      width: min(var(--max), calc(100% - 44px));
+      height: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 210px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      background: var(--ink);
+    }
+
+    .nav-links {
+      justify-self: center;
+      display: flex;
+      align-items: center;
+      gap: 34px;
+      color: rgba(0, 0, 0, 0.72);
+      font-size: 12px;
+    }
+
+    .nav-links a {
+      white-space: nowrap;
+      transition: color 160ms ease;
+    }
+
+    .nav-links a:hover { color: var(--blue); }
+
+    .nav-right {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+      min-width: 210px;
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.72);
+    }
+
+    .nav-cta {
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--blue);
+      font-weight: 600;
+    }
+
+    .menu-toggle {
+      display: none;
+      width: 32px;
+      height: 32px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+    }
+
+    main { overflow: hidden; }
+
+    .hero {
+      min-height: 100vh;
+      padding: 124px 22px 58px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background:
+        linear-gradient(180deg, #fbfbfd 0%, #fff 52%, #f5f5f7 100%);
+    }
+
+    .hero-copy {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      color: var(--blue);
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .hero h1 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 72px;
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .hero-lead {
+      width: min(790px, 100%);
+      margin: 30px auto 0;
+      color: var(--muted);
+      font-size: 21px;
+      line-height: 1.7;
+      font-weight: 500;
+    }
+
+    .hero-answer {
+      width: min(810px, 100%);
+      margin: 18px auto 0;
+      color: var(--body);
+      font-size: 21px;
+      line-height: 1.68;
+      font-weight: 700;
+    }
+
+    .hero-actions {
+      margin-top: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .link-blue {
+      color: var(--blue);
+    }
+
+    .link-blue:hover { color: var(--blue-dark); }
+
+    .hero-stage {
+      width: min(1110px, 100%);
+      margin: 56px auto 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .system-visual {
+      position: relative;
+      min-height: 520px;
+      border-radius: 8px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(245, 245, 247, 0.96)),
+        repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.035) 0 1px, transparent 1px 88px),
+        repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.028) 0 1px, transparent 1px 88px);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .system-visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.90) 0%, rgba(255, 255, 255, 0.56) 42%, rgba(255, 255, 255, 0.18) 100%);
+      pointer-events: none;
+    }
+
+    .visual-core {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 250px;
+      height: 250px;
+      transform: translate(-50%, -50%);
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(0, 113, 227, 0.18);
+      box-shadow: 0 24px 60px rgba(0, 113, 227, 0.13);
+      z-index: 2;
+    }
+
+    .core-ring {
+      width: 156px;
+      height: 156px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        conic-gradient(from 180deg, #0071e3 0 32%, #8cc8ff 32% 58%, #d7eaff 58% 78%, #f3f8ff 78% 100%);
+    }
+
+    .core-ring span {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-size: 22px;
+      font-weight: 800;
+      background: #fff;
+    }
+
+    .visual-label {
+      position: absolute;
+      z-index: 3;
+      display: grid;
+      gap: 5px;
+      min-width: 158px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.90);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .visual-label b {
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .visual-label span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .label-a { left: 8%; top: 13%; }
+    .label-b { right: 8%; top: 14%; }
+    .label-c { left: 10%; bottom: 13%; }
+    .label-d { right: 10%; bottom: 12%; }
+    .label-e { left: 50%; top: 11%; transform: translateX(-50%); }
+    .label-f { left: 50%; bottom: 10%; transform: translateX(-50%); }
+
+    .visual-line {
+      position: absolute;
+      z-index: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 113, 227, 0.35), transparent);
+      transform-origin: center;
+    }
+
+    .line-1 { left: 23%; top: 32%; width: 260px; transform: rotate(16deg); }
+    .line-2 { right: 23%; top: 32%; width: 260px; transform: rotate(-16deg); }
+    .line-3 { left: 24%; bottom: 31%; width: 260px; transform: rotate(-16deg); }
+    .line-4 { right: 24%; bottom: 31%; width: 260px; transform: rotate(16deg); }
+    .line-5 { left: 50%; top: 26%; width: 1px; height: 120px; background: linear-gradient(180deg, transparent, rgba(0, 113, 227, 0.35)); }
+    .line-6 { left: 50%; bottom: 24%; width: 1px; height: 130px; background: linear-gradient(180deg, rgba(0, 113, 227, 0.35), transparent); }
+
+    .proof-strip {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .proof-inner {
+      width: min(var(--max), calc(100% - 44px));
+      min-height: 94px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .proof-title {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .customer-row {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      flex-wrap: wrap;
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .section {
+      padding: 122px 22px;
+    }
+
+    .section.white { background: #fff; }
+    .section.soft { background: var(--soft); }
+    .section.black { background: #000; color: #fff; }
+
+    .section-inner {
+      width: min(var(--max), 100%);
+      margin: 0 auto;
+    }
+
+    .section-kicker {
+      margin: 0 0 14px;
+      color: var(--blue);
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .section-title {
+      margin: 0;
+      color: var(--ink);
+      font-size: 56px;
+      line-height: 1.12;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .section.black .section-title,
+    .section.black .section-kicker { color: #fff; }
+
+    .section-lead {
+      width: min(820px, 100%);
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: 21px;
+      line-height: 1.72;
+      font-weight: 500;
+    }
+
+    .section.black .section-lead { color: rgba(255, 255, 255, 0.72); }
+
+    .insight-grid {
+      margin-top: 58px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .insight-item {
+      min-height: 260px;
+      padding: 30px;
+      border-radius: 8px;
+      background: var(--soft);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .insight-item b {
+      color: var(--ink);
+      font-size: 26px;
+      line-height: 1.24;
+      font-weight: 800;
+    }
+
+    .insight-item p {
+      margin: 28px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    .solution-stack {
+      margin-top: 66px;
+      display: grid;
+      gap: 28px;
+    }
+
+    .solution-block {
+      min-height: 560px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .solution-block.dark {
+      background: #050505;
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .solution-copy {
+      padding: 54px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .solution-index {
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .solution-copy h3 {
+      margin: 0;
+      font-size: 40px;
+      line-height: 1.18;
+      letter-spacing: 0;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .solution-block.dark .solution-copy h3 { color: #fff; }
+
+    .solution-copy p {
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.75;
+      font-weight: 500;
+    }
+
+    .solution-block.dark .solution-copy p { color: rgba(255, 255, 255, 0.72); }
+
+    .solution-points {
+      margin: 34px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 15px;
+    }
+
+    .solution-points li {
+      display: grid;
+      grid-template-columns: 10px 1fr;
+      gap: 12px;
+      color: var(--body);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .solution-block.dark .solution-points li { color: rgba(255, 255, 255, 0.82); }
+
+    .solution-points li::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      margin-top: 9px;
+      border-radius: 50%;
+      background: var(--blue);
+    }
+
+    .solution-visual {
+      position: relative;
+      min-height: 420px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, #f5f5f7, #ffffff);
+      border-left: 1px solid var(--line);
+    }
+
+    .solution-block.dark .solution-visual {
+      border-left-color: rgba(255, 255, 255, 0.12);
+      background:
+        linear-gradient(180deg, #1d1d1f, #050505);
+    }
+
+    .mini-screen {
+      position: absolute;
+      inset: 62px 46px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 22px 54px rgba(0, 0, 0, 0.11);
+      overflow: hidden;
+    }
+
+    .solution-block.dark .mini-screen {
+      background: rgba(255, 255, 255, 0.10);
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .mini-bar {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .solution-block.dark .mini-bar { border-bottom-color: rgba(255, 255, 255, 0.12); }
+
+    .mini-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    .mini-body {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .mini-row {
+      min-height: 76px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      background: #fff;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .solution-block.dark .mini-row {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.10);
+    }
+
+    .mini-row span {
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .solution-block.dark .mini-row span { background: rgba(255, 255, 255, 0.20); }
+
+    .mini-row span:first-child { width: 76%; }
+    .mini-row span:last-child { width: 72px; background: rgba(0, 113, 227, 0.55); }
+
+    .scenario-grid {
+      margin-top: 58px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .scenario {
+      min-height: 180px;
+      padding: 24px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .scenario b {
+      color: var(--ink);
+      font-size: 20px;
+      line-height: 1.35;
+    }
+
+    .scenario span {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .case-hero {
+      margin-top: 58px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 18px;
+    }
+
+    .case-poster {
+      position: relative;
+      min-height: 490px;
+      padding: 36px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .case-poster::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(0, 0, 0, 0.26)),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 68px),
+        repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 68px);
+      opacity: 0.9;
+    }
+
+    .case-poster > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .case-tag {
+      margin: 0 0 18px;
+      color: rgba(255, 255, 255, 0.70);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .case-poster h3 {
+      margin: 0;
+      font-size: 52px;
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .case-poster p {
+      width: min(540px, 100%);
+      margin: 22px 0 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 18px;
+      line-height: 1.72;
+    }
+
+    .case-side {
+      display: grid;
+      gap: 18px;
+    }
+
+    .case-small {
+      min-height: 236px;
+      padding: 28px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .case-small b {
+      color: var(--ink);
+      font-size: 28px;
+      line-height: 1.18;
+    }
+
+    .case-small p {
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.68;
+    }
+
+    .case-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .case-tile {
+      min-height: 220px;
+      padding: 24px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .case-tile b {
+      color: var(--ink);
+      font-size: 22px;
+      line-height: 1.28;
+    }
+
+    .case-tile span {
+      display: block;
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .local-wrap {
+      margin-top: 66px;
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 40px;
+      align-items: start;
+    }
+
+    .local-statement {
+      position: sticky;
+      top: 96px;
+    }
+
+    .local-statement h2 {
+      margin: 0;
+      color: #fff;
+      font-size: 54px;
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    .local-statement p {
+      margin: 24px 0 0;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 20px;
+      line-height: 1.72;
+      font-weight: 500;
+    }
+
+    .metric-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .metric {
+      min-height: 172px;
+      padding: 28px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .metric b {
+      display: block;
+      color: #fff;
+      font-size: 44px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 14px;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .about-grid {
+      margin-top: 62px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .about-panel {
+      min-height: 350px;
+      padding: 34px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .about-panel h3 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 34px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .about-panel p {
+      margin: 28px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    .contact {
+      padding: 102px 22px 70px;
+      background: #fff;
+    }
+
+    .contact-inner {
+      width: min(var(--max), 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .contact-copy {
+      padding: 44px;
+      border-radius: 8px;
+      background: var(--soft);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .contact-copy h2 {
+      margin: 0 0 30px;
+      color: var(--ink);
+      font-size: 44px;
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    .contact-item {
+      padding: 20px 0;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .contact-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .contact-item b {
+      display: block;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .map-box {
+      min-height: 440px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.56), rgba(245, 245, 247, 0.94)),
+        repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.045) 0 1px, transparent 1px 74px),
+        repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0 1px, transparent 1px 74px);
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      text-align: center;
+      padding: 28px;
+    }
+
+    .map-pin {
+      width: min(360px, 100%);
+      padding: 30px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .map-pin b {
+      display: block;
+      font-size: 24px;
+      line-height: 1.3;
+    }
+
+    .map-pin span {
+      display: block;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .footer {
+      padding: 34px 22px 46px;
+      color: var(--muted);
+      background: #fff;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      font-size: 13px;
+    }
+
+    .footer-inner {
+      width: min(var(--max), 100%);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+
+    @media (max-width: 1040px) {
+      .nav-inner {
+        width: min(100%, calc(100% - 30px));
+        grid-template-columns: auto auto;
+      }
+
+      .brand { min-width: auto; }
+
+      .nav-links {
+        position: absolute;
+        left: 15px;
+        right: 15px;
+        top: 58px;
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .nav-links.open { display: flex; }
+
+      .nav-links a {
+        width: 100%;
+        padding: 12px 10px;
+        font-size: 14px;
+      }
+
+      .nav-right {
+        justify-self: end;
+        min-width: auto;
+      }
+
+      .nav-right .phone,
+      .nav-cta { display: none; }
+
+      .menu-toggle { display: inline-flex; }
+
+      .hero h1 { font-size: 56px; }
+      .hero-lead,
+      .hero-answer { font-size: 19px; }
+
+      .system-visual { min-height: 480px; }
+      .visual-core { width: 218px; height: 218px; }
+      .visual-label { min-width: 140px; }
+
+      .solution-block,
+      .case-hero,
+      .local-wrap,
+      .about-grid,
+      .contact-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .solution-visual { border-left: 0; border-top: 1px solid var(--line); }
+      .solution-block.dark .solution-visual { border-top-color: rgba(255, 255, 255, 0.12); }
+      .scenario-grid,
+      .case-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .local-statement { position: static; }
+    }
+
+    @media (max-width: 760px) {
+      .hero {
+        min-height: auto;
+        padding: 100px 18px 42px;
+      }
+
+      .hero h1 {
+        font-size: 42px;
+        line-height: 1.14;
+      }
+
+      .hero-lead,
+      .hero-answer {
+        font-size: 17px;
+        line-height: 1.72;
+      }
+
+      .hero-stage { margin-top: 38px; }
+      .system-visual {
+        min-height: 620px;
+      }
+
+      .visual-core {
+        top: 47%;
+        width: 190px;
+        height: 190px;
+      }
+
+      .core-ring { width: 132px; height: 132px; }
+      .core-ring span { width: 96px; height: 96px; font-size: 19px; }
+
+      .visual-label {
+        left: 22px;
+        right: 22px;
+        transform: none;
+        min-width: 0;
+      }
+
+      .label-a { top: 24px; }
+      .label-b { top: 112px; }
+      .label-e { top: 200px; }
+      .label-c { bottom: 200px; }
+      .label-d { bottom: 112px; }
+      .label-f { bottom: 24px; }
+      .visual-line { display: none; }
+
+      .proof-inner {
+        width: min(100%, calc(100% - 36px));
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 22px 0;
+      }
+
+      .customer-row {
+        gap: 16px;
+        font-size: 14px;
+      }
+
+      .section {
+        padding: 74px 18px;
+      }
+
+      .section-title {
+        font-size: 38px;
+      }
+
+      .section-lead {
+        font-size: 17px;
+      }
+
+      .insight-grid,
+      .scenario-grid,
+      .case-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .insight-item {
+        min-height: 220px;
+        padding: 24px;
+      }
+
+      .solution-copy {
+        padding: 30px;
+      }
+
+      .solution-copy h3 {
+        font-size: 31px;
+      }
+
+      .solution-copy p {
+        font-size: 16px;
+      }
+
+      .solution-visual {
+        min-height: 360px;
+      }
+
+      .mini-screen {
+        inset: 32px 22px;
+      }
+
+      .case-poster {
+        min-height: 390px;
+        padding: 28px;
+      }
+
+      .case-poster h3 {
+        font-size: 36px;
+      }
+
+      .case-poster p {
+        font-size: 16px;
+      }
+
+      .local-statement h2 {
+        font-size: 38px;
+      }
+
+      .local-statement p {
+        font-size: 17px;
+      }
+
+      .metric b {
+        font-size: 34px;
+      }
+
+      .about-panel,
+      .contact-copy {
+        padding: 26px;
+      }
+
+      .contact-copy h2 {
+        font-size: 34px;
+      }
+
+      .footer-inner {
+        display: grid;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .brand-name { max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+      .hero h1 { font-size: 38px; }
+      .section-title,
+      .local-statement h2 {
+        font-size: 34px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-nav">
+    <div class="nav-inner">
+      <a class="brand" href="#home" aria-label="回到首页">
+        <span class="brand-mark">HY</span>
+        <span class="brand-name">海南华悦科技有限公司</span>
+      </a>
+      <nav class="nav-links" id="siteNav" aria-label="主导航">
+        <a href="#home">首页</a>
+        <a href="#solutions">解决方案</a>
+        <a href="#cases">客户案例</a>
+        <a href="#local">本地服务</a>
+        <a href="#about">关于华悦</a>
+      </nav>
+      <div class="nav-right">
+        <span class="phone">0898-68548301</span>
+        <a class="nav-cta" href="#contact">联系华悦</a>
+        <button class="menu-toggle" type="button" aria-controls="siteNav" aria-expanded="false">菜单</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy reveal">
+        <p class="eyebrow">企业管理系统建设与定制开发</p>
+        <h1 id="hero-title">系统越来越多，为什么管理还是看不清、推不动、追不到？</h1>
+        <p class="hero-lead">很多企业不是没有系统，而是系统、部门、流程、数据和线下确认没有真正连起来。事项推进靠反复沟通，数据汇总靠多方对数，管理层很难及时看清进展、风险和责任。</p>
+        <p class="hero-answer">华悦帮助企业梳理组织、流程和关键管理对象，把分散在业务环节和系统里的管理信息连起来，让流程可执行、进展可追踪、风险可看见、结果可分析。</p>
+        <div class="hero-actions">
+          <a class="link-blue" href="#solutions">查看解决方案</a>
+          <a class="link-blue" href="#cases">查看客户案例</a>
+        </div>
+      </div>
+      <div class="hero-stage reveal" aria-hidden="true">
+        <div class="system-visual">
+          <div class="visual-line line-1"></div>
+          <div class="visual-line line-2"></div>
+          <div class="visual-line line-3"></div>
+          <div class="visual-line line-4"></div>
+          <div class="visual-line line-5"></div>
+          <div class="visual-line line-6"></div>
+          <div class="visual-label label-a"><b>组织</b><span>集团、多主体、部门与责任边界</span></div>
+          <div class="visual-label label-b"><b>流程</b><span>审批、采购、库存、生产与项目推进</span></div>
+          <div class="visual-label label-e"><b>系统</b><span>ERP、OA、WMS、MES、BI 与外部接口</span></div>
+          <div class="visual-core"><div class="core-ring"><span>HY</span></div></div>
+          <div class="visual-label label-c"><b>数据</b><span>单据、成本、预算、报表与经营结果</span></div>
+          <div class="visual-label label-d"><b>责任</b><span>进展、风险、留痕与闭环跟踪</span></div>
+          <div class="visual-label label-f"><b>结果</b><span>经营看得见，管理推得动</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="proof-strip" aria-label="代表客户">
+      <div class="proof-inner">
+        <div class="proof-title">代表客户</div>
+        <div class="customer-row">
+          <span>海南橡胶</span>
+          <span>椰树集团</span>
+          <span>翔泰渔业</span>
+          <span>中和药业</span>
+          <span>省妇女儿童医学中心</span>
+          <span>省财金集团</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white" aria-labelledby="insight-title">
+      <div class="section-inner">
+        <p class="section-kicker reveal">华悦先看清问题，再建设系统</p>
+        <h2 class="section-title reveal" id="insight-title">不是再多上一套软件。是把管理重新连起来。</h2>
+        <p class="section-lead reveal">华悦服务的客户往往已经有基础系统。真正的压力在于：系统功能跟不上管理变化，流程跨部门断开，关键数据不能互通，业务和财务没有形成同一条管理链路。</p>
+        <div class="insight-grid">
+          <article class="insight-item reveal">
+            <b>先把管理对象说清楚。</b>
+            <p>组织、部门、项目、合同、资产、库存、成本、预算、报表，先厘清边界，再决定系统怎么承载。</p>
+          </article>
+          <article class="insight-item reveal">
+            <b>再把流程责任接起来。</b>
+            <p>让审批、执行、核算、复盘在同一条链路里推进，减少反复确认、重复录入和跨部门对账。</p>
+          </article>
+          <article class="insight-item reveal">
+            <b>最后让结果持续可追踪。</b>
+            <p>管理层看到的不只是报表，而是进展、异常、责任、风险和可以继续优化的依据。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft" id="solutions" aria-labelledby="solution-title">
+      <div class="section-inner">
+        <p class="section-kicker reveal">解决方案</p>
+        <h2 class="section-title reveal" id="solution-title">三类能力，解决同一个问题：让管理真正贯通。</h2>
+        <p class="section-lead reveal">华悦不是简单替企业换一套系统，而是围绕已有系统、组织流程和管理目标，选择 ERP 建设、协同系统建设或定制开发，把断开的管理链路补齐。</p>
+
+        <div class="solution-stack">
+          <article class="solution-block reveal">
+            <div class="solution-copy">
+              <div class="solution-index">01 / 核心 ERP 系统建设</div>
+              <h3>把经营业务和财务核算接到同一套管理链路里。</h3>
+              <p>围绕财务、采购、销售、库存、生产、质量、成本、预算和合并报表，帮助企业把业务发生、库存变化、成本归集和财务核算放到同一套管理链路里。</p>
+              <ul class="solution-points">
+                <li>让业务数据、库存数据、成本数据和财务数据互相校验。</li>
+                <li>减少月底临时汇总和跨部门对账。</li>
+                <li>让经营结果能从业务过程一路追溯。</li>
+              </ul>
+            </div>
+            <div class="solution-visual" aria-hidden="true">
+              <div class="mini-screen">
+                <div class="mini-bar"><i class="mini-dot"></i><i class="mini-dot"></i><i class="mini-dot"></i></div>
+                <div class="mini-body">
+                  <div class="mini-row"><span></span><span></span></div>
+                  <div class="mini-row"><span></span><span></span></div>
+                  <div class="mini-row"><span></span><span></span></div>
+                  <div class="mini-row"><span></span><span></span></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="solution-block dark reveal">
+            <div class="solution-copy">
+              <div class="solution-index">02 / 泛 ERP 系统建设</div>
+              <h3>把审批、项目、资产、合同和报表纳入统一协同。</h3>
+              <p>OA、HR、BI、SRM、WMS、MES、PM 不应只是孤立工具。华悦帮助企业把审批流、项目过程、资产合同、仓储生产和经营报表纳入同一套管理视图。</p>
+              <ul class="solution-points">
+                <li>事项推进过程有留痕，责任和进展能被追踪。</li>
+                <li>关键管理对象不再散落在部门表格中。</li>
+                <li>经营报表从手工整理变成过程数据沉淀。</li>
+              </ul>
+            </div>
+            <div class="solution-visual" aria-hidden="true">
+              <div class="mini-screen">
+                <div class="mini-bar"><i class="mini-dot"></i><i class="mini-dot"></i><i class="mini-dot"></i></div>
+                <div class="mini-body">
+                  <div class="mini-row"><span></span><span></span></div>
+                  <div class="mini-row"><span></span><span></span></div>
+                  <div class="mini-row"><span></span><span></span></div>
+                  <div class="mini-row"><span></span><span></span></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="solution-block reveal">
+            <div class="solution-copy">
+              <div class="solution-index">03 / 各类定制软件开发</div>
+              <h3>把标准软件难以覆盖的业务场景做成可落地系统。</h3>
+              <p>当标准系统难以完整承载客户的特殊规则、业务流程或外部接口时，华悦通过定制开发把这些关键环节补齐，并与既有 ERP、OA、财务、仓储或第三方平台形成连续的管理链路。</p>
+              <ul class="solution-points">
+                <li>把特殊业务规则从线下经验变成系统化执行。</li>
+                <li>把外部平台、移动作业和数据采集纳入统一管理。</li>
+                <li>把项目现场的关键动作转化为可追踪的数据资产。</li>
+              </ul>
+            </div>
+            <div class="solution-visual" aria-hidden="true">
+              <div class="mini-screen">
+                <div class="mini-bar"><i class="mini-dot"></i><i class="mini-dot"></i><i class="mini-dot"></i></div>
+                <div class="mini-body">
+                  <div class="mini-row"><span></span><span></span></div>
+                  <div class="mini-row"><span></span><span></span></div>
+                  <div class="mini-row"><span></span><span></span></div>
+                  <div class="mini-row"><span></span><span></span></div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white" aria-labelledby="scenario-title">
+      <div class="section-inner">
+        <p class="section-kicker reveal">管理场景</p>
+        <h2 class="section-title reveal" id="scenario-title">客户看见的是场景，华悦处理的是链路。</h2>
+        <div class="scenario-grid">
+          <article class="scenario reveal"><b>多组织财务核算与合并报表</b><span>统一核算口径，减少手工汇总和多方对数。</span></article>
+          <article class="scenario reveal"><b>采购、库存、成本和财务一体化</b><span>让业务单据、库存变化和财务结果互相印证。</span></article>
+          <article class="scenario reveal"><b>生产、质量、批次与成本追溯</b><span>把生产过程和成本归集接到同一条链路。</span></article>
+          <article class="scenario reveal"><b>预算、采购、资产、合同与财务协同</b><span>让管理对象在线上流转、留痕和分析。</span></article>
+          <article class="scenario reveal"><b>项目审批、合同、招采与责任追踪</b><span>把推进过程、节点风险和责任边界看清楚。</span></article>
+          <article class="scenario reveal"><b>外部接口、移动作业与数据采集</b><span>把原来靠人工传递的数据接入系统链路。</span></article>
+          <article class="scenario reveal"><b>经营报表与问题追溯</b><span>从结果倒查过程，发现异常和改进空间。</span></article>
+          <article class="scenario reveal"><b>长期运维、培训、流程优化与升级</b><span>系统上线不是终点，组织变化后还要继续调整。</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft" id="cases" aria-labelledby="case-title">
+      <div class="section-inner">
+        <p class="section-kicker reveal">客户案例</p>
+        <h2 class="section-title reveal" id="case-title">这些组织，把复杂管理问题交给华悦。</h2>
+        <p class="section-lead reveal">案例不是客户名单。它们说明华悦能处理跨组织、跨部门、跨系统、跨业务链路的管理软件建设问题。</p>
+        <div class="case-hero">
+          <article class="case-poster reveal">
+            <p class="case-tag">排序 01 / 橡胶智慧收购平台</p>
+            <h3>海南橡胶</h3>
+            <p>覆盖天然橡胶收购、结算、银行与保险系统对接，把现场采集、支付结算和产业数据沉淀接成连续链路。</p>
+          </article>
+          <div class="case-side">
+            <article class="case-small reveal">
+              <b>椰树集团</b>
+              <p>全国中转仓一体化管控，让工厂发货、中转库存、经销商排货和物流跟踪形成统一视图。</p>
+            </article>
+            <article class="case-small reveal">
+              <b>翔泰渔业</b>
+              <p>水产与饲料两大板块业务一体化，贯通采购、生产、销售、成本和财务核算。</p>
+            </article>
+          </div>
+        </div>
+        <div class="case-grid">
+          <article class="case-tile reveal"><b>海南现代科技集团</b><span>综合性集团业财一体化管控</span></article>
+          <article class="case-tile reveal"><b>海口市建工集团</b><span>多项目、多部门协同管控</span></article>
+          <article class="case-tile reveal"><b>海南中和药业</b><span>采购、生产、销售、财务全链条规范化</span></article>
+          <article class="case-tile reveal"><b>省妇女儿童医学中心</b><span>预算、采购、资产、合同与财务精细运营</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section black" id="local" aria-labelledby="local-title">
+      <div class="section-inner">
+        <p class="section-kicker reveal">本地服务</p>
+        <div class="local-wrap">
+          <div class="local-statement reveal">
+            <h2 id="local-title">为什么海南客户需要一个在本地、懂业务、能长期跟进的团队。</h2>
+            <p>本地团队的价值，不只是能到现场。真正重要的是持续理解客户组织变化、流程调整和系统升级，在问题出现前后都能跟得上。</p>
+          </div>
+          <div class="metric-list">
+            <div class="metric reveal"><b>20年+</b><span>核心团队企业数字化服务经验，长期服务海南本地复杂组织。</span></div>
+            <div class="metric reveal"><b>X名PMP</b><span>项目管理专业人员参与交付，让复杂系统建设有计划、有节奏、有闭环。</span></div>
+            <div class="metric reveal"><b>X个以上</b><span>百万级项目交付经验，覆盖 ERP、协同系统和定制开发项目。</span></div>
+            <div class="metric reveal"><b>本地团队</b><span>现场梳理、实施培训、上线支持、长期维护，持续陪客户把系统用起来。</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft" id="about" aria-labelledby="about-title">
+      <div class="section-inner">
+        <p class="section-kicker reveal">关于华悦</p>
+        <h2 class="section-title reveal" id="about-title">用科技使组织更美好。</h2>
+        <div class="about-grid">
+          <article class="about-panel reveal">
+            <h3>华悦是谁</h3>
+            <p>海南华悦科技有限公司专注企业管理软件开发、实施与服务，为客户在财务、供应链、生产、人力资源、协同办公等领域建设可落地的数字化管理系统。</p>
+          </article>
+          <article class="about-panel reveal">
+            <h3>华悦能做什么</h3>
+            <p>华悦帮助客户梳理组织、流程和关键管理对象，围绕 ERP、协同系统和定制开发，把系统功能、流程连接、数据贯通和组织协同落到真实业务里。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact" aria-labelledby="contact-title">
+      <div class="contact-inner">
+        <div class="contact-copy reveal">
+          <h2 id="contact-title">联系华悦</h2>
+          <div class="contact-item">
+            <span>电话</span>
+            <b>0898-68548301</b>
+          </div>
+          <div class="contact-item">
+            <span>地址</span>
+            <b>海南省海口市龙华区海秀中路 71 号海垦广场 B 座 11 楼</b>
+          </div>
+        </div>
+        <div class="map-box reveal" role="img" aria-label="海南华悦科技有限公司地图定位示意">
+          <div class="map-pin">
+            <b>海垦广场 B 座 11 楼</b>
+            <span>海南华悦科技有限公司</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>海南华悦科技有限公司</span>
+      <span>电话：0898-68548301</span>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('siteNav');
+    const toggle = document.querySelector('.menu-toggle');
+
+    toggle.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+
+    nav.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14 });
+
+    document.querySelectorAll('.reveal').forEach((node) => observer.observe(node));
+  </script>
+</body>
+</html>
