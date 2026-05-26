@@ -1,0 +1,1309 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>海南华悦科技有限公司官网原型 V1</title>
+  <meta name="description" content="海南华悦科技有限公司数字化解决方案官网首页原型" />
+  <style>
+    :root {
+      --primary: #2386ee;
+      --primary-dark: #0467cf;
+      --primary-soft: #eff6ff;
+      --ink: #03053b;
+      --text: #333333;
+      --muted: #575d6c;
+      --line: #e5e8ed;
+      --soft: #f5f7fa;
+      --blue-soft: #f2f8ff;
+      --white: #ffffff;
+      --shadow: 0 20px 50px rgba(16, 38, 72, 0.10);
+      --radius: 8px;
+      --max: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.75;
+      letter-spacing: 0;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    button {
+      font: inherit;
+      color: inherit;
+      border: 0;
+      background: none;
+      cursor: pointer;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-shell {
+      max-width: var(--max);
+      height: 78px;
+      margin: 0 auto;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 238px;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2386ee 0%, #4fd5c5 100%);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 13px;
+      box-shadow: 0 12px 26px rgba(35, 134, 238, 0.24);
+    }
+
+    .brand-name {
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 34px;
+      font-size: 14px;
+      color: #252b3a;
+    }
+
+    .nav-links a { white-space: nowrap; }
+    .nav-links a:hover { color: var(--primary); }
+
+    .nav-action {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 250px;
+      justify-content: flex-end;
+    }
+
+    .phone {
+      font-size: 14px;
+      color: var(--primary-dark);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .btn-primary, .btn-secondary {
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 7px;
+      padding: 0 20px;
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--white);
+      box-shadow: 0 12px 24px rgba(35, 134, 238, 0.20);
+    }
+
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+    .btn-secondary {
+      border: 1px solid #cfd9e8;
+      color: var(--ink);
+      background: var(--white);
+    }
+
+    .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+
+    .menu-toggle { display: none; }
+
+    main { overflow: hidden; }
+
+    section { scroll-margin-top: 96px; }
+
+    .hero {
+      position: relative;
+      min-height: 720px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.96) 42%, rgba(242,248,255,0.64) 100%),
+        radial-gradient(circle at 84% 24%, rgba(35,134,238,0.13), rgba(35,134,238,0) 34%),
+        linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+    }
+
+    .hero-shell {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 92px 28px 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
+      align-items: center;
+      gap: 42px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 18px;
+      height: 2px;
+      background: var(--primary);
+      display: inline-block;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    .hero h1 {
+      color: #050816;
+      font-size: clamp(40px, 4.2vw, 56px);
+      line-height: 1.22;
+      font-weight: 800;
+      max-width: 660px;
+    }
+
+    .hero-lead {
+      margin-top: 26px;
+      max-width: 650px;
+      font-size: 17px;
+      line-height: 1.9;
+      color: #293044;
+    }
+
+    .hero-answer {
+      margin-top: 30px;
+      max-width: 660px;
+      padding-left: 18px;
+      border-left: 3px solid var(--primary);
+      color: var(--ink);
+      font-weight: 700;
+      line-height: 1.9;
+    }
+
+    .hero-actions {
+      margin-top: 36px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 510px;
+    }
+
+    .visual-board {
+      position: relative;
+      width: min(620px, 100%);
+      height: 448px;
+      margin-left: auto;
+      border-radius: 8px;
+      overflow: hidden;
+      background:
+        linear-gradient(140deg, rgba(255,255,255,0.94), rgba(239,246,255,0.76)),
+        linear-gradient(120deg, #ecf7ff 0%, #ffffff 52%, #eff8ff 100%);
+      border: 1px solid rgba(212, 225, 242, 0.86);
+      box-shadow: var(--shadow);
+    }
+
+    .visual-board::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(35,134,238,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(35,134,238,0.06) 1px, transparent 1px);
+      background-size: 44px 44px;
+      opacity: 0.48;
+    }
+
+    .screen {
+      position: absolute;
+      background: rgba(255,255,255,0.88);
+      border: 1px solid rgba(203, 216, 232, 0.85);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgba(40, 84, 130, 0.12);
+      backdrop-filter: blur(10px);
+    }
+
+    .screen-main {
+      left: 92px;
+      top: 82px;
+      width: 410px;
+      height: 260px;
+      padding: 22px;
+    }
+
+    .screen-side {
+      right: 30px;
+      bottom: 48px;
+      width: 178px;
+      height: 210px;
+      padding: 16px;
+    }
+
+    .screen-top {
+      left: 40px;
+      top: 38px;
+      width: 250px;
+      height: 96px;
+      padding: 16px;
+    }
+
+    .mock-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--ink);
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .mock-chip {
+      font-size: 11px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      border-radius: 999px;
+      padding: 3px 8px;
+    }
+
+    .mock-flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .flow-node {
+      min-height: 62px;
+      border-radius: 7px;
+      background: #f7fbff;
+      border: 1px solid #dbe8f8;
+      display: grid;
+      place-items: center;
+      color: #1f4c81;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      padding: 8px;
+    }
+
+    .bar-row {
+      height: 10px;
+      border-radius: 999px;
+      background: #e9eff7;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+
+    .bar-row span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), #4fd5c5);
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .mini-metric {
+      border: 1px solid #dfeaf7;
+      background: #fbfdff;
+      border-radius: 7px;
+      padding: 10px;
+    }
+
+    .mini-metric strong {
+      display: block;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .mini-metric span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .link-line {
+      position: absolute;
+      border: 1px dashed rgba(35, 134, 238, 0.34);
+      border-left: 0;
+      border-bottom: 0;
+      width: 180px;
+      height: 92px;
+      right: 92px;
+      top: 186px;
+      border-radius: 0 28px 0 0;
+    }
+
+    .orb-label {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid #dbe8f8;
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 14px 28px rgba(35, 134, 238, 0.12);
+    }
+
+    .orb-a { left: 54px; bottom: 78px; }
+    .orb-b { right: 82px; top: 68px; }
+    .orb-c { right: 184px; bottom: 34px; }
+
+    .trust-strip {
+      max-width: var(--max);
+      margin: 52px auto 0;
+      padding: 0 28px 58px;
+    }
+
+    .trust-panel {
+      min-height: 90px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.76);
+      overflow: hidden;
+    }
+
+    .trust-label {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .customer-row {
+      display: flex;
+      align-items: center;
+      gap: 34px;
+      white-space: nowrap;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .section {
+      padding: 104px 28px;
+    }
+
+    .section.soft { background: var(--soft); }
+
+    .section-shell {
+      max-width: var(--max);
+      margin: 0 auto;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(360px, 0.9fr);
+      align-items: end;
+      gap: 72px;
+      margin-bottom: 52px;
+    }
+
+    .kicker {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      color: var(--ink);
+      font-size: clamp(30px, 3.1vw, 42px);
+      line-height: 1.3;
+      font-weight: 850;
+    }
+
+    .section-copy {
+      color: #4e525c;
+      font-size: 16px;
+      line-height: 1.9;
+    }
+
+    .solution-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .solution-tab {
+      min-height: 92px;
+      text-align: left;
+      padding: 18px 18px 16px;
+      border-bottom: 3px solid #d9dadc;
+      color: #252b3a;
+      background: transparent;
+    }
+
+    .solution-tab span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .solution-tab strong {
+      color: var(--ink);
+      font-size: 19px;
+      line-height: 1.45;
+    }
+
+    .solution-tab.active { border-bottom-color: var(--primary); }
+    .solution-tab.active strong, .solution-tab.active span { color: var(--primary); }
+
+    .solution-panel {
+      display: none;
+      min-height: 390px;
+      grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1fr);
+      gap: 44px;
+      align-items: center;
+      padding: 44px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
+    }
+
+    .solution-panel.active { display: grid; }
+
+    .solution-panel h3 {
+      color: var(--ink);
+      font-size: clamp(25px, 2.2vw, 34px);
+      line-height: 1.34;
+      font-weight: 850;
+      margin-bottom: 18px;
+    }
+
+    .solution-panel p {
+      color: #3c4353;
+      line-height: 1.95;
+      margin-bottom: 24px;
+    }
+
+    .solution-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .solution-list li {
+      position: relative;
+      padding-left: 18px;
+      color: #252b3a;
+    }
+
+    .solution-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 12px;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+
+    .solution-visual {
+      min-height: 280px;
+      border-radius: var(--radius);
+      border: 1px solid #dce8f7;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.92), rgba(239,246,255,0.82)),
+        linear-gradient(90deg, rgba(35,134,238,0.12), rgba(79,213,197,0.12));
+      position: relative;
+      overflow: hidden;
+      padding: 28px;
+    }
+
+    .chain {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: center;
+      gap: 10px;
+      margin-top: 34px;
+    }
+
+    .chain-node {
+      min-height: 72px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #dbe8f8;
+      color: #183b66;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 10px 20px rgba(35, 134, 238, 0.07);
+    }
+
+    .visual-caption {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .visual-title {
+      color: var(--ink);
+      font-size: 22px;
+      line-height: 1.4;
+      font-weight: 850;
+      max-width: 390px;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .scenario-card {
+      min-height: 184px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scenario-card::after {
+      content: "";
+      position: absolute;
+      right: -22px;
+      bottom: -24px;
+      width: 96px;
+      height: 96px;
+      border: 1px solid rgba(35,134,238,0.18);
+      border-radius: 999px;
+      background: rgba(239,246,255,0.72);
+    }
+
+    .scenario-index {
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 850;
+      margin-bottom: 12px;
+    }
+
+    .scenario-card h3 {
+      color: var(--ink);
+      font-size: 20px;
+      line-height: 1.45;
+      margin-bottom: 12px;
+      font-weight: 850;
+    }
+
+    .scenario-card p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.75;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cases-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+    }
+
+    .case-poster {
+      min-height: 310px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+      color: #fff;
+      background: #0f2745;
+      box-shadow: 0 22px 52px rgba(12, 32, 62, 0.18);
+    }
+
+    .case-poster.large { min-height: 484px; }
+
+    .case-poster::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(4, 16, 39, 0.10), rgba(4, 16, 39, 0.82)),
+        var(--case-bg, linear-gradient(135deg, #154d8f, #0f2745));
+    }
+
+    .case-poster::after {
+      content: "";
+      position: absolute;
+      inset: 24px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 6px;
+    }
+
+    .case-content {
+      position: absolute;
+      inset: auto 0 0;
+      padding: 34px;
+      z-index: 1;
+    }
+
+    .case-kind {
+      font-size: 13px;
+      opacity: 0.78;
+      margin-bottom: 10px;
+    }
+
+    .case-poster h3 {
+      font-size: clamp(26px, 2.6vw, 40px);
+      line-height: 1.25;
+      font-weight: 850;
+      margin-bottom: 14px;
+    }
+
+    .case-poster:not(.large) h3 { font-size: 25px; }
+
+    .case-poster p {
+      color: rgba(255,255,255,0.84);
+      line-height: 1.75;
+      max-width: 600px;
+    }
+
+    .case-stack {
+      display: grid;
+      gap: 22px;
+    }
+
+    .case-grid-small {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .case-small {
+      min-height: 184px;
+      border-radius: var(--radius);
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .case-small strong {
+      color: var(--ink);
+      font-size: 19px;
+      line-height: 1.45;
+    }
+
+    .case-small span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .service-panel {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .service-metric {
+      min-height: 156px;
+      padding: 30px 26px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .service-metric strong {
+      display: block;
+      color: #050816;
+      font-size: 32px;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .service-metric span { color: var(--muted); font-size: 14px; }
+
+    .process-line {
+      margin-top: 34px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .process-step {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      background: #fff;
+    }
+
+    .process-step b {
+      display: inline-flex;
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-soft);
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+
+    .process-step h3 {
+      color: var(--ink);
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .process-step p { color: var(--muted); font-size: 14px; line-height: 1.75; }
+
+    .about-contact {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 34px;
+      align-items: stretch;
+    }
+
+    .about-block, .contact-block {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 36px;
+    }
+
+    .about-block h2, .contact-block h2 {
+      color: var(--ink);
+      font-size: 30px;
+      line-height: 1.35;
+      margin-bottom: 18px;
+    }
+
+    .about-block p, .contact-block p { color: #3c4353; line-height: 1.9; }
+
+    .contact-list {
+      margin: 26px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 14px;
+    }
+
+    .contact-list li {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 14px;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+
+    .contact-list span { color: var(--muted); }
+    .contact-list strong { color: var(--ink); }
+
+    .map-placeholder {
+      margin-top: 26px;
+      height: 220px;
+      border-radius: var(--radius);
+      border: 1px solid #d8e5f5;
+      background:
+        linear-gradient(135deg, rgba(35,134,238,0.08), rgba(79,213,197,0.08)),
+        linear-gradient(90deg, rgba(35,134,238,0.08) 1px, transparent 1px),
+        linear-gradient(rgba(35,134,238,0.08) 1px, transparent 1px);
+      background-size: auto, 34px 34px, 34px 34px;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-weight: 850;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--line);
+      background: #fff;
+      padding: 34px 28px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-shell {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links { display: flex; gap: 22px; flex-wrap: wrap; }
+
+    @media (max-width: 1080px) {
+      .nav-action .phone { display: none; }
+      .nav-action { min-width: auto; }
+      .hero-shell,
+      .solution-panel,
+      .section-head,
+      .about-contact,
+      .cases-layout {
+        grid-template-columns: 1fr;
+      }
+      .hero-shell { padding-top: 64px; }
+      .hero-visual { min-height: auto; }
+      .visual-board { margin-left: 0; }
+      .scenario-grid { grid-template-columns: repeat(2, 1fr); }
+      .case-grid-small { grid-template-columns: repeat(2, 1fr); }
+      .process-line { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 820px) {
+      .nav-shell { height: 68px; padding: 0 18px; }
+      .brand { min-width: auto; }
+      .brand-name { font-size: 15px; }
+      .menu-toggle {
+        display: inline-flex;
+        width: 38px;
+        height: 38px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        color: var(--ink);
+      }
+      .nav-links {
+        position: absolute;
+        left: 18px;
+        right: 18px;
+        top: 76px;
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        padding: 12px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { width: 100%; padding: 12px; }
+      .nav-action .btn-primary { display: none; }
+      .hero { min-height: auto; }
+      .hero-shell { grid-template-columns: 1fr; padding: 50px 20px 0; }
+      .hero h1 { font-size: 38px; }
+      .hero-lead { font-size: 16px; }
+      .visual-board { height: 380px; }
+      .screen-main { left: 28px; top: 86px; width: calc(100% - 56px); }
+      .screen-top { left: 22px; width: 220px; }
+      .screen-side { right: 24px; width: 155px; }
+      .trust-strip { padding: 0 20px 42px; }
+      .trust-panel { align-items: flex-start; flex-direction: column; padding: 20px 0; gap: 14px; overflow-x: auto; }
+      .customer-row { gap: 24px; padding-bottom: 4px; }
+      .section { padding: 72px 20px; }
+      .section-head { gap: 24px; margin-bottom: 34px; }
+      .solution-tabs { grid-template-columns: 1fr; }
+      .solution-panel { padding: 28px; }
+      .chain { grid-template-columns: 1fr; }
+      .scenario-grid,
+      .case-grid-small,
+      .service-panel,
+      .process-line { grid-template-columns: 1fr; }
+      .case-content { padding: 28px; }
+      .case-poster.large { min-height: 420px; }
+      .contact-list li { grid-template-columns: 1fr; gap: 4px; }
+    }
+
+    @media (max-width: 430px) {
+      .hero h1 { font-size: 34px; }
+      .section-title { font-size: 28px; }
+      .visual-board { height: 340px; }
+      .screen-main { height: 230px; padding: 16px; }
+      .mock-flow { grid-template-columns: repeat(2, 1fr); }
+      .screen-side, .orb-label, .link-line { display: none; }
+      .case-poster h3, .case-poster:not(.large) h3 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-shell">
+      <a class="brand" href="#home" aria-label="海南华悦科技有限公司首页">
+        <span class="brand-mark">HY</span>
+        <span class="brand-name">海南华悦科技有限公司</span>
+      </a>
+      <nav class="nav-links" id="siteNav" aria-label="主导航">
+        <a href="#home">首页</a>
+        <a href="#solutions">解决方案</a>
+        <a href="#cases">客户案例</a>
+        <a href="#local-service">本地服务</a>
+        <a href="#about">关于华悦</a>
+      </nav>
+      <div class="nav-action">
+        <span class="phone">0898-68548301</span>
+        <a class="btn-primary" href="#contact">联系华悦</a>
+        <button class="menu-toggle" type="button" aria-controls="siteNav" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-shell">
+        <div class="hero-copy">
+          <div class="eyebrow">企业数字化管理解决方案</div>
+          <h1 id="hero-title">系统越来越多，为什么管理还是看不清、推不动、追不到？</h1>
+          <p class="hero-lead">很多企业不是没有系统，而是系统、部门、流程、数据和表格没有真正连起来。事项推进靠反复确认，数据汇总靠多方对数，管理层很难及时看清进展、风险和责任。</p>
+          <p class="hero-answer">华悦帮助企业梳理组织、流程和关键管理对象，把分散在部门、业务环节和系统里的管理信息连起来，让流程可执行、进展可追踪、风险可看见、结果可分析。</p>
+          <div class="hero-actions">
+            <a class="btn-primary" href="#solutions">查看解决方案</a>
+            <a class="btn-secondary" href="#cases">查看客户案例</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="组织、流程、数据与系统连接示意">
+          <div class="visual-board">
+            <div class="screen screen-top">
+              <div class="mock-title">管理对象 <span class="mock-chip">已贯通</span></div>
+              <div class="bar-row"><span style="width: 76%"></span></div>
+              <div class="bar-row"><span style="width: 58%"></span></div>
+            </div>
+            <div class="screen screen-main">
+              <div class="mock-title">经营管理视图 <span class="mock-chip">实时追踪</span></div>
+              <div class="mock-flow">
+                <div class="flow-node">组织</div>
+                <div class="flow-node">流程</div>
+                <div class="flow-node">数据</div>
+                <div class="flow-node">系统</div>
+              </div>
+              <div class="metric-grid">
+                <div class="mini-metric"><strong>进展</strong><span>事项、审批、项目</span></div>
+                <div class="mini-metric"><strong>风险</strong><span>预算、合同、库存</span></div>
+                <div class="mini-metric"><strong>责任</strong><span>部门、岗位、节点</span></div>
+                <div class="mini-metric"><strong>结果</strong><span>报表、成本、分析</span></div>
+              </div>
+            </div>
+            <div class="screen screen-side">
+              <div class="mock-title">移动协同</div>
+              <div class="bar-row"><span style="width: 68%"></span></div>
+              <div class="bar-row"><span style="width: 82%"></span></div>
+              <div class="bar-row"><span style="width: 52%"></span></div>
+            </div>
+            <span class="link-line"></span>
+            <span class="orb-label orb-a">ERP</span>
+            <span class="orb-label orb-b">OA</span>
+            <span class="orb-label orb-c">BI</span>
+          </div>
+        </div>
+      </div>
+      <div class="trust-strip" aria-label="代表客户">
+        <div class="trust-panel">
+          <div class="trust-label">代表客户</div>
+          <div class="customer-row">
+            <span>海南橡胶</span>
+            <span>椰树集团</span>
+            <span>翔泰渔业</span>
+            <span>中和药业</span>
+            <span>省妇女儿童医学中心</span>
+            <span>省财金集团</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="solutions" aria-labelledby="solutions-title">
+      <div class="section-shell">
+        <div class="section-head">
+          <div>
+            <div class="kicker">解决方案</div>
+            <h2 class="section-title" id="solutions-title">华悦把哪些管理断点接起来？</h2>
+          </div>
+          <p class="section-copy">华悦不是简单替企业换一套系统，而是先看清已有系统、组织流程、管理对象和责任边界，再通过 ERP、协同系统和定制开发，把关键管理链路接成可执行、可追踪、可分析的系统。</p>
+        </div>
+
+        <div class="solution-tabs" role="tablist" aria-label="解决方案分类">
+          <button class="solution-tab active" type="button" role="tab" aria-selected="true" data-tab="erp"><span>方案 01 / 核心 ERP 系统建设</span><strong>经营业务与财务核算贯通</strong></button>
+          <button class="solution-tab" type="button" role="tab" aria-selected="false" data-tab="collaboration"><span>方案 02 / 泛 ERP 系统建设</span><strong>审批、项目、资产、合同协同</strong></button>
+          <button class="solution-tab" type="button" role="tab" aria-selected="false" data-tab="custom"><span>方案 03 / 定制软件开发</span><strong>特殊业务场景落地成系统</strong></button>
+        </div>
+
+        <article class="solution-panel active" data-panel="erp">
+          <div>
+            <h3>把经营业务和财务核算接到同一套管理链路里</h3>
+            <p>覆盖财务、采购、销售、库存、生产、质量、成本、预算和合并报表，让业务数据、库存数据、成本数据和财务数据相互校验。</p>
+            <ul class="solution-list">
+              <li>订单、采购、入库、生产、发货、开票、收款形成连续链路。</li>
+              <li>业务过程自动沉淀为财务核算与经营分析依据。</li>
+              <li>管理层不只看财务结果，也能追溯业务过程。</li>
+            </ul>
+          </div>
+          <div class="solution-visual">
+            <div class="visual-caption">Core ERP</div>
+            <div class="visual-title">从业务发生到财务结果，形成同一条可追踪链路。</div>
+            <div class="chain">
+              <div class="chain-node">采购</div>
+              <div class="chain-node">库存</div>
+              <div class="chain-node">生产</div>
+              <div class="chain-node">成本</div>
+              <div class="chain-node">财务</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="solution-panel" data-panel="collaboration">
+          <div>
+            <h3>把审批、项目、资产、合同和报表纳入统一协同</h3>
+            <p>覆盖 OA、HR、BI、SRM、WMS、MES、PM 等系统，把分散在不同部门和工具里的管理事项统一到可推进、可追踪的协同链路里。</p>
+            <ul class="solution-list">
+              <li>事项进展、风险、责任、预算和结果能够被持续追踪。</li>
+              <li>项目、合同、资产、仓储与生产执行不再各自运行。</li>
+              <li>经营报表从事后汇总转为过程数据沉淀。</li>
+            </ul>
+          </div>
+          <div class="solution-visual">
+            <div class="visual-caption">Collaboration</div>
+            <div class="visual-title">把审批、项目、资产、合同、报表放进同一套协同秩序。</div>
+            <div class="chain">
+              <div class="chain-node">审批</div>
+              <div class="chain-node">项目</div>
+              <div class="chain-node">资产</div>
+              <div class="chain-node">合同</div>
+              <div class="chain-node">报表</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="solution-panel" data-panel="custom">
+          <div>
+            <h3>把标准软件难以覆盖的业务场景做成可落地系统</h3>
+            <p>当标准系统难以完整承载客户的特殊规则、业务流程或外部接口时，华悦通过定制开发把关键环节补齐，并与既有 ERP、OA、财务、仓储或第三方平台形成连续的管理链路。</p>
+            <ul class="solution-list">
+              <li>承载特殊业务规则、外部接口、移动作业和现场数据采集。</li>
+              <li>补齐标准系统覆盖不到的结算链路和行业专项平台。</li>
+              <li>让非标准业务也能被流程化、数据化和责任化。</li>
+            </ul>
+          </div>
+          <div class="solution-visual">
+            <div class="visual-caption">Custom Development</div>
+            <div class="visual-title">把关键业务环节补齐，再接入既有系统。</div>
+            <div class="chain">
+              <div class="chain-node">规则</div>
+              <div class="chain-node">采集</div>
+              <div class="chain-node">接口</div>
+              <div class="chain-node">结算</div>
+              <div class="chain-node">追踪</div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section soft" aria-labelledby="scenario-title">
+      <div class="section-shell">
+        <div class="section-head">
+          <div>
+            <div class="kicker">管理场景</div>
+            <h2 class="section-title" id="scenario-title">让客户看到，解决方案落在哪里</h2>
+          </div>
+          <p class="section-copy">不按系统名称堆砌功能，而按客户真实管理场景组织：哪些事项原来分散，华悦把哪些环节连接起来，管理层因此能追踪什么。</p>
+        </div>
+        <div class="scenario-grid">
+          <article class="scenario-card"><div class="scenario-index">01</div><h3>多组织财务核算与合并报表</h3><p>统一核算口径，支撑多主体财务汇总、穿透和经营分析。</p></article>
+          <article class="scenario-card"><div class="scenario-index">02</div><h3>采购、库存、成本和财务一体化</h3><p>让采购入库、库存变化、成本归集和财务核算相互校验。</p></article>
+          <article class="scenario-card"><div class="scenario-index">03</div><h3>生产、质量、批次与成本追溯</h3><p>把生产过程、质量记录、批次流向和成本核算接成链路。</p></article>
+          <article class="scenario-card"><div class="scenario-index">04</div><h3>医院预算、采购、资产、合同与财务协同</h3><p>支撑预算控制、资产管理、采购执行和财务核算一致。</p></article>
+          <article class="scenario-card"><div class="scenario-index">05</div><h3>项目审批、合同、招采与责任追踪</h3><p>让项目事项、审批节点、合同执行和招采过程有迹可循。</p></article>
+          <article class="scenario-card"><div class="scenario-index">06</div><h3>外部系统接口、移动作业与数据采集</h3><p>把现场业务和第三方平台数据纳入统一系统链路。</p></article>
+          <article class="scenario-card"><div class="scenario-index">07</div><h3>经营报表、管理驾驶舱与问题追溯</h3><p>报表不只看结果，更能追到业务过程和责任节点。</p></article>
+          <article class="scenario-card"><div class="scenario-index">08</div><h3>长期运维、培训、流程优化与系统升级</h3><p>系统上线后持续适配组织、流程、权限和管理要求变化。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="cases" aria-labelledby="cases-title">
+      <div class="section-shell">
+        <div class="section-head">
+          <div>
+            <div class="kicker">客户案例</div>
+            <h2 class="section-title" id="cases-title">这些组织，把复杂管理问题交给华悦</h2>
+          </div>
+          <p class="section-copy">华悦的案例不是客户名单，而是复杂组织管理问题的交付证明。每个案例重点表达客户原来卡在哪里，华悦把哪些环节连起来，管理层因此能看到什么。</p>
+        </div>
+        <div class="cases-layout">
+          <article class="case-poster large" style="--case-bg: linear-gradient(135deg, #123a66 0%, #0b1e38 58%, #1d6da8 100%);">
+            <div class="case-content">
+              <div class="case-kind">排序 01 / 橡胶智慧管理平台</div>
+              <h3>海南天然橡胶产业集团股份有限公司</h3>
+              <p>覆盖收购、结算、保险对接、胶园生产和产业数据沉淀，把分散现场数据接入统一管理链路。</p>
+            </div>
+          </article>
+          <div class="case-stack">
+            <article class="case-poster" style="--case-bg: linear-gradient(135deg, #104f85 0%, #10233f 70%);">
+              <div class="case-content">
+                <div class="case-kind">排序 02 / 全国中转仓一体化管控</div>
+                <h3>椰树集团有限公司</h3>
+                <p>让工厂、中转仓、物流与经销商排货形成统一视图。</p>
+              </div>
+            </article>
+            <article class="case-poster" style="--case-bg: linear-gradient(135deg, #0d5b73 0%, #0d2842 70%);">
+              <div class="case-content">
+                <div class="case-kind">排序 03 / 水产全产业链业务一体化</div>
+                <h3>海南翔泰渔业股份有限公司</h3>
+                <p>采购、生产、销售、过磅接口和财务核算贯通。</p>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div class="case-grid-small">
+          <article class="case-small"><strong>海南现代科技集团有限公司</strong><span>综合性集团业财一体化管控</span></article>
+          <article class="case-small"><strong>海口市建工集团有限公司</strong><span>国有建工集团数字化协同管控</span></article>
+          <article class="case-small"><strong>海南国健高科技乳业有限公司</strong><span>进口婴幼儿食品集团化业财一体化管控</span></article>
+          <article class="case-small"><strong>海南中和药业股份有限公司</strong><span>采购、生产、销售、财务全链条规范化管控</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft" id="local-service" aria-labelledby="local-title">
+      <div class="section-shell">
+        <div class="section-head">
+          <div>
+            <div class="kicker">本地服务</div>
+            <h2 class="section-title" id="local-title">本地团队的价值，不只是能到现场</h2>
+          </div>
+          <p class="section-copy">企业系统上线后，组织、流程、岗位和管理要求还会持续变化。本地团队的价值，是能长期理解客户现场，持续跟进实施、培训、运维和优化，让系统跟得上管理变化。</p>
+        </div>
+        <div class="service-panel">
+          <div class="service-metric"><strong>20年+</strong><span>核心团队企业数字化服务经验</span></div>
+          <div class="service-metric"><strong>X名PMP</strong><span>项目管理专业人员参与交付</span></div>
+          <div class="service-metric"><strong>X个以上</strong><span>百万级项目交付经验</span></div>
+          <div class="service-metric"><strong>本地团队</strong><span>现场梳理、实施培训、长期维护</span></div>
+        </div>
+        <div class="process-line">
+          <article class="process-step"><b>1</b><h3>现场调研</h3><p>看清组织、流程、系统和责任边界。</p></article>
+          <article class="process-step"><b>2</b><h3>方案设计</h3><p>明确系统范围、流程节点和交付节奏。</p></article>
+          <article class="process-step"><b>3</b><h3>实施上线</h3><p>配置、开发、集成、培训、切换和问题处理。</p></article>
+          <article class="process-step"><b>4</b><h3>长期维护</h3><p>流程优化、系统升级、权限调整和持续支持。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="section-shell about-contact">
+        <article class="about-block">
+          <div class="kicker">关于华悦</div>
+          <h2 id="about-title">用科技使组织更美好</h2>
+          <p>海南华悦科技有限公司专注于企业管理软件开发、实施与服务，长期服务海南集团企业、制造企业、公共机构、医疗机构和批发贸易客户。华悦帮助客户把分散的流程、数据和系统连接成可持续运行的数字化管理体系。</p>
+        </article>
+        <article class="contact-block" id="contact">
+          <div class="kicker">联系华悦</div>
+          <h2>电话、地址与地图定位</h2>
+          <p>第一版官网只保留直接联系信息，不设置留言表单。</p>
+          <ul class="contact-list">
+            <li><span>电话</span><strong>0898-68548301</strong></li>
+            <li><span>地址</span><strong>海南省海口市龙华区海秀中路 71 号海垦广场 B 座 11 楼</strong></li>
+          </ul>
+          <div class="map-placeholder">地图定位区域<br />海口 · 海垦广场 B 座 11 楼</div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-shell">
+      <div>© 海南华悦科技有限公司</div>
+      <div class="footer-links">
+        <a href="#home">首页</a>
+        <a href="#solutions">解决方案</a>
+        <a href="#cases">客户案例</a>
+        <a href="#local-service">本地服务</a>
+        <a href="#about">关于华悦</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const tabs = document.querySelectorAll('.solution-tab');
+    const panels = document.querySelectorAll('.solution-panel');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const key = tab.dataset.tab;
+        tabs.forEach((item) => {
+          item.classList.toggle('active', item === tab);
+          item.setAttribute('aria-selected', item === tab ? 'true' : 'false');
+        });
+        panels.forEach((panel) => {
+          panel.classList.toggle('active', panel.dataset.panel === key);
+        });
+      });
+    });
+
+    const menuToggle = document.querySelector('.menu-toggle');
+    const siteNav = document.querySelector('#siteNav');
+
+    menuToggle.addEventListener('click', () => {
+      const open = siteNav.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    siteNav.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        siteNav.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
+</body>
+</html>
