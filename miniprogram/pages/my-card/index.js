@@ -109,9 +109,18 @@ Page({
   _syncLocalState(staffInfo, isInitialLoad) {
     const companyTabs = this._buildCompanyTabs(staffInfo)
     const activeCompanyId = this._getActiveCompanyId(companyTabs, this.data.activeCompanyId)
-    const currentCard = activeCompanyId ? this._buildFallbackCard(staffInfo, companyTabs, activeCompanyId) : null
+    const fallbackCard = activeCompanyId ? this._buildFallbackCard(staffInfo, companyTabs, activeCompanyId) : null
+    const existingCard = this.data.currentCard
+    const shouldKeepCurrentCard = !isInitialLoad &&
+      existingCard &&
+      existingCard.companyId === activeCompanyId
+    const currentCard = shouldKeepCurrentCard
+      ? this._mergeCurrentCardWithFallback(existingCard, fallbackCard)
+      : fallbackCard
 
-    this._cardCache = {}
+    if (!shouldKeepCurrentCard) {
+      this._cardCache = {}
+    }
     this.setData({
       loading: isInitialLoad,
       staffInfo,
@@ -179,6 +188,27 @@ Page({
     }
   },
 
+  _mergeCurrentCardWithFallback(existingCard, fallbackCard) {
+    if (!existingCard) {
+      return fallbackCard || null
+    }
+    if (!fallbackCard) {
+      return existingCard
+    }
+
+    return {
+      ...existingCard,
+      staff: {
+        ...existingCard.staff,
+        ...fallbackCard.staff
+      },
+      company: {
+        ...fallbackCard.company,
+        ...existingCard.company
+      }
+    }
+  },
+
   _formatCardData(staffInfo, companyTabs, companyId, cardInfo) {
     const fallback = this._buildFallbackCard(staffInfo, companyTabs, companyId)
     if (!cardInfo) {
@@ -231,14 +261,28 @@ Page({
           cache[item.companyId] = item.data
         }
       })
-      this._cardCache = cache
+      const hasSuccessfulResponse = results.some((item) => item && item.data)
+      this._cardCache = hasSuccessfulResponse ? cache : (this._cardCache || {})
 
       const resolvedCompanyId = cache[activeCompanyId]
         ? activeCompanyId
         : this._getActiveCompanyId(companyTabs, activeCompanyId)
-      const currentCard = resolvedCompanyId
-        ? this._formatCardData(staffInfo, companyTabs, resolvedCompanyId, cache[resolvedCompanyId])
+      const cardInfo = resolvedCompanyId ? cache[resolvedCompanyId] : null
+      const activeResult = resolvedCompanyId
+        ? results.find((item) => item && item.companyId === resolvedCompanyId)
         : null
+      const fallbackCard = resolvedCompanyId
+        ? this._buildFallbackCard(staffInfo, companyTabs, resolvedCompanyId)
+        : null
+      const shouldKeepCurrentCard = !cardInfo &&
+        this.data.currentCard &&
+        this.data.currentCard.companyId === resolvedCompanyId &&
+        !(activeResult && activeResult.data)
+      const currentCard = cardInfo
+        ? this._formatCardData(staffInfo, companyTabs, resolvedCompanyId, cardInfo)
+        : (shouldKeepCurrentCard
+            ? this._mergeCurrentCardWithFallback(this.data.currentCard, fallbackCard)
+            : fallbackCard)
 
       this.setData({
         loading: false,
