@@ -38,12 +38,17 @@ miniprogram/cloudfunctions/**/tcb_custom_login.local.json
 .cloudbase-home/
 .cloudbase-deploy-tmp/
 .rtk/
+.codegraph/
+.playwright-cli/
+output/
+backups/
 备份/
 
 # Local release artifacts
 release_backups/
 web-cloudbase-project/
 项目文档/客户案例/
+项目文档/安全审查/
 项目文档/华悦客户案例0428.zip
 
 # Historical repair packages
