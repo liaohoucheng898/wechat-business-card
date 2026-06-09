@@ -209,7 +209,7 @@ export function adminUnbindWechat(staffId, targetOpenid) {
 }
 
 /**
- * 重置员工密码
+ * 重新生成员工绑定码
  */
 export function adminResetPassword(staffId) {
   return callFunction('adminResetPassword', { staffId })

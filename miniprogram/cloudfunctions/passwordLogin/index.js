@@ -1,13 +1,14 @@
 const cloud = require('wx-server-sdk')
-const crypto = require('crypto')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const { success, fail } = require('./_shared/response')
-const { E0101, E0102, E0206, E0209, E0211, E0213 } = require('./_shared/error-codes')
+const { E0101, E0102 } = require('./_shared/error-codes')
 const { COL, getDb, getStaffByPhone, getAdminConfig, normalizeStaffOpenids } = require('./_shared/db')
 const { isValidPhone, isValidPassword, checkRequired } = require('./_shared/validate')
 const { getPasswordStatus, verifyPassword } = require('./_shared/password')
+const { generateSessionToken, buildSessionFields } = require('./_shared/session')
+const { genericBindingCodeError, logPreAuthReject } = require('./_shared/login-security')
 
 async function resolveFileUrl(fileID) {
   if (!fileID) return ''
@@ -60,27 +61,31 @@ exports.main = async (event) => {
     }
 
     if (!isValidPassword(password)) {
-      return fail(E0101, '密码需 8-20 位，且必须同时包含字母和数字')
+      return fail(E0101, '绑定码需 8-20 位，且必须同时包含字母和数字')
     }
 
     const db = getDb()
     const staff = await getStaffByPhone(phone)
     if (!staff) {
-      return fail(E0209)
+      logPreAuthReject('passwordLogin', 'staff_not_found', phone)
+      return fail(genericBindingCodeError())
     }
 
     if (staff.status === 'disabled') {
-      return fail(E0211)
+      logPreAuthReject('passwordLogin', 'staff_disabled', phone)
+      return fail(genericBindingCodeError())
     }
 
     const now = Date.now()
     if (staff.passwordLockUntil && new Date(staff.passwordLockUntil).getTime() > now) {
-      return fail(E0206)
+      logPreAuthReject('passwordLogin', 'password_locked', phone)
+      return fail(genericBindingCodeError())
     }
 
     const passwordStatus = getPasswordStatus(staff)
     if (passwordStatus === 'unset') {
-      return fail(E0213, '该账号尚未设置密码，请联系管理员重置密码')
+      logPreAuthReject('passwordLogin', 'password_unset', phone)
+      return fail(genericBindingCodeError())
     }
 
     const passwordValid = await verifyPassword(password, staff)
@@ -91,19 +96,16 @@ exports.main = async (event) => {
         updatedAt: db.serverDate(),
       }
 
-      if (errorCount >= 5) {
-        updateData.passwordLockUntil = new Date(now + 15 * 60 * 1000)
-      }
-
       await db.collection(COL.STAFF).doc(staff._id).update({ data: updateData })
 
       if (errorCount >= 5) {
-        return fail(E0206)
+        logPreAuthReject('passwordLogin', 'password_error_threshold', phone)
+        return fail(genericBindingCodeError())
       }
-      return fail(E0213)
+      return fail(genericBindingCodeError())
     }
 
-    const sessionToken = crypto.randomBytes(16).toString('hex')
+    const sessionToken = generateSessionToken()
     const sessionExpireAt = new Date(now + 7 * 24 * 60 * 60 * 1000)
     const boundOpenids = normalizeStaffOpenids(staff)
     const hasCurrentOpenid = boundOpenids.includes(OPENID)
@@ -113,12 +115,16 @@ exports.main = async (event) => {
     }
 
     const updateData = {
-      sessionToken,
-      sessionExpireAt,
+      ...buildSessionFields(sessionToken, OPENID, sessionExpireAt),
+      passwordHash: '',
+      passwordSalt: '',
+      passwordStatus: 'active',
+      mustChangePassword: false,
       passwordErrorCount: 0,
       passwordLockUntil: null,
       openids: boundOpenids,
       wechatBindings: normalizeWechatBindings(staff, boundOpenids),
+      bindingCodeUsedAt: db.serverDate(),
       updatedAt: db.serverDate(),
     }
 
@@ -141,7 +147,8 @@ exports.main = async (event) => {
     }
 
     const avatarFileId = staff.avatar || staff.avatarOriginal || ''
-    const mustChangePassword = passwordStatus === 'temporary'
+    const nextPasswordStatus = 'active'
+    const mustChangePassword = false
     const staffInfo = {
       staffId: staff._id,
       name: staff.name,
@@ -155,7 +162,7 @@ exports.main = async (event) => {
       avatarOriginal: avatarFileId,
       enabledCompanies: staff.enabledCompanies || [],
       isAdmin: !!staff.isAdmin,
-      passwordStatus,
+      passwordStatus: nextPasswordStatus,
       mustChangePassword,
     }
 
@@ -164,7 +171,7 @@ exports.main = async (event) => {
       staffInfo,
       sessionToken,
       sessionExpireAt: sessionExpireAt.getTime(),
-      passwordStatus,
+      passwordStatus: nextPasswordStatus,
       mustChangePassword,
     })
   } catch (error) {

@@ -30,7 +30,7 @@
 
 1. 以后本项目的 CloudBase 操作默认使用项目专用腾讯云子账号 API 密钥登录态，不再使用主账号扫码授权。
 2. 子账号密钥只保存在本机 CloudBase CLI 登录态中，不写入仓库，不写入项目文档，不发送到聊天记录。
-3. 当前项目统一通过 `scripts/invoke-tcb.cmd` 调用 CloudBase CLI，该脚本会把登录态写入项目本地 `.cloudbase-home/` 目录；该目录已被 `.gitignore` 排除，禁止提交。
+3. 当前项目统一通过 `scripts/invoke-tcb.cmd` 调用 CloudBase CLI，该脚本默认把登录态写入项目外目录 `%LOCALAPPDATA%\Codex\CloudBase\wechat-card`，禁止再写入项目本地 `.cloudbase-home/`。
 4. 验证登录态是否有效时，优先执行：
    ```bash
    .\scripts\invoke-tcb.cmd env list --json
@@ -39,10 +39,15 @@
 5. 如果登录态失效，优先使用子账号 API 密钥重新登录：
    ```bash
    .\scripts\invoke-tcb.cmd logout
-   .\scripts\invoke-tcb.cmd login --apiKeyId <SecretId> --apiKey <SecretKey>
+   .\scripts\invoke-tcb.cmd login -k
    .\scripts\invoke-tcb.cmd env list --json
    ```
-6. 除非用户明确要求或子账号权限无法满足当前排障需要，否则不要重新发起主账号扫码授权。
+6. 执行 `login -k` 后只在本机终端交互输入 SecretId 和 SecretKey，禁止把密钥写入聊天、文档、脚本或命令历史。
+7. 发布或备份前执行以下命令，确认项目内不存在旧 CloudBase 登录态：
+   ```bash
+   npm run cb:check:credentials
+   ```
+8. 除非用户明确要求或子账号权限无法满足当前排障需要，否则不要重新发起主账号扫码授权。
 
 ## 三、当前已接通的自动部署能力
 
@@ -75,7 +80,7 @@
 2. `package.json`
    - 作用：提供统一发布命令入口
 3. `scripts/invoke-tcb.cmd`
-   - 作用：统一调用 CloudBase CLI，并把登录态和配置写到项目本地目录
+   - 作用：统一调用 CloudBase CLI，并把登录态和配置写到项目外安全目录
 4. `scripts/deploy-cloudfunctions.ps1`
    - 作用：批量发布 `miniprogram/cloudfunctions` 下的云函数
 5. `scripts/deploy-http-routes.ps1`
@@ -91,8 +96,10 @@
    - 作用：后台生产构建时使用的 CloudBase HTTP 服务基础地址
 9. `admin/src/config/env.js`
    - 作用：后台运行时环境配置，包含 `VITE_CLOUD_HTTP_BASE_URL`
-10. `.gitignore`
-   - 已排除 `.cloudbase-home/`，防止本地登录态误提交到仓库
+10. `scripts/assert-no-project-cloudbase-credentials.cmd`
+   - 作用：发布或备份前检查项目目录内是否残留旧 CloudBase 登录态
+11. `.gitignore`
+   - 继续排除历史 `.cloudbase-home/`，防止旧登录态误提交到仓库
 
 ## 五、当前可直接使用的命令
 

@@ -6,11 +6,11 @@
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
-const crypto = require('crypto')
 const { success, fail } = require('./_shared/response')
 const { E0102, E0211 } = require('./_shared/error-codes')
 const { COL, getDb, getStaffByOpenid, normalizeStaffOpenids } = require('./_shared/db')
 const { getPasswordStatus } = require('./_shared/password')
+const { generateSessionToken, buildSessionFields } = require('./_shared/session')
 
 async function resolveFileUrl(fileID) {
   if (!fileID) return ''
@@ -56,7 +56,7 @@ exports.main = async () => {
       return fail(E0211)
     }
 
-    const sessionToken = crypto.randomBytes(16).toString('hex')
+    const sessionToken = generateSessionToken()
     const sessionExpireAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     const db = getDb()
     const boundOpenids = normalizeStaffOpenids(staff)
@@ -65,8 +65,7 @@ exports.main = async () => {
     }
 
     const updateData = {
-      sessionToken,
-      sessionExpireAt,
+      ...buildSessionFields(sessionToken, OPENID, sessionExpireAt),
       openids: boundOpenids,
       wechatBindings: normalizeWechatBindings(staff, boundOpenids),
       updatedAt: db.serverDate(),

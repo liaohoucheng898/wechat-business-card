@@ -76,6 +76,31 @@ Page({
     this._syncLocalState(staffInfo, true)
   },
 
+  _clearAuthAndGoBind() {
+    auth.clearSession()
+    const app = getApp()
+    if (app && app.globalData) {
+      const authResult = {
+        loggedIn: false,
+        needBind: true
+      }
+      app.globalData.staffInfo = null
+      app.globalData.sessionToken = null
+      app.globalData.authReady = true
+      app.globalData.authResult = authResult
+      app.globalData.authPromise = Promise.resolve(authResult)
+    }
+    this._cardCache = {}
+    this.setData({
+      loading: false,
+      staffInfo: null,
+      companyTabs: [],
+      activeCompanyId: '',
+      currentCard: null
+    })
+    wx.reLaunch({ url: '/pages/bind-phone/index' })
+  },
+
   _syncStaffInfo() {
     this._waitForAuthReady().then(() => {
       if (!auth.isLoggedIn()) {
@@ -83,7 +108,12 @@ Page({
       }
       return callCloud('login', {}, { showLoading: false, silent: true })
     }).then((data) => {
-      if (!data || data.needBind || !data.staffInfo) {
+      if (data && data.needBind) {
+        this._clearAuthAndGoBind()
+        return
+      }
+
+      if (!data || !data.staffInfo) {
         return
       }
 
@@ -103,7 +133,11 @@ Page({
         app.globalData.authPromise = Promise.resolve(authResult)
       }
       this._syncLocalState(data.staffInfo, false)
-    }).catch(() => {})
+    }).catch((err) => {
+      if (err && (err.code === 'E0207' || err.code === 'E0211')) {
+        this._clearAuthAndGoBind()
+      }
+    })
   },
 
   _syncLocalState(staffInfo, isInitialLoad) {

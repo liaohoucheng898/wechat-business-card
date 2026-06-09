@@ -7,6 +7,46 @@
 const cloud = require('wx-server-sdk')
 const { COL, getDb, getAdminConfig } = require('./db')
 const { E0207, E0208, E0211 } = require('./error-codes')
+const { hashSessionToken } = require('./session')
+
+function normalizeStaffOpenids(staff = {}) {
+  const openids = []
+
+  if (staff.openid) {
+    openids.push(String(staff.openid).trim())
+  }
+
+  if (Array.isArray(staff.openids)) {
+    staff.openids.forEach((item) => {
+      const value = String(item || '').trim()
+      if (value) {
+        openids.push(value)
+      }
+    })
+  }
+
+  return Array.from(new Set(openids.filter(Boolean)))
+}
+
+async function getStaffBySessionToken(db, sessionToken) {
+  const sessionTokenHash = hashSessionToken(sessionToken)
+
+  const { data: hashedList } = await db.collection(COL.STAFF)
+    .where({ sessionTokenHash })
+    .limit(1)
+    .get()
+
+  if (hashedList.length) {
+    return hashedList[0]
+  }
+
+  const { data: legacyList } = await db.collection(COL.STAFF)
+    .where({ sessionToken })
+    .limit(1)
+    .get()
+
+  return legacyList[0] || null
+}
 
 /**
  * 普通员工 Token 校验（小程序端）
@@ -16,26 +56,30 @@ async function verifyToken(sessionToken) {
     return { error: E0207 }
   }
 
-  const db = getDb()
-  const now = Date.now()
-
-  const { data: list } = await db.collection(COL.STAFF)
-    .where({ sessionToken })
-    .limit(1)
-    .get()
-
-  if (!list.length) {
+  const { OPENID } = cloud.getWXContext()
+  const currentOpenid = String(OPENID || '').trim()
+  if (!currentOpenid) {
     return { error: E0207 }
   }
 
-  const staff = list[0]
+  const db = getDb()
+  const now = Date.now()
+  const staff = await getStaffBySessionToken(db, sessionToken)
 
-  if (!staff.sessionExpireAt || staff.sessionExpireAt.getTime() < now) {
+  if (!staff || !staff.sessionExpireAt || staff.sessionExpireAt.getTime() < now) {
     return { error: E0207 }
   }
 
   if (staff.status !== 'active') {
     return { error: E0211 }
+  }
+
+  if (staff.sessionOpenid) {
+    if (String(staff.sessionOpenid).trim() !== currentOpenid) {
+      return { error: E0207 }
+    }
+  } else if (!normalizeStaffOpenids(staff).includes(currentOpenid)) {
+    return { error: E0207 }
   }
 
   return { staffInfo: staff }

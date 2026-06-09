@@ -88,7 +88,7 @@ Page({
   handlePasswordLogin() {
     const { phone, password, canSubmit } = this.data
     if (!canSubmit) {
-      showError('请输入正确的账号和密码')
+      showError('请输入正确的手机号和绑定码')
       return
     }
 
@@ -101,7 +101,7 @@ Page({
       if (err.code === 'E0209') {
         showError('该手机号未开通，请联系管理员')
       } else if (err.code === 'E0210') {
-        showError('该账号已绑定其他微信，请联系管理员重置密码后重新绑定')
+        showError('该账号已绑定其他微信，请联系管理员重新生成绑定码后再绑定')
       } else if (err.code === 'E0211') {
         showError('该账号已停用，请联系管理员')
       }

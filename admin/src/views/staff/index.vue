@@ -84,7 +84,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="密码状态" width="110" align="center">
+        <el-table-column label="绑定码状态" width="110" align="center">
           <template #default="{ row }">
             <el-tag
               :type="getPasswordStatusType(row.passwordStatus)"
@@ -123,7 +123,7 @@
         <el-table-column label="操作" width="280" align="center" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link size="small" @click="handleResetPassword(row)">
-              重置密码
+              重新生成绑定码
             </el-button>
             <el-button type="primary" link size="small" @click="openDrawer(row)">
               编辑
@@ -188,7 +188,7 @@
           <p class="import-dialog__text">模板字段：姓名、手机号、华悦职位、华宝职位。</p>
           <p class="import-dialog__text">只要填写了某个公司的职位，系统就会自动开通这个公司。</p>
           <p class="import-dialog__text">如果两个职位都没填，这一行会导入失败。</p>
-          <p class="import-dialog__text">如员工后续需要进入小程序，请在员工列表里单独重置密码后再发给他。</p>
+          <p class="import-dialog__text">如员工后续需要进入小程序，请在员工列表里单独重新生成绑定码后再发给他。</p>
           <el-button type="primary" plain @click="downloadImportTemplate">
             下载模板
           </el-button>
@@ -252,7 +252,7 @@
 
     <el-dialog
       v-model="credentialDialogVisible"
-      title="账号信息"
+      title="绑定信息"
       width="420px"
       destroy-on-close
     >
@@ -265,16 +265,16 @@
         </div>
 
         <div class="credential-field">
-          <span class="credential-label">密码</span>
-          <el-input :model-value="credentialDialog.temporaryPassword" readonly />
+          <span class="credential-label">绑定码</span>
+          <el-input :model-value="credentialDialog.bindingCode" readonly />
         </div>
 
-        <p class="credential-note">请把这组账号和密码发给对应员工，员工首次打开小程序时输入账号和密码后会自动绑定当前微信，后续直接通过微信进入。</p>
+        <p class="credential-note">请把手机号和绑定码发给对应员工。员工首次打开小程序时输入手机号和绑定码后会自动绑定当前微信，后续直接通过微信进入。</p>
       </div>
 
       <template #footer>
         <el-button @click="credentialDialogVisible = false">关闭</el-button>
-        <el-button type="primary" @click="copyPassword">复制密码</el-button>
+        <el-button type="primary" @click="copyPassword">复制绑定码</el-button>
       </template>
     </el-dialog>
   </div>
@@ -317,7 +317,7 @@ const bindingFilter = ref('')
 const credentialDialogVisible = ref(false)
 const credentialDialog = ref({
   phone: '',
-  temporaryPassword: '',
+  bindingCode: '',
   tip: ''
 })
 const importDialogVisible = ref(false)
@@ -369,9 +369,9 @@ function getCompanyName(companyId) {
 }
 
 function getPasswordStatusLabel(status) {
-  if (status === 'temporary') return '临时密码'
-  if (status === 'active') return '已设置'
-  return '未设置'
+  if (status === 'temporary') return '待绑定'
+  if (status === 'active') return '已生成'
+  return '未生成'
 }
 
 function getPasswordStatusType(status) {
@@ -701,7 +701,7 @@ async function handleToggle(row) {
 function openCredentialDialog(data, tip) {
   credentialDialog.value = {
     phone: data.phone || '',
-    temporaryPassword: data.temporaryPassword || '',
+    bindingCode: data.bindingCode || data.temporaryPassword || '',
     tip
   }
   credentialDialogVisible.value = true
@@ -710,8 +710,8 @@ function openCredentialDialog(data, tip) {
 async function handleResetPassword(row) {
   try {
     await ElMessageBox.confirm(
-      `确认重置员工“${row.name}”的登录密码？重置后旧密码会立即失效，需要把新临时密码发给本人。`,
-      '重置密码',
+      `确认重新生成员工“${row.name}”的绑定码？生成后旧微信绑定和旧登录态会立即失效，需要把新绑定码发给本人重新绑定。`,
+      '重新生成绑定码',
       {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
@@ -720,7 +720,7 @@ async function handleResetPassword(row) {
     )
 
     const data = await adminResetPassword(row.staffId)
-    ElMessage.success('已生成新的密码')
+    ElMessage.success('已生成新的绑定码')
     fetchList()
 
     if (row.staffId === userStore.adminInfo?.staffId) {
@@ -730,7 +730,7 @@ async function handleResetPassword(row) {
       })
     }
 
-    openCredentialDialog(data, `请把“${row.name}”的新账号信息发给他。`)
+    openCredentialDialog(data, `请把“${row.name}”的新绑定信息发给他。`)
   } catch {
     // 取消或接口错误
   }
@@ -757,10 +757,10 @@ async function handleDelete(row) {
 }
 
 function copyPassword() {
-  const text = credentialDialog.value.temporaryPassword || ''
+  const text = credentialDialog.value.bindingCode || ''
   if (navigator.clipboard?.writeText) {
     navigator.clipboard.writeText(text).then(() => {
-      ElMessage.success('已复制')
+      ElMessage.success('已复制绑定码')
     }).catch(() => {
       ElMessage.warning('复制失败，请手动复制')
     })
@@ -773,14 +773,14 @@ function copyPassword() {
   textarea.select()
   document.execCommand('copy')
   document.body.removeChild(textarea)
-  ElMessage.success('已复制')
+  ElMessage.success('已复制绑定码')
 }
 
 function onSaved(payload) {
   drawerVisible.value = false
   fetchList()
-  if (payload?.credentials?.temporaryPassword) {
-    openCredentialDialog(payload.credentials, '请把这组账号信息发给新员工。')
+  if (payload?.credentials?.bindingCode || payload?.credentials?.temporaryPassword) {
+    openCredentialDialog(payload.credentials, '请把这组绑定信息发给新员工。')
   }
 }
 

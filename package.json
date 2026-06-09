@@ -5,6 +5,7 @@
   "scripts": {
     "cb:login": ".\\scripts\\invoke-tcb.cmd login",
     "cb:env:list": ".\\scripts\\invoke-tcb.cmd env list",
+    "cb:check:credentials": ".\\scripts\\assert-no-project-cloudbase-credentials.cmd",
     "cb:deploy:functions": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-cloudfunctions.ps1",
     "cb:deploy:http-routes": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-http-routes.ps1",
     "cb:build:admin": "npm --prefix ./admin run build",

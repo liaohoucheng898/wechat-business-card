@@ -79,6 +79,7 @@ exports.main = async (event) => {
         showSecondPhone: !!secondPhone && !!showSecondPhone,
         openid: null,
         openids: [],
+        wechatBindings: [],
         wechat: wechat || '',
         email: email || '',
         bio: bio || '',
@@ -92,6 +93,7 @@ exports.main = async (event) => {
         pcSessionToken: null,
         pcSessionExpireAt: null,
         ...passwordFields,
+        bindingCodeUpdatedAt: db.serverDate(),
         passwordUpdatedAt: db.serverDate(),
         createdAt: db.serverDate(),
         updatedAt: db.serverDate(),
@@ -101,6 +103,7 @@ exports.main = async (event) => {
     const result = success({
       staffId: newStaffId,
       phone,
+      bindingCode: temporaryPassword,
       temporaryPassword,
       passwordStatus: 'temporary',
       mustChangePassword: true,

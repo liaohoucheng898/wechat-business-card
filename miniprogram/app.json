@@ -5,7 +5,6 @@
     "pages/case-detail/index",
     "pages/card-disabled/index",
     "pages/bind-phone/index",
-    "pages/change-password/index",
     "pages/edit-card/index",
     "pages/my-stats/index"
   ],

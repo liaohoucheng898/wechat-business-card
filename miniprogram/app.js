@@ -113,28 +113,16 @@ App({
       return result
     }
 
-    // 先检查本地是否有有效token
-    if (auth.isLoggedIn()) {
-      const staffInfo = auth.getStaffInfo()
-      const sessionToken = auth.getSessionToken()
-      this.globalData.staffInfo = staffInfo
-      this.globalData.sessionToken = sessionToken
-      const result = finishAuth({
-        loggedIn: true,
-        needBind: false,
-        staffInfo,
-        sessionToken
-      })
-      this.globalData.authPromise = Promise.resolve(result)
-      if (this.isDefaultEntryLaunch()) {
-        this.redirectToDefaultEntry('/pages/my-card/index')
-      }
-      return this.globalData.authPromise
+    const clearLocalAuth = () => {
+      auth.clearSession()
+      this.globalData.staffInfo = null
+      this.globalData.sessionToken = null
     }
 
     // 调用login云函数尝试用openid自动登录
     this.globalData.authPromise = callCloud('login', {}, { showLoading: false, silent: true }).then(data => {
       if (!data) {
+        clearLocalAuth()
         return finishAuth({
           loggedIn: false,
           needBind: false
@@ -143,6 +131,7 @@ App({
 
       // 未绑定手机号：直接跳转绑定页，避免首页一直loading
       if (data.needBind) {
+        clearLocalAuth()
         const result = finishAuth({
           loggedIn: false,
           needBind: true
@@ -168,10 +157,15 @@ App({
       return result
     }).catch(() => {
       // 静默失败，用户打开需要登录的页面时会跳转绑定页
-      return finishAuth({
+      clearLocalAuth()
+      const result = finishAuth({
         loggedIn: false,
         needBind: false
       })
+      if (this.isDefaultEntryLaunch()) {
+        this.redirectToDefaultEntry('/pages/bind-phone/index')
+      }
+      return result
     })
 
     return this.globalData.authPromise

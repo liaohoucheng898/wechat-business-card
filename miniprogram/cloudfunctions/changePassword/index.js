@@ -7,19 +7,16 @@ const tcbApp = tcb.init({ env: tcb.SYMBOL_CURRENT_ENV })
 const tcbAuth = tcbApp.auth()
 
 const { success, fail } = require('./_shared/response')
-const { E0101, E0102, E0207, E0213, E0215 } = require('./_shared/error-codes')
-const { verifyToken, verifyAdminByStaffId } = require('./_shared/auth')
+const { E0101, E0102, E0207, E0208, E0213, E0215 } = require('./_shared/error-codes')
+const { verifyAdminByStaffId } = require('./_shared/auth')
 const { COL, getDb } = require('./_shared/db')
 const { checkRequired, isValidPassword } = require('./_shared/validate')
 const { buildPasswordFields, verifyPassword } = require('./_shared/password')
+const { clearSessionFields } = require('./_shared/session')
 
 async function resolveCurrentStaff(event) {
   if (event.sessionToken) {
-    const tokenResult = await verifyToken(event.sessionToken)
-    if (tokenResult.error) {
-      return { error: tokenResult.error }
-    }
-    return { staffInfo: tokenResult.staffInfo }
+    return { error: E0208 }
   }
 
   const { customUserId: staffId } = tcbAuth.getUserInfo()
@@ -65,6 +62,7 @@ exports.main = async (event) => {
     await db.collection(COL.STAFF).doc(staff._id).update({
       data: {
         ...passwordFields,
+        ...clearSessionFields(),
         passwordUpdatedAt: db.serverDate(),
         updatedAt: db.serverDate(),
       },

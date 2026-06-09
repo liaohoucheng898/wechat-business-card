@@ -6,10 +6,11 @@ const tcb = require('@cloudbase/node-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const { success, fail } = require('./_shared/response')
-const { E0101, E0102, E0206, E0209, E0211, E0212, E0213 } = require('./_shared/error-codes')
+const { E0101, E0102 } = require('./_shared/error-codes')
 const { isValidPhone, isValidPassword } = require('./_shared/validate')
 const { COL, getDb, getStaffByPhone, getAdminConfig } = require('./_shared/db')
 const { getPasswordStatus, verifyPassword } = require('./_shared/password')
+const { genericLoginError, logPreAuthReject } = require('./_shared/login-security')
 
 function maskPhone(phone = '') {
   if (!phone || phone.length !== 11) return phone
@@ -71,28 +72,34 @@ exports.main = async (event) => {
     const db = getDb()
     const staff = await getStaffByPhone(phone)
     if (!staff) {
-      return fail(E0209)
+      logPreAuthReject('adminPasswordLogin', 'staff_not_found', phone)
+      return fail(genericLoginError())
     }
     if (staff.status === 'disabled') {
-      return fail(E0211)
+      logPreAuthReject('adminPasswordLogin', 'staff_disabled', phone)
+      return fail(genericLoginError())
     }
     if (!staff.isAdmin) {
-      return fail(E0212)
+      logPreAuthReject('adminPasswordLogin', 'not_admin', phone)
+      return fail(genericLoginError())
     }
 
     const adminConfig = await getAdminConfig()
     if (!adminConfig || !adminConfig.adminPhones.includes(phone)) {
-      return fail(E0212)
+      logPreAuthReject('adminPasswordLogin', 'not_in_admin_config', phone)
+      return fail(genericLoginError())
     }
 
     const now = Date.now()
     if (staff.passwordLockUntil && new Date(staff.passwordLockUntil).getTime() > now) {
-      return fail(E0206)
+      logPreAuthReject('adminPasswordLogin', 'password_locked', phone)
+      return fail(genericLoginError())
     }
 
     const passwordStatus = getPasswordStatus(staff)
     if (passwordStatus === 'unset') {
-      return fail(E0213, '该管理员账号尚未设置密码，请联系其他管理员为你重置密码')
+      logPreAuthReject('adminPasswordLogin', 'password_unset', phone)
+      return fail(genericLoginError())
     }
 
     const passwordValid = await verifyPassword(password, staff)
@@ -102,15 +109,13 @@ exports.main = async (event) => {
         passwordErrorCount: errorCount,
         updatedAt: db.serverDate(),
       }
-      if (errorCount >= 5) {
-        updateData.passwordLockUntil = new Date(now + 15 * 60 * 1000)
-      }
       await db.collection(COL.STAFF).doc(staff._id).update({ data: updateData })
 
       if (errorCount >= 5) {
-        return fail(E0206)
+        logPreAuthReject('adminPasswordLogin', 'password_error_threshold', phone)
+        return fail(genericLoginError())
       }
-      return fail(E0213)
+      return fail(genericLoginError())
     }
 
     await db.collection(COL.STAFF).doc(staff._id).update({

@@ -2,7 +2,6 @@
  * bindPhone - 绑定手机号
  */
 const cloud = require('wx-server-sdk')
-const crypto = require('crypto')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
@@ -14,6 +13,7 @@ const {
 const { COL, getDb, getStaffByPhone, getAdminConfig } = require('./_shared/db')
 const { isValidPhone, isValidSmsCode, checkRequired } = require('./_shared/validate')
 const { getPasswordStatus } = require('./_shared/password')
+const { generateSessionToken, buildSessionFields } = require('./_shared/session')
 
 async function resolveFileUrl(fileID) {
   if (!fileID) return ''
@@ -116,13 +116,12 @@ exports.main = async (event) => {
       return fail(E0210)
     }
 
-    const sessionToken = crypto.randomBytes(16).toString('hex')
+    const sessionToken = generateSessionToken()
     const sessionExpireAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
     const updateData = {
       openid: OPENID,
-      sessionToken,
-      sessionExpireAt,
+      ...buildSessionFields(sessionToken, OPENID, sessionExpireAt),
       updatedAt: db.serverDate(),
     }
 

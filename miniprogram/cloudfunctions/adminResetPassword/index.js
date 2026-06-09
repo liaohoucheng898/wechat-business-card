@@ -12,6 +12,7 @@ const { verifyAdminByStaffId } = require('./_shared/auth')
 const { COL, getDb, getStaffById } = require('./_shared/db')
 const { checkRequired } = require('./_shared/validate')
 const { buildPasswordFields, generateTempPassword } = require('./_shared/password')
+const { clearSessionFields } = require('./_shared/session')
 
 exports.main = async (event) => {
   try {
@@ -38,6 +39,11 @@ exports.main = async (event) => {
     await db.collection(COL.STAFF).doc(targetStaff._id).update({
       data: {
         ...passwordFields,
+        openid: null,
+        openids: [],
+        wechatBindings: [],
+        ...clearSessionFields(),
+        bindingCodeUpdatedAt: db.serverDate(),
         passwordUpdatedAt: db.serverDate(),
         updatedAt: db.serverDate(),
       },
@@ -46,6 +52,7 @@ exports.main = async (event) => {
     return success({
       staffId: targetStaff._id,
       phone: targetStaff.phone,
+      bindingCode: temporaryPassword,
       temporaryPassword,
       passwordStatus: 'temporary',
       mustChangePassword: true,

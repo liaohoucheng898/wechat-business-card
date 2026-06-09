@@ -409,6 +409,8 @@ function normalizeStats(stats = {}) {
     },
     staffRank: staffRankSource.map((item) => ({
       ...item,
+      weekViews: item.weekViews ?? item.views7d ?? 0,
+      halfMonthViews: item.halfMonthViews ?? item.views15d ?? 0,
       monthViews: item.monthViews ?? item.views30d ?? 0,
       totalViews: item.totalViews ?? item.viewsTotal ?? 0
     }))

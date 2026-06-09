@@ -10,7 +10,7 @@
 
       <view class="bind-title">欢迎使用电子名片</view>
       <view class="bind-desc">
-        请输入管理员发给你的账号和密码，首次验证成功后会自动绑定当前微信。
+        请输入管理员发给你的手机号和绑定码，验证成功后会自动绑定当前微信。
       </view>
 
       <view class="password-form">
@@ -29,20 +29,20 @@
         </view>
 
         <view class="form-item">
-          <text class="form-label">密码</text>
+          <text class="form-label">绑定码</text>
           <view class="form-input-wrap">
             <input
               class="form-input"
               password
               maxlength="20"
-              placeholder="请输入密码"
+              placeholder="请输入绑定码"
               value="{{password}}"
               bindinput="onPasswordInput"
             />
           </view>
         </view>
 
-        <view class="password-tip">密码需为 8-20 位，且必须同时包含字母和数字</view>
+        <view class="password-tip">绑定码需为 8-20 位，且必须同时包含字母和数字</view>
       </view>
 
       <view class="bind-action">
@@ -59,7 +59,7 @@
 
   <view class="bind-tip">
     <text class="text-assist">
-      如果忘记密码，请联系管理员在 PC 后台为你重置密码。
+      如果绑定码失效，请联系管理员在 PC 后台重新生成绑定码。
     </text>
   </view>
 </view>

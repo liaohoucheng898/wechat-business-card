@@ -45,6 +45,7 @@ function New-SanitizedFunctionDeployDir {
 
   Assert-PathInsideProject -PathToCheck $deployTempRoot
   $targetDir = Join-Path $deployTempRoot $FunctionDir.Name
+  $sharedSourceDir = Join-Path $projectRoot "miniprogram\cloudfunctions\_shared"
 
   if (Test-Path -LiteralPath $targetDir) {
     Remove-Item -LiteralPath $targetDir -Recurse -Force
@@ -56,6 +57,14 @@ function New-SanitizedFunctionDeployDir {
     $sensitiveFileNames -notcontains $_.Name
   } | ForEach-Object {
     Copy-Item -LiteralPath $_.FullName -Destination $targetDir -Recurse -Force
+  }
+
+  if (Test-Path -LiteralPath $sharedSourceDir) {
+    $targetSharedDir = Join-Path $targetDir "_shared"
+    if (Test-Path -LiteralPath $targetSharedDir) {
+      Remove-Item -LiteralPath $targetSharedDir -Recurse -Force
+    }
+    Copy-Item -LiteralPath $sharedSourceDir -Destination $targetSharedDir -Recurse -Force
   }
 
   $sensitiveMatches = Get-ChildItem -LiteralPath $targetDir -Recurse -File -Force | Where-Object {

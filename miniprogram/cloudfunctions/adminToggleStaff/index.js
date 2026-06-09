@@ -11,6 +11,7 @@ const { success, fail } = require('./_shared/response')
 const { E0101, E0102, E0302, E0304 } = require('./_shared/error-codes')
 const { verifyAdminByStaffId } = require('./_shared/auth')
 const { COL, getDb, getStaffById } = require('./_shared/db')
+const { clearSessionFields } = require('./_shared/session')
 
 exports.main = async (event) => {
   try {
@@ -49,10 +50,7 @@ exports.main = async (event) => {
 
     // disable时清除登录token（强制登出）
     if (action === 'disable') {
-      updateData.sessionToken = null
-      updateData.sessionExpireAt = null
-      updateData.pcSessionToken = null
-      updateData.pcSessionExpireAt = null
+      Object.assign(updateData, clearSessionFields())
     }
 
     await db.collection(COL.STAFF).doc(staffId).update({ data: updateData })

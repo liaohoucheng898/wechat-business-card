@@ -6,10 +6,11 @@ const tcb = require('@cloudbase/node-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const { success, fail } = require('./_shared/response')
-const { E0101, E0102, E0201, E0202, E0206, E0209, E0211, E0212, E0213 } = require('./_shared/error-codes')
+const { E0101, E0102 } = require('./_shared/error-codes')
 const { isValidPhone, isValidSmsCode, isValidPassword } = require('./_shared/validate')
 const { COL, getDb, getStaffByPhone, getAdminConfig } = require('./_shared/db')
 const { getPasswordStatus, verifyPassword } = require('./_shared/password')
+const { genericLoginError, genericSmsLoginError, logPreAuthReject } = require('./_shared/login-security')
 
 function maskPhone(phone = '') {
   if (!phone || phone.length !== 11) return phone
@@ -167,16 +168,19 @@ async function validateSmsLogin({ db, phone, smsCode, now }) {
     .get()
 
   if (!codeList.length) {
-    return fail(E0201)
+    logPreAuthReject('adminLogin', 'sms_code_not_found', phone)
+    return fail(genericSmsLoginError())
   }
 
   const codeRecord = codeList[0]
   if (codeRecord.lockedUntil && codeRecord.lockedUntil.getTime() > now) {
-    return fail(E0206)
+    logPreAuthReject('adminLogin', 'sms_code_locked', phone)
+    return fail(genericSmsLoginError())
   }
 
   if (codeRecord.createdAt.getTime() + 5 * 60 * 1000 < now) {
-    return fail(E0201)
+    logPreAuthReject('adminLogin', 'sms_code_expired', phone)
+    return fail(genericSmsLoginError())
   }
 
   if (codeRecord.code !== smsCode) {
@@ -189,9 +193,10 @@ async function validateSmsLogin({ db, phone, smsCode, now }) {
     await db.collection(COL.SMS_CODES).doc(codeRecord._id).update({ data: updateData })
 
     if (errorCount >= 5) {
-      return fail(E0206)
+      logPreAuthReject('adminLogin', 'sms_code_error_locked', phone)
+      return fail(genericSmsLoginError())
     }
-    return fail(E0202)
+    return fail(genericSmsLoginError())
   }
 
   await db.collection(COL.SMS_CODES).doc(codeRecord._id).update({
@@ -207,12 +212,14 @@ async function validatePasswordLogin({ db, staff, password, now }) {
   }
 
   if (staff.passwordLockUntil && new Date(staff.passwordLockUntil).getTime() > now) {
-    return fail(E0206)
+    logPreAuthReject('adminLogin', 'password_locked', staff.phone)
+    return fail(genericLoginError())
   }
 
   const passwordStatus = getPasswordStatus(staff)
   if (passwordStatus === 'unset') {
-    return fail(E0213, '该管理员账号尚未设置密码，请联系其他管理员为你重置密码')
+    logPreAuthReject('adminLogin', 'password_unset', staff.phone)
+    return fail(genericLoginError())
   }
 
   const passwordValid = await verifyPassword(password, staff)
@@ -223,16 +230,13 @@ async function validatePasswordLogin({ db, staff, password, now }) {
       updatedAt: db.serverDate(),
     }
 
-    if (errorCount >= 5) {
-      updateData.passwordLockUntil = new Date(now + 15 * 60 * 1000)
-    }
-
     await db.collection(COL.STAFF).doc(staff._id).update({ data: updateData })
 
     if (errorCount >= 5) {
-      return fail(E0206)
+      logPreAuthReject('adminLogin', 'password_error_threshold', staff.phone)
+      return fail(genericLoginError())
     }
-    return fail(E0213)
+    return fail(genericLoginError())
   }
 
   await db.collection(COL.STAFF).doc(staff._id).update({
@@ -283,18 +287,22 @@ exports.main = async (event = {}) => {
     const now = Date.now()
     const staff = await getStaffByPhone(phone)
     if (!staff) {
-      return respond(event, fail(E0209))
+      logPreAuthReject('adminLogin', 'staff_not_found', phone)
+      return respond(event, fail(genericLoginError()))
     }
     if (staff.status === 'disabled') {
-      return respond(event, fail(E0211))
+      logPreAuthReject('adminLogin', 'staff_disabled', phone)
+      return respond(event, fail(genericLoginError()))
     }
     if (!staff.isAdmin) {
-      return respond(event, fail(E0212))
+      logPreAuthReject('adminLogin', 'not_admin', phone)
+      return respond(event, fail(genericLoginError()))
     }
 
     const adminConfig = await getAdminConfig()
     if (!adminConfig || !adminConfig.adminPhones.includes(phone)) {
-      return respond(event, fail(E0212))
+      logPreAuthReject('adminLogin', 'not_in_admin_config', phone)
+      return respond(event, fail(genericLoginError()))
     }
 
     const loginError = isPasswordLogin

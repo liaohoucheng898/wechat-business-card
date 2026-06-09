@@ -7,9 +7,10 @@ const { sms } = require('tencentcloud-sdk-nodejs')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const { success, fail } = require('./_shared/response')
-const { E0101, E0102, E0203, E0204, E0205, E0209, E0211, E0212 } = require('./_shared/error-codes')
+const { E0101, E0102, E0203, E0204, E0205 } = require('./_shared/error-codes')
 const { COL, getDb, getStaffByPhone, getAdminConfig } = require('./_shared/db')
 const { isValidPhone, checkRequired } = require('./_shared/validate')
+const { logPreAuthReject } = require('./_shared/login-security')
 
 const SMS_CONFIG = {
   secretId: process.env.SMS_SECRET_ID || '',
@@ -115,6 +116,10 @@ function respond(event, payload, statusCode = 200) {
   return isHttpRequest(event) ? wrapHttpResponse(event, payload, statusCode) : payload
 }
 
+function pretendSmsSent(event) {
+  return respond(event, success({ expireIn: 300 }))
+}
+
 function rejectDisallowedOrigin(event) {
   if (!isHttpRequest(event)) return null
   const origin = getHeader(event?.headers, 'origin')
@@ -174,17 +179,20 @@ exports.main = async (event = {}) => {
 
     const staff = await getStaffByPhone(phone)
     if (!staff) {
-      return respond(event, fail(E0209))
+      logPreAuthReject('sendSmsCode', 'staff_not_found', phone)
+      return pretendSmsSent(event)
+    }
+
+    if (staff.status === 'disabled') {
+      logPreAuthReject('sendSmsCode', 'staff_disabled', phone)
+      return pretendSmsSent(event)
     }
 
     if (isHttpRequest(event)) {
-      if (staff.status === 'disabled') {
-        return respond(event, fail(E0211))
-      }
-
       const adminConfig = await getAdminConfig()
       if (!staff.isAdmin || !adminConfig || !adminConfig.adminPhones.includes(phone)) {
-        return respond(event, fail(E0212))
+        logPreAuthReject('sendSmsCode', 'not_admin', phone)
+        return pretendSmsSent(event)
       }
     }
 
