@@ -3,6 +3,8 @@ const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const { resolveRichTextUrls } = require('./_shared/richtext')
+const { checkRequired } = require('./_shared/validate')
+const { isAllowedPublicCloudFileId } = require('./_shared/file-policy')
 
 const COL = {
   CASES: 'cases',
@@ -24,6 +26,7 @@ function getDb() {
 async function resolveFileUrl(fileID) {
   if (!fileID) return ''
   if (!fileID.startsWith('cloud://')) return fileID
+  if (!isAllowedPublicCloudFileId(fileID)) return ''
 
   try {
     const { fileList } = await cloud.getTempFileURL({ fileList: [fileID] })
@@ -35,11 +38,12 @@ async function resolveFileUrl(fileID) {
 }
 
 exports.main = async (event) => {
-  const { caseId, companyId = '' } = event
+  const { caseId, companyId } = event
 
   try {
-    if (!caseId) {
-      return fail('缺少 caseId', 'E0101')
+    const { valid, missing } = checkRequired(event, ['caseId', 'companyId'])
+    if (!valid) {
+      return fail(`缺少参数: ${missing}`, 'E0101')
     }
 
     const db = getDb()
@@ -62,7 +66,7 @@ exports.main = async (event) => {
       return fail('案例暂不可查看', 'E0502')
     }
 
-    if (companyId && !(caseDoc.companyIds || []).includes(companyId)) {
+    if (!(caseDoc.companyIds || []).includes(companyId)) {
       return fail('案例暂不可查看', 'E0502')
     }
 
@@ -83,7 +87,6 @@ exports.main = async (event) => {
       description: caseDoc.description || '',
       cover: await resolveFileUrl(caseDoc.cover || ''),
       content: await resolveRichTextUrls(cloud, caseDoc.content || ''),
-      companyIds: caseDoc.companyIds || [],
       categoryIds,
       categoryNames,
     })

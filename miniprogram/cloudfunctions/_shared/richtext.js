@@ -1,3 +1,5 @@
+const { isAllowedPublicCloudFileId } = require('./file-policy')
+
 const ALLOWED_TAGS = new Set([
   'p',
   'br',
@@ -349,7 +351,7 @@ function extractCloudFileIds(html = '') {
 
 async function resolveRichTextUrls(cloud, html = '') {
   const normalizedHtml = normalizeRichTextHtml(html)
-  const fileIds = extractCloudFileIds(normalizedHtml)
+  const fileIds = extractCloudFileIds(normalizedHtml).filter(isAllowedPublicCloudFileId)
   if (!fileIds.length) {
     return normalizedHtml
   }

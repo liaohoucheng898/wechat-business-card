@@ -10,6 +10,7 @@ const sharp = require('sharp')
 const path = require('path')
 const { success, fail } = require('./_shared/response')
 const { E0102, E0701, E0702, E0703 } = require('./_shared/error-codes')
+const { isAllowedCompressedImageSource, clampImageOptions } = require('./_shared/file-policy')
 
 // 支持的图片格式
 const SUPPORTED_FORMATS = ['.jpg', '.jpeg', '.png', '.webp']
@@ -17,12 +18,7 @@ const SUPPORTED_FORMATS = ['.jpg', '.jpeg', '.png', '.webp']
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 
 exports.main = async (event, context) => {
-  const {
-    fileID,
-    targetWidth = 400,
-    targetHeight = 0,
-    quality = 80,
-  } = event
+  const { fileID } = event
 
   try {
     if (!fileID) {
@@ -33,6 +29,10 @@ exports.main = async (event, context) => {
     const ext = path.extname(fileID).toLowerCase()
     if (!SUPPORTED_FORMATS.includes(ext)) {
       return fail(E0701, `不支持的图片格式: ${ext}，仅支持 JPG/PNG/WebP`)
+    }
+
+    if (!isAllowedCompressedImageSource(fileID)) {
+      return fail(E0701, '不允许处理该文件')
     }
 
     // 2. 从云存储下载原图
@@ -54,18 +54,19 @@ exports.main = async (event, context) => {
     let compressed
     try {
       let pipeline = sharp(fileBuffer)
+      const imageOptions = clampImageOptions(event)
 
       // 设置尺寸
-      const resizeOpts = { width: targetWidth }
-      if (targetHeight > 0) {
-        resizeOpts.height = targetHeight
+      const resizeOpts = { width: imageOptions.targetWidth }
+      if (imageOptions.targetHeight > 0) {
+        resizeOpts.height = imageOptions.targetHeight
         resizeOpts.fit = 'cover'
       }
 
       pipeline = pipeline.resize(resizeOpts)
 
       // 输出为 JPEG（最佳压缩比）
-      compressed = await pipeline.jpeg({ quality, progressive: true }).toBuffer()
+      compressed = await pipeline.jpeg({ quality: imageOptions.quality, progressive: true }).toBuffer()
     } catch (e) {
       console.error('[imageCompress] compress failed:', e?.message || String(e))
       return fail(E0703)

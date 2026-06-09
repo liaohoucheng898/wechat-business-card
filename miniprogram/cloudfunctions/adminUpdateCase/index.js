@@ -11,6 +11,7 @@ const { E0101, E0102, E0104, E0501, E0502 } = require('./_shared/error-codes')
 const { verifyAdminByStaffId } = require('./_shared/auth')
 const { COL, getDb } = require('./_shared/db')
 const { sanitizeRichText } = require('./_shared/richtext')
+const { validateCompanyIds, validateCategoryIds } = require('./_shared/relation-policy')
 
 exports.main = async (event) => {
   try {
@@ -67,6 +68,25 @@ exports.main = async (event) => {
         return fail(E0101, '至少选择一家公司')
       }
     }
+    if (fields.categoryIds !== undefined && !Array.isArray(fields.categoryIds)) {
+      return fail(E0101, '栏目配置无效')
+    }
+
+    let validatedCompanyIds = null
+    let validatedCategoryIds = null
+    try {
+      if (fields.companyIds !== undefined) {
+        validatedCompanyIds = await validateCompanyIds(db, fields.companyIds)
+      }
+      const effectiveCompanyIds = validatedCompanyIds || (Array.isArray(caseDoc.companyIds) ? caseDoc.companyIds : [])
+      if (fields.categoryIds !== undefined) {
+        validatedCategoryIds = await validateCategoryIds(db, fields.categoryIds, {
+          allowedCompanyIds: effectiveCompanyIds,
+        })
+      }
+    } catch (error) {
+      return fail(E0101, '案例关联配置无效')
+    }
 
     const updateData = { updatedAt: db.serverDate() }
     const allowedFields = ['title', 'cover', 'coverThumb', 'description', 'content', 'sort', 'visible', 'companyIds', 'categoryIds']
@@ -78,6 +98,14 @@ exports.main = async (event) => {
       }
       if (key === 'content') {
         updateData[key] = sanitizeRichText(fields[key] || '')
+        return
+      }
+      if (key === 'companyIds') {
+        updateData[key] = validatedCompanyIds
+        return
+      }
+      if (key === 'categoryIds') {
+        updateData[key] = validatedCategoryIds
         return
       }
       updateData[key] = fields[key]

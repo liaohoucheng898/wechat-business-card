@@ -92,6 +92,8 @@ Page({
     casesLoadingMore: false,
     hasMoreCases: false,
     nextCaseOffset: 0,
+    cardViewToken: '',
+    companyIntroViewToken: '',
     defaultAvatar: config.defaultAvatar,
     saveContactWrapStyle: 'top:24px;left:16px;width:96px;height:32px',
     saveContactButtonStyle: 'height:29.5px;line-height:29.5px;font-size:12px'
@@ -129,7 +131,9 @@ Page({
       activeCategoryId: '',
       casesLoadingMore: false,
       hasMoreCases: false,
-      nextCaseOffset: 0
+      nextCaseOffset: 0,
+      cardViewToken: '',
+      companyIntroViewToken: ''
     })
     this.loadCardInfo()
   },
@@ -226,6 +230,8 @@ Page({
         casesLoadingMore: false,
         hasMoreCases: !!data.hasMoreCases,
         nextCaseOffset: Number(data.nextCaseOffset) || cases.length,
+        cardViewToken: data.viewToken || '',
+        companyIntroViewToken: data.companyIntroViewToken || '',
         loading: false,
         notFound: false,
         notFoundText: '名片不存在'
@@ -245,7 +251,9 @@ Page({
           filteredCases: [],
           casesLoadingMore: false,
           hasMoreCases: false,
-          nextCaseOffset: 0
+          nextCaseOffset: 0,
+          cardViewToken: '',
+          companyIntroViewToken: ''
         })
         return
       }
@@ -257,6 +265,7 @@ Page({
 
   writeLog(logType, caseId) {
     const { staffId, companyId } = this.data
+    let viewToken = ''
     let shareScene = 'other'
     const scene = this._enterScene
 
@@ -268,12 +277,26 @@ Page({
       shareScene = 'timeline'
     }
 
+    if (logType === 'card_view') {
+      viewToken = this.data.cardViewToken
+    } else if (logType === 'company_intro_click') {
+      viewToken = this.data.companyIntroViewToken
+    } else if (logType === 'case_click') {
+      const targetCase = (this.data.cases || []).find((item) => item.caseId === caseId)
+      viewToken = targetCase && targetCase.viewToken
+    }
+
+    if (!viewToken) {
+      return
+    }
+
     callCloud('writeViewLog', {
       staffId,
       companyId,
       logType,
       caseId: caseId || null,
-      shareScene
+      shareScene,
+      viewToken
     }, {
       showLoading: false,
       silent: true

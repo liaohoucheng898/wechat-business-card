@@ -10,6 +10,7 @@ const { E0101, E0102, E0104, E0301, E0302, E0303, E0305 } = require('./_shared/e
 const { verifyAdminByStaffId } = require('./_shared/auth')
 const { COL, getDb, getStaffById, getStaffByPhone, getAdminConfig, normalizeStaffOpenids } = require('./_shared/db')
 const { isValidPhone, isValidName, isValidEmail, isValidBio } = require('./_shared/validate')
+const { validateEnabledCompanies } = require('./_shared/relation-policy')
 
 function sanitizeWechatBindings(staff = {}, bindings = []) {
   const currentOpenids = normalizeStaffOpenids(staff)
@@ -127,6 +128,18 @@ exports.main = async (event) => {
     }
 
     const db = getDb()
+    let validatedEnabledCompanies = null
+    if (fields.enabledCompanies !== undefined) {
+      try {
+        validatedEnabledCompanies = await validateEnabledCompanies(db, fields.enabledCompanies)
+      } catch (error) {
+        if (error.message === 'company_required') {
+          return fail(E0303)
+        }
+        return fail(E0101, '员工可用公司配置无效')
+      }
+    }
+
     const shouldSyncAdminConfig = phoneChanged || nextIsAdmin !== oldIsAdmin
     let nextAdminPhones = null
     let nextAdminOpenids = null
@@ -187,10 +200,7 @@ exports.main = async (event) => {
       if (key === 'name') {
         updateData[key] = fields[key].trim()
       } else if (key === 'enabledCompanies') {
-        updateData[key] = fields[key].map((company) => ({
-          companyId: company.companyId,
-          title: company.title,
-        }))
+        updateData[key] = validatedEnabledCompanies
       } else if (key === 'wechatBindings') {
         updateData[key] = sanitizeWechatBindings(staff, fields[key])
       } else {

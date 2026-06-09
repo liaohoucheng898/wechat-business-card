@@ -7,10 +7,11 @@ const tcbApp = tcb.init({ env: tcb.SYMBOL_CURRENT_ENV })
 const tcbAuth = tcbApp.auth()
 
 const { success, fail } = require('./_shared/response')
-const { E0101, E0102, E0401 } = require('./_shared/error-codes')
+const { E0101, E0102 } = require('./_shared/error-codes')
 const { verifyAdminByStaffId } = require('./_shared/auth')
-const { COL, getDb, getCompanyById } = require('./_shared/db')
+const { COL, getDb } = require('./_shared/db')
 const { sanitizeRichText } = require('./_shared/richtext')
+const { validateCompanyIds, validateCategoryIds } = require('./_shared/relation-policy')
 
 exports.main = async (event) => {
   try {
@@ -33,17 +34,21 @@ exports.main = async (event) => {
       return fail(E0101, '简要描述不超过200字')
     }
 
-    for (const companyId of companyIds) {
-      const company = await getCompanyById(companyId)
-      if (!company) {
-        return fail(E0401, `公司 ${companyId} 不存在`)
-      }
+    const db = getDb()
+    let validatedCompanyIds
+    let validatedCategoryIds
+    try {
+      validatedCompanyIds = await validateCompanyIds(db, companyIds)
+      validatedCategoryIds = await validateCategoryIds(db, Array.isArray(categoryIds) ? categoryIds : [], {
+        allowedCompanyIds: validatedCompanyIds,
+      })
+    } catch (error) {
+      return fail(E0101, '案例关联配置无效')
     }
 
-    const db = getDb()
     const { _id: caseId } = await db.collection(COL.CASES).add({
       data: {
-        companyIds,
+        companyIds: validatedCompanyIds,
         title: title.trim(),
         cover: cover || '',
         coverThumb: coverThumb || '',
@@ -51,7 +56,7 @@ exports.main = async (event) => {
         content: sanitizeRichText(content || ''),
         sort: typeof sort === 'number' ? sort : 100,
         visible: visible !== false,
-        categoryIds: Array.isArray(categoryIds) ? categoryIds : [],
+        categoryIds: validatedCategoryIds,
         deleted: false,
         deletedAt: null,
         createdAt: db.serverDate(),

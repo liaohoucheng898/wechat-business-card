@@ -10,6 +10,8 @@ const { E0101, E0102, E0302, E0401 } = require('./_shared/error-codes')
 const { COL, getDb, getStaffById, getCompanyById } = require('./_shared/db')
 const { checkRequired } = require('./_shared/validate')
 const { resolveRichTextUrls } = require('./_shared/richtext')
+const { isAllowedPublicCloudFileId } = require('./_shared/file-policy')
+const { signViewToken } = require('./_shared/view-token')
 
 const CASE_PAGE_SIZE = 8
 
@@ -31,6 +33,7 @@ function buildPhoneDisplay(phone = '', secondPhone = '', showSecondPhone = false
 async function resolveFileUrl(fileID) {
   if (!fileID) return ''
   if (!fileID.startsWith('cloud://')) return fileID
+  if (!isAllowedPublicCloudFileId(fileID)) return ''
 
   try {
     const { fileList } = await cloud.getTempFileURL({ fileList: [fileID] })
@@ -50,6 +53,10 @@ async function resolveFileUrlMap(fileIDs = []) {
     if (!id || urlMap.has(id)) return
     if (!id.startsWith('cloud://')) {
       urlMap.set(id, id)
+      return
+    }
+    if (!isAllowedPublicCloudFileId(id)) {
+      urlMap.set(id, '')
       return
     }
     cloudFileIds.push(id)
@@ -132,11 +139,14 @@ exports.main = async (event) => {
         cover: caseCoverUrlMap.get(coverFileId) || '',
         description: item.description,
         categoryIds: item.categoryIds || [],
+        viewToken: signViewToken({ staffId, companyId, logType: 'case_click', caseId: item._id }),
       }
     })
 
     return success({
       disabled: false,
+      viewToken: signViewToken({ staffId, companyId, logType: 'card_view' }),
+      companyIntroViewToken: signViewToken({ staffId, companyId, logType: 'company_intro_click' }),
       staff: {
         name: staff.name,
         phone: maskPhone(staff.phone),

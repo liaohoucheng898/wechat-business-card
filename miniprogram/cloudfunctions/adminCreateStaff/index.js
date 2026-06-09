@@ -11,6 +11,7 @@ const { verifyAdminByStaffId } = require('./_shared/auth')
 const { COL, getDb, getStaffByPhone } = require('./_shared/db')
 const { isValidPhone, isValidName, isValidEmail, isValidBio } = require('./_shared/validate')
 const { buildPasswordFields, generateTempPassword } = require('./_shared/password')
+const { validateEnabledCompanies } = require('./_shared/relation-policy')
 
 exports.main = async (event) => {
   try {
@@ -51,22 +52,21 @@ exports.main = async (event) => {
       return fail(E0303)
     }
 
-    for (const ec of enabledCompanies) {
-      if (!ec.companyId) {
-        return fail(E0101, 'enabledCompanies 需要包含 companyId')
+    const db = getDb()
+    let companies
+    try {
+      companies = await validateEnabledCompanies(db, enabledCompanies)
+    } catch (error) {
+      if (error.message === 'company_required') {
+        return fail(E0303)
       }
+      return fail(E0101, '员工可用公司配置无效')
     }
 
     const existing = await getStaffByPhone(phone)
     if (existing) {
       return fail(E0301)
     }
-
-    const db = getDb()
-    const companies = enabledCompanies.map((ec) => ({
-      companyId: ec.companyId,
-      title: ec.title,
-    }))
 
     const temporaryPassword = generateTempPassword(8)
     const passwordFields = await buildPasswordFields(temporaryPassword, { temporary: true })

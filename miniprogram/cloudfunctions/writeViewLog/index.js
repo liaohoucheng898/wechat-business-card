@@ -12,15 +12,16 @@ const { success, fail } = require('./_shared/response')
 const { E0101, E0102 } = require('./_shared/error-codes')
 const { COL, getDb, getStaffById, getStaffByOpenid } = require('./_shared/db')
 const { checkRequired, isValidLogType, isValidShareScene } = require('./_shared/validate')
+const { verifyViewToken } = require('./_shared/view-token')
 
 const DEBOUNCE_MS = 10 * 60 * 1000 // 10分钟防抖
 
 exports.main = async (event, context) => {
-  const { staffId, companyId, logType, caseId, shareScene } = event
+  const { staffId, companyId, logType, caseId, shareScene, viewToken } = event
 
   try {
     // 参数校验
-    const { valid, missing } = checkRequired(event, ['staffId', 'companyId', 'logType'])
+    const { valid, missing } = checkRequired(event, ['staffId', 'companyId', 'logType', 'viewToken'])
     if (!valid) {
       return fail(E0101, `缺少参数: ${missing}`)
     }
@@ -32,6 +33,16 @@ exports.main = async (event, context) => {
     // case_click 必须有 caseId
     if (logType === 'case_click' && !caseId) {
       return fail(E0101, 'case_click 类型必须提供 caseId')
+    }
+
+    const tokenResult = verifyViewToken(viewToken, {
+      staffId,
+      companyId,
+      logType,
+      caseId: caseId || '',
+    })
+    if (!tokenResult.ok) {
+      return fail(E0101, '访问事件无效')
     }
 
     const validScene = isValidShareScene(shareScene) ? shareScene : 'other'

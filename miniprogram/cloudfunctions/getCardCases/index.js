@@ -9,6 +9,8 @@ const { success, fail } = require('./_shared/response')
 const { E0101, E0102, E0302, E0401 } = require('./_shared/error-codes')
 const { COL, getDb, getStaffById, getCompanyById } = require('./_shared/db')
 const { checkRequired } = require('./_shared/validate')
+const { isAllowedPublicCloudFileId } = require('./_shared/file-policy')
+const { signViewToken } = require('./_shared/view-token')
 
 const CASE_PAGE_SIZE = 8
 const MAX_PAGE_SIZE = 8
@@ -22,6 +24,10 @@ async function resolveFileUrlMap(fileIDs = []) {
     if (!id || urlMap.has(id)) return
     if (!id.startsWith('cloud://')) {
       urlMap.set(id, id)
+      return
+    }
+    if (!isAllowedPublicCloudFileId(id)) {
+      urlMap.set(id, '')
       return
     }
     cloudFileIds.push(id)
@@ -47,7 +53,7 @@ function normalizePageValue(value, fallback, min, max) {
   return Math.min(Math.max(normalized, min), max)
 }
 
-function formatCases(cases = [], caseCoverUrlMap = new Map()) {
+function formatCases(cases = [], caseCoverUrlMap = new Map(), staffId = '', companyId = '') {
   return (cases || []).map((item) => {
     const coverFileId = item.coverThumb || item.cover || ''
     return {
@@ -56,6 +62,7 @@ function formatCases(cases = [], caseCoverUrlMap = new Map()) {
       cover: caseCoverUrlMap.get(coverFileId) || '',
       description: item.description,
       categoryIds: item.categoryIds || [],
+      viewToken: signViewToken({ staffId, companyId, logType: 'case_click', caseId: item._id }),
     }
   })
 }
@@ -121,7 +128,7 @@ exports.main = async (event = {}) => {
     const caseCoverUrlMap = await resolveFileUrlMap(caseCoverFileIds)
 
     return success({
-      cases: formatCases(visibleCases, caseCoverUrlMap),
+      cases: formatCases(visibleCases, caseCoverUrlMap, staffId, companyId),
       hasMoreCases,
       nextCaseOffset: safeOffset + visibleCases.length,
     })
